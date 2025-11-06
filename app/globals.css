@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Leaflet Map Overrides */
+.leaflet-container {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Route Instructions Panel */
+.leaflet-routing-container {
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.2), 0 8px 10px -6px rgba(249, 115, 22, 0.1);
+  border: 2px solid #fed7aa;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1f2937;
+}
+
+.leaflet-routing-container h2,
+.leaflet-routing-container h3 {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: white;
+  padding: 0.75rem 1rem;
+  margin: 0;
+  font-weight: bold;
+  font-size: 0.875rem;
+  border-bottom: 2px solid #ea580c;
+}
+
+.leaflet-routing-alt {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin: 0.5rem;
+  border: 2px solid #fed7aa;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: #1f2937;
+}
+
+.leaflet-routing-alt:hover {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #fb923c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
+  color: #1f2937;
+}
+
+.leaflet-routing-alt-minimized {
+  background-color: #fff;
+  color: #1f2937;
+}
+
+.leaflet-routing-alt table {
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+.leaflet-routing-alt td {
+  padding: 0.25rem 0.5rem;
+  color: #1f2937;
+}
+
+.leaflet-routing-alt span {
+  color: #1f2937 !important;
+}
+
+/* Selected route highlight */
+.leaflet-routing-alt.leaflet-routing-alt-selected {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  border: 2px solid #f97316;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+}
+
+/* Route summary */
+.leaflet-routing-alt h3 {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Control buttons */
+.leaflet-bar a {
+  border-radius: 0.5rem;
+  border: 2px solid #fed7aa;
+  background: white;
+  color: #f97316;
+  transition: all 0.2s ease;
+}
+
+.leaflet-bar a:hover {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #fb923c;
+  color: #ea580c;
+}
+
+.leaflet-bar a:first-child {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.leaflet-bar a:last-child {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+/* Hide geocoder inputs */
+.leaflet-routing-geocoders {
+  display: none;
+}
+
+/* Custom marker popup */
+.leaflet-popup-content-wrapper {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom markers - remove default background */
+.custom-marker {
+  background: transparent !important;
+  border: none !important;
+}

@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email           String           @unique
+  password        String
+  mobileNumber    String?          @map("mobile_number")
+  role            Role             @default(user)
+  membershipTier  MembershipTier   @default(none) @map("membership_tier")
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  heritageSites   HeritageSite[]
+  payments        Payment[]
+
+  @@map("profiles")
+}
+
+model HeritageSite {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId        String        @map("user_id") @db.Uuid
+  title         String
+  description   String
+  paymentStatus PaymentStatus @default(NOT_STARTED) @map("payment_status")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  profile       Profile       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images        SiteImage[]
+
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@map("heritage_sites")
+}
+
+model SiteImage {
+  id                 String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId             String       @map("site_id") @db.Uuid
+  location           String
+  cloudinaryUrl      String       @map("cloudinary_url")
+  cloudinaryPublicId String       @map("cloudinary_public_id")
+  isVerified         Boolean      @default(false) @map("is_verified")
+  cameraModel        String?      @map("camera_model")
+  gpsLatitude        Float?       @map("gps_latitude") @db.DoublePrecision
+  gpsLongitude       Float?       @map("gps_longitude") @db.DoublePrecision
+  createdAt          DateTime     @default(now()) @map("created_at")
+
+  site               HeritageSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+  @@index([createdAt(sort: Desc)])
+  @@map("site_images")
+}
+
+model Payment {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String        @map("user_id") @db.Uuid
+  heritageSiteId  String?       @map("heritage_site_id") @db.Uuid
+  amount          Float
+  status          PaymentStatus @default(NOT_STARTED)
+  paymentMethod   String?       @map("payment_method")
+  transactionId   String?       @map("transaction_id")
+  notes           String?
+  paidAt          DateTime?     @map("paid_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  profile         Profile       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@map("payments")
+}
+
+enum Role {
+  admin
+  user
+}
+
+enum MembershipTier {
+  none
+  silver
+  gold
+  platinum
+}
+
+enum PaymentStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
