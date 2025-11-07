@@ -114,7 +114,7 @@ export default function MapsPage() {
       <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white flex items-center justify-center px-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-orange-600 mx-auto"></div>
-          <p className="mt-3 sm:mt-4 text-sm sm:text-base text-gray-900 font-medium">Loading map...</p>
+          <p className="mt-3 sm:mt-4 text-sm sm:text-base text-slate-900 font-medium">Loading map...</p>
         </div>
       </div>
     )
@@ -143,8 +143,8 @@ export default function MapsPage() {
 
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border-2 border-orange-100">
             <div className="mb-3 sm:mb-4">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">{siteData.title}</h1>
-              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{siteData.description}</p>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 mb-2 leading-tight">{siteData.title}</h1>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">{siteData.description}</p>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3 lg:gap-4">
@@ -153,7 +153,7 @@ export default function MapsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span className="font-bold text-gray-900 text-xs sm:text-sm truncate">{siteData.selectedImage.location}</span>
+                <span className="font-bold text-slate-900 text-xs sm:text-sm truncate">{siteData.selectedImage.location}</span>
               </div>
 
               <div className="flex items-center gap-2 bg-blue-50 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-blue-200 flex-1 sm:flex-initial">
@@ -161,7 +161,7 @@ export default function MapsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
                 <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
-                  <span className="font-mono text-[10px] sm:text-xs lg:text-sm font-semibold text-gray-900 truncate">
+                  <span className="font-mono text-[10px] sm:text-xs lg:text-sm font-semibold text-slate-900 truncate">
                     {siteData.selectedImage.gpsLatitude.toFixed(4)}, {siteData.selectedImage.gpsLongitude.toFixed(4)}
                   </span>
                   {siteData.selectedImage.isGeocoded && (
@@ -176,7 +176,7 @@ export default function MapsPage() {
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
-                <span className="font-bold text-gray-900 text-xs sm:text-sm">Route from Bengaluru</span>
+                <span className="font-bold text-slate-900 text-xs sm:text-sm">Route from Bengaluru</span>
               </div>
             </div>
           </div>

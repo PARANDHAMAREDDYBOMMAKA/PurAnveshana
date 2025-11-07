@@ -22,17 +22,21 @@ export async function compressImage(file: File): Promise<File> {
 }
 
 export async function uploadToCloudinary(file: File): Promise<UploadResult> {
-  // Compress image before uploading
-  const compressedFile = await compressImage(file)
+  const isVideo = file.type.startsWith('video/')
+
+  // Compress image before uploading (skip compression for videos)
+  const fileToUpload = isVideo ? file : await compressImage(file)
 
   const formData = new FormData()
-  formData.append('file', compressedFile)
+  formData.append('file', fileToUpload)
   formData.append('upload_preset', 'ml_default') // You'll need to create this in Cloudinary
 
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 
+  // Use different endpoint for videos vs images
+  const uploadType = isVideo ? 'video' : 'image'
   const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    `https://api.cloudinary.com/v1_1/${cloudName}/${uploadType}/upload`,
     {
       method: 'POST',
       body: formData,
@@ -40,7 +44,7 @@ export async function uploadToCloudinary(file: File): Promise<UploadResult> {
   )
 
   if (!response.ok) {
-    throw new Error('Failed to upload image to Cloudinary')
+    throw new Error(`Failed to upload ${uploadType} to Cloudinary`)
   }
 
   const data = await response.json()

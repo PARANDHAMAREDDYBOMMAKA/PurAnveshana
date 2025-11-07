@@ -55,7 +55,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-          <p className="mt-4 text-gray-900 font-medium">Loading dashboard...</p>
+          <p className="mt-4 text-slate-900 font-medium">Loading dashboard...</p>
         </div>
       </div>
     )

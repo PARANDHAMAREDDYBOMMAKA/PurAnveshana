@@ -76,9 +76,9 @@ export default function Home() {
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-orange-600 transition">Features</a>
-              <a href="#how-it-works" className="text-gray-700 hover:text-orange-600 transition">How It Works</a>
-              <a href="#about" className="text-gray-700 hover:text-orange-600 transition">About</a>
+              <a href="#features" className="text-slate-700 hover:text-orange-600 transition">Features</a>
+              <a href="#how-it-works" className="text-slate-700 hover:text-orange-600 transition">How It Works</a>
+              <a href="#about" className="text-slate-700 hover:text-orange-600 transition">About</a>
               <Link href="/signup">
                 <button className="px-6 py-2 bg-linear-to-r cursor-pointer from-orange-500 to-amber-600 text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                   Join Now
@@ -96,9 +96,9 @@ export default function Home() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t">
             <div className="px-4 py-4 space-y-3">
-              <a href="#features" className="block text-gray-700 hover:text-orange-600">Features</a>
-              <a href="#how-it-works" className="block text-gray-700 hover:text-orange-600">How It Works</a>
-              <a href="#about" className="block text-gray-700 hover:text-orange-600">About</a>
+              <a href="#features" className="block text-slate-700 hover:text-orange-600">Features</a>
+              <a href="#how-it-works" className="block text-slate-700 hover:text-orange-600">How It Works</a>
+              <a href="#about" className="block text-slate-700 hover:text-orange-600">About</a>
               <Link href="/signup">
                 <button className="w-full px-6 py-2 cursor-pointer bg-linear-to-r from-orange-500 to-amber-600 text-white rounded-full">
                   Join Now
@@ -110,21 +110,34 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-20"
+          >
+            <source src="/Video_Generation_With_Minimum_Duration.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-linear-to-br from-amber-50/90 via-orange-50/85 to-white/90"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
               <div className="inline-block px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold">
                 Preserving Heritage Together
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
                 Discover and<br />
                 <span className="bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
                   Document India's
                 </span><br />
                 Ancient Heritage
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed">
                 Join our community in documenting and preserving ancient sites. Share your discoveries, earn rewards, and help preserve our cultural legacy for future generations.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -160,8 +173,8 @@ export default function Home() {
       <section id="features" className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Why Puranveshana?</h2>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-600">Empowering communities to preserve cultural heritage</p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">Why Puranveshana?</h2>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-600">Empowering communities to preserve cultural heritage</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
@@ -170,8 +183,8 @@ export default function Home() {
                 <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-orange-500 to-amber-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
                   <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-sm sm:text-base text-gray-600">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-slate-600">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -186,8 +199,8 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">How It Works</h2>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">How It Works</h2>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto">
               Start your journey as a PurAnveshi in three simple steps
             </p>
           </div>
@@ -200,8 +213,8 @@ export default function Home() {
                     <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center text-white text-lg sm:text-xl font-bold mb-3 sm:mb-4 shadow-lg group-hover:scale-105 transition-transform duration-300">
                       {item.step}
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
                 {idx < howItWorks.length - 1 && (
@@ -235,6 +248,59 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-white via-orange-50/20 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
+              See PurAnveshana in Action
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600">
+              Watch how our platform helps preserve India's heritage
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300">
+              <div className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Heritage Discovery & Rewards</h3>
+                <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-slate-100" style={{ paddingBottom: '56.25%' }}>
+                  <video
+                    controls
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                    preload="metadata"
+                  >
+                    <source src="/PurAnveshana_Heritage_Discovery_Rewards.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                <p className="text-sm sm:text-base text-slate-600 mt-3 sm:mt-4">
+                  Learn how PurAnveshana rewards explorers for documenting ancient heritage sites across India.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300">
+              <div className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Platform Overview</h3>
+                <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-slate-100" style={{ paddingBottom: '56.25%' }}>
+                  <video
+                    controls
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                    preload="metadata"
+                  >
+                    <source src="/Video_Generation_With_Minimum_Duration.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                <p className="text-sm sm:text-base text-slate-600 mt-3 sm:mt-4">
+                  A comprehensive guide to using PurAnveshana for heritage documentation and preservation.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Earn by Exploring Section */}
       <section className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -242,11 +308,11 @@ export default function Home() {
             <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
               पुरान्वेषी भव — Be a PurAnveshi
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 px-2">
               Earn by Exploring India's Hidden Heritage
             </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-3 sm:mb-4">Discover, Upload, Earn, Preserve</p>
-            <p className="text-sm sm:text-base lg:text-lg text-gray-600 mt-2 sm:mt-4 max-w-4xl mx-auto px-2">
+            <p className="text-base sm:text-lg lg:text-xl text-slate-600 mb-3 sm:mb-4">Discover, Upload, Earn, Preserve</p>
+            <p className="text-sm sm:text-base lg:text-lg text-slate-600 mt-2 sm:mt-4 max-w-4xl mx-auto px-2">
               We invite you to become a <span className="font-semibold text-orange-600">PurAnveshi</span> — an explorer of ancient India.
               Every time you discover and upload a unique ancient site — a temple, ruin, inscription, rock art, or forgotten monument —
               you earn rewards for helping preserve our heritage.
@@ -255,7 +321,7 @@ export default function Home() {
 
           {/* Reward System Table */}
           <div className="mb-8 sm:mb-12 lg:mb-16">
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 text-center px-2">Reward System</h3>
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 text-center px-2">Reward System</h3>
             <div className="overflow-x-auto -mx-4 sm:mx-0">
               <div className="inline-block min-w-full align-middle px-4 sm:px-0">
                 <table className="min-w-full bg-white rounded-xl shadow-lg overflow-hidden">
@@ -266,16 +332,16 @@ export default function Home() {
                       <th className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm lg:text-base font-semibold hidden md:table-cell">Description</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-slate-200">
                     <tr className="hover:bg-orange-50 transition-colors">
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
                         <div className="flex items-center gap-1.5 sm:gap-2">
                           <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 shrink-0" />
-                          <span className="font-semibold text-gray-900 text-xs sm:text-sm lg:text-base">Unique + Verified</span>
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Unique + Verified</span>
                         </div>
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-green-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹50–₹200</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-gray-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
                         Original photo or video, captured by you, with location data and clear details.
                       </td>
                     </tr>
@@ -283,11 +349,11 @@ export default function Home() {
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
                         <div className="flex items-center gap-1.5 sm:gap-2">
                           <X className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 shrink-0" />
-                          <span className="font-semibold text-gray-900 text-xs sm:text-sm lg:text-base">Duplicate / Copied</span>
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Duplicate / Copied</span>
                         </div>
                       </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-gray-500 font-bold text-xs sm:text-sm lg:text-base">₹0</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-gray-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-500 font-bold text-xs sm:text-sm lg:text-base">₹0</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
                         Already exists on the web or submitted by others.
                       </td>
                     </tr>
@@ -295,11 +361,11 @@ export default function Home() {
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
                         <div className="flex items-center gap-1.5 sm:gap-2">
                           <X className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 shrink-0" />
-                          <span className="font-semibold text-gray-900 text-xs sm:text-sm lg:text-base">Fake / Fraud</span>
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Fake / Fraud</span>
                         </div>
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-red-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">Deduct Points</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-gray-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
                         Misuse or AI-generated images may result in temporary suspension.
                       </td>
                     </tr>
@@ -307,11 +373,11 @@ export default function Home() {
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
                         <div className="flex items-center gap-1.5 sm:gap-2">
                           <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 shrink-0" />
-                          <span className="font-semibold text-gray-900 text-xs sm:text-sm lg:text-base">Rare Find</span>
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Rare Find</span>
                         </div>
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹500+</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-gray-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
                         For exceptional discoveries — ancient inscriptions, rare idols, or undocumented sites.
                       </td>
                     </tr>
@@ -321,16 +387,16 @@ export default function Home() {
             </div>
             {/* Mobile descriptions */}
             <div className="mt-4 space-y-3 md:hidden px-2">
-              <div className="text-xs text-gray-600">
+              <div className="text-xs text-slate-600">
                 <strong className="text-green-600">Unique + Verified:</strong> Original photo/video with location data
               </div>
-              <div className="text-xs text-gray-600">
-                <strong className="text-gray-500">Duplicate:</strong> Already exists on web
+              <div className="text-xs text-slate-600">
+                <strong className="text-slate-500">Duplicate:</strong> Already exists on web
               </div>
-              <div className="text-xs text-gray-600">
+              <div className="text-xs text-slate-600">
                 <strong className="text-red-600">Fake/Fraud:</strong> May result in suspension
               </div>
-              <div className="text-xs text-gray-600">
+              <div className="text-xs text-slate-600">
                 <strong className="text-amber-600">Rare Find:</strong> Exceptional discoveries get higher rewards
               </div>
             </div>
@@ -338,8 +404,8 @@ export default function Home() {
 
           {/* What Verified Means */}
           <div className="mb-8 sm:mb-12 lg:mb-16">
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 text-center px-2">What "Verified" Means</h3>
-            <p className="text-center text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 text-center px-2">What "Verified" Means</h3>
+            <p className="text-center text-sm sm:text-base text-slate-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
               We verify every upload for authenticity, location, and uniqueness.
             </p>
 
@@ -348,10 +414,10 @@ export default function Home() {
               <div className="bg-linear-to-br from-green-50 to-emerald-50 rounded-xl sm:rounded-2xl p-5 sm:p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                   <Check className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 shrink-0" />
-                  <h4 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">1. Authentic Content</h4>
+                  <h4 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">1. Authentic Content</h4>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-700 mb-2 font-medium">सत्य / वास्तविक</p>
-                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-gray-600">
+                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium">सत्य / वास्तविक</p>
+                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-slate-600">
                   <li className="flex items-start gap-2">
                     <span className="text-green-600 mt-0.5 shrink-0">•</span>
                     <span>You must click the photo or record the video yourself.</span>
@@ -371,10 +437,10 @@ export default function Home() {
               <div className="bg-linear-to-br from-blue-50 to-cyan-50 rounded-xl sm:rounded-2xl p-5 sm:p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                   <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 shrink-0" />
-                  <h4 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">2. Geotagged Location</h4>
+                  <h4 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">2. Geotagged Location</h4>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-700 mb-2 font-medium">भौगोलिकाङ्कित</p>
-                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-gray-600">
+                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium">भौगोलिकाङ्कित</p>
+                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-slate-600">
                   <li className="flex items-start gap-2">
                     <span className="text-blue-600 mt-0.5 shrink-0">•</span>
                     <span>Keep your phone's location (GPS) ON while capturing.</span>
@@ -394,10 +460,10 @@ export default function Home() {
               <div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-xl sm:rounded-2xl p-5 sm:p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                   <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 shrink-0" />
-                  <h4 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">3. Unique Discovery</h4>
+                  <h4 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">3. Unique Discovery</h4>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-700 mb-2 font-medium">पुरातन स्थान अन्वेषण</p>
-                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-gray-600">
+                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium">पुरातन स्थान अन्वेषण</p>
+                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-slate-600">
                   <li className="flex items-start gap-2">
                     <span className="text-purple-600 mt-0.5 shrink-0">•</span>
                     <span>Our system checks if the same image exists online.</span>
@@ -422,8 +488,8 @@ export default function Home() {
                 <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
-                <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">Example</h4>
-                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+                <h4 className="text-lg sm:text-xl font-bold text-slate-900 mb-2 sm:mb-3">Example</h4>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
                   <span className="font-semibold">Ramesh from Chhattisgarh</span> found an old stone carving near his village.
                   He uploaded clear photos with GPS on, added a short note about the site.
                   The system verified it — and he earned <span className="font-bold text-green-600">₹150</span> as an authentic, geotagged discovery.
@@ -435,10 +501,10 @@ export default function Home() {
 
           {/* CTA */}
           <div className="text-center mt-8 sm:mt-10 lg:mt-12 px-2">
-            <p className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
+            <p className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">
               पुरान्वेषी भव — Be a PurAnveshi
             </p>
-            <p className="text-sm sm:text-base lg:text-lg text-gray-600 mb-4 sm:mb-6 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base lg:text-lg text-slate-600 mb-4 sm:mb-6 max-w-2xl mx-auto">
               Explore, record, and preserve the stories of India's forgotten past.
               Every discovery you make brings ancient India closer to life again.
             </p>
@@ -456,18 +522,18 @@ export default function Home() {
       <section id="faq" className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-white to-amber-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Frequently Asked Questions</h2>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-600">Everything you need to know about becoming a PurAnveshi</p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">What we would like you to know ?</h2>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-600">Everything you need to know about becoming a PurAnveshi</p>
           </div>
 
           <div className="space-y-4">
             {/* FAQ Item 1 */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
               <button
                 onClick={() => setOpenFaq(openFaq === 1 ? null : 1)}
                 className="w-full px-6 py-5 flex items-center justify-between hover:bg-orange-50 transition-colors"
               >
-                <h3 className="text-lg font-bold text-gray-900 text-left">
+                <h3 className="text-lg font-bold text-slate-900 text-left">
                   What is the criteria to get paid?
                 </h3>
                 <ChevronDown
@@ -477,7 +543,7 @@ export default function Home() {
                 />
               </button>
               {openFaq === 1 && (
-                <div className="px-6 pb-5 text-gray-700 leading-relaxed space-y-3">
+                <div className="px-6 pb-5 text-slate-700 leading-relaxed space-y-3">
                   <p>To receive payment, your upload must meet these requirements:</p>
                   <ul className="space-y-2">
                     <li className="pl-4"><strong>Original Content:</strong> Photo/video taken by you, not downloaded from internet</li>
@@ -491,12 +557,12 @@ export default function Home() {
             </div>
 
             {/* FAQ Item 2 */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
               <button
                 onClick={() => setOpenFaq(openFaq === 2 ? null : 2)}
                 className="w-full px-6 py-5 flex items-center justify-between hover:bg-orange-50 transition-colors"
               >
-                <h3 className="text-lg font-bold text-gray-900 text-left">
+                <h3 className="text-lg font-bold text-slate-900 text-left">
                   When and how will I receive payment?
                 </h3>
                 <ChevronDown
@@ -506,7 +572,7 @@ export default function Home() {
                 />
               </button>
               {openFaq === 2 && (
-                <div className="px-6 pb-5 text-gray-700 leading-relaxed space-y-3">
+                <div className="px-6 pb-5 text-slate-700 leading-relaxed space-y-3">
                   <p>Payment process:</p>
                   <ul className="space-y-2">
                     <li className="pl-4"><strong>Verification Time:</strong> 3-7 working days after submission</li>
@@ -520,12 +586,12 @@ export default function Home() {
             </div>
 
             {/* FAQ Item 3 */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
               <button
                 onClick={() => setOpenFaq(openFaq === 3 ? null : 3)}
                 className="w-full px-6 py-5 flex items-center justify-between hover:bg-orange-50 transition-colors"
               >
-                <h3 className="text-lg font-bold text-gray-900 text-left">
+                <h3 className="text-lg font-bold text-slate-900 text-left">
                   What kind of images get paid higher?
                 </h3>
                 <ChevronDown
@@ -535,7 +601,7 @@ export default function Home() {
                 />
               </button>
               {openFaq === 3 && (
-                <div className="px-6 pb-5 text-gray-700 leading-relaxed space-y-3">
+                <div className="px-6 pb-5 text-slate-700 leading-relaxed space-y-3">
                   <p>Higher rewards are given for:</p>
                   <ul className="space-y-2">
                     <li className="pl-4"><strong>Rare Discoveries:</strong> Undocumented sites, ancient inscriptions, rare idols (up to 500 rupees and above)</li>
@@ -550,12 +616,12 @@ export default function Home() {
             </div>
 
             {/* FAQ Item 4 */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
               <button
                 onClick={() => setOpenFaq(openFaq === 4 ? null : 4)}
                 className="w-full px-6 py-5 flex items-center justify-between hover:bg-orange-50 transition-colors"
               >
-                <h3 className="text-lg font-bold text-gray-900 text-left">
+                <h3 className="text-lg font-bold text-slate-900 text-left">
                   What happens if I upload fake or copied images?
                 </h3>
                 <ChevronDown
@@ -565,7 +631,7 @@ export default function Home() {
                 />
               </button>
               {openFaq === 4 && (
-                <div className="px-6 pb-5 text-gray-700 leading-relaxed space-y-3">
+                <div className="px-6 pb-5 text-slate-700 leading-relaxed space-y-3">
                   <p>We take authenticity seriously:</p>
                   <ul className="space-y-2">
                     <li className="pl-4"><strong>First Offense:</strong> Upload rejected, no reward</li>
@@ -610,24 +676,24 @@ export default function Home() {
                 </div>
                 <span className="text-lg sm:text-xl lg:text-2xl font-bold">Puranveshana</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-3 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 mb-2 sm:mb-3 leading-relaxed">
                 Discover, document, and preserve India's hidden ancient heritage.
               </p>
-              <p className="text-xs text-gray-400 italic mb-3 sm:mb-4">
+              <p className="text-xs text-slate-400 italic mb-3 sm:mb-4">
                 पुरान्वेषी भव — Be a PurAnveshi
               </p>
               {/* Social Links */}
               <div className="flex gap-2 sm:gap-3">
-                <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 bg-gray-800 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-all duration-300">
+                <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-800 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-all duration-300">
                   <span className="text-xs sm:text-sm">f</span>
                 </a>
-                <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 bg-gray-800 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-all duration-300">
+                <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-800 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-all duration-300">
                   <span className="text-xs sm:text-sm">t</span>
                 </a>
-                <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 bg-gray-800 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-all duration-300">
+                <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-800 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-all duration-300">
                   <span className="text-xs sm:text-sm">in</span>
                 </a>
-                <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 bg-gray-800 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-all duration-300">
+                <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-800 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-all duration-300">
                   <span className="text-xs sm:text-sm">ig</span>
                 </a>
               </div>
@@ -636,7 +702,7 @@ export default function Home() {
             {/* Platform Links */}
             <div>
               <h4 className="font-bold mb-2 sm:mb-3 text-sm sm:text-base text-orange-400">Platform</h4>
-              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-300">
+              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-slate-300">
                 <li><a href="#how-it-works" className="hover:text-orange-400 transition-colors">How It Works</a></li>
                 <li><a href="#features" className="hover:text-orange-400 transition-colors">Features</a></li>
                 <li><Link href="/dashboard" className="hover:text-orange-400 transition-colors">Dashboard</Link></li>
@@ -647,7 +713,7 @@ export default function Home() {
             {/* Resources */}
             <div>
               <h4 className="font-bold mb-2 sm:mb-3 text-sm sm:text-base text-orange-400">Resources</h4>
-              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-300">
+              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-slate-300">
                 <li><button onClick={() => setShowGuidelines(true)} className="hover:text-orange-400 transition-colors">Guidelines</button></li>
                 <li><button onClick={() => setShowContributors(true)} className="hover:text-orange-400 transition-colors">Contributors</button></li>
                 <li><button onClick={() => setShowStories(true)} className="hover:text-orange-400 transition-colors">Stories</button></li>
@@ -658,7 +724,7 @@ export default function Home() {
             {/* Legal & Support */}
             <div>
               <h4 className="font-bold mb-2 sm:mb-3 text-sm sm:text-base text-orange-400">Support</h4>
-              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-300">
+              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-slate-300">
                 <li><button onClick={() => setShowPrivacy(true)} className="hover:text-orange-400 transition-colors">Privacy</button></li>
                 <li><button onClick={() => setShowTerms(true)} className="hover:text-orange-400 transition-colors">Terms</button></li>
                 <li><button onClick={() => setShowContact(true)} className="hover:text-orange-400 transition-colors">Contact</button></li>
@@ -668,12 +734,12 @@ export default function Home() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-gray-800 pt-4 sm:pt-6">
+          <div className="border-t border-slate-800 pt-4 sm:pt-6">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-              <p className="text-xs text-gray-400 text-center sm:text-left">
+              <p className="text-xs text-slate-400 text-center sm:text-left">
                 &copy; 2025 Puranveshana. All rights reserved.
               </p>
-              <div className="flex gap-3 sm:gap-5 text-xs text-gray-400">
+              <div className="flex gap-3 sm:gap-5 text-xs text-slate-400">
                 <button onClick={() => setShowSitemap(true)} className="hover:text-orange-400 transition-colors">Sitemap</button>
                 <button onClick={() => setShowAccessibility(true)} className="hover:text-orange-400 transition-colors">Accessibility</button>
                 <button onClick={() => setShowCookies(true)} className="hover:text-orange-400 transition-colors">Cookies</button>
@@ -689,27 +755,27 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowPrivacy(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Privacy Policy</h2>
-              <button onClick={() => setShowPrivacy(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Privacy Policy</h2>
+              <button onClick={() => setShowPrivacy(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <div className="prose prose-sm sm:prose max-w-none text-gray-700 space-y-4">
-              <p className="text-sm text-gray-500">Last updated: November 6, 2025</p>
+            <div className="prose prose-sm sm:prose max-w-none text-slate-700 space-y-4">
+              <p className="text-sm text-slate-500">Last updated: November 6, 2025</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">1. Information We Collect</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">1. Information We Collect</h3>
               <p>We collect information you provide directly to us when you create an account, upload heritage site information, or communicate with us. This includes your email address, mobile number, uploaded images with GPS data, and site descriptions.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">2. How We Use Your Information</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">2. How We Use Your Information</h3>
               <p>We use the information we collect to operate and improve our platform, verify authenticity of uploads, process payments, and communicate with you about your contributions.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">3. Data Security</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">3. Data Security</h3>
               <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">4. Your Rights</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">4. Your Rights</h3>
               <p>You have the right to access, update, or delete your personal information. Contact us at privacy@puranveshana.com for any privacy-related requests.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">5. Contact Us</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">5. Contact Us</h3>
               <p>If you have any questions about this Privacy Policy, please contact us at privacy@puranveshana.com</p>
             </div>
           </div>
@@ -721,27 +787,27 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowTerms(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Terms of Service</h2>
-              <button onClick={() => setShowTerms(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Terms of Service</h2>
+              <button onClick={() => setShowTerms(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <div className="prose prose-sm sm:prose max-w-none text-gray-700 space-y-4">
-              <p className="text-sm text-gray-500">Last updated: November 6, 2025</p>
+            <div className="prose prose-sm sm:prose max-w-none text-slate-700 space-y-4">
+              <p className="text-sm text-slate-500">Last updated: November 6, 2025</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">1. Acceptance of Terms</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">1. Acceptance of Terms</h3>
               <p>By accessing and using PurAnveshana, you accept and agree to be bound by the terms and provision of this agreement.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">2. User Responsibilities</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">2. User Responsibilities</h3>
               <p>You agree to provide authentic, original content with accurate location data. You must not upload copyrighted material, AI-generated images, or false information.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">3. Content Ownership</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">3. Content Ownership</h3>
               <p>You retain ownership of your uploaded content but grant us a license to use, display, and distribute it for the purpose of preserving and showcasing India's heritage.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">4. Payment Terms</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">4. Payment Terms</h3>
               <p>Payments are made for verified, unique contributions. We reserve the right to reject submissions that don't meet our quality or authenticity standards. Once payment processing begins, uploaded content cannot be edited or deleted.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">5. Account Termination</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">5. Account Termination</h3>
               <p>We reserve the right to suspend or terminate accounts that violate these terms, including those submitting fraudulent or copied content.</p>
             </div>
           </div>
@@ -753,8 +819,8 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowContact(false)}>
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Contact Us</h2>
-              <button onClick={() => setShowContact(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Contact Us</h2>
+              <button onClick={() => setShowContact(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -764,7 +830,7 @@ export default function Home() {
                   <Mail className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1">Email</h3>
+                  <h3 className="font-bold text-slate-900 mb-1">Email</h3>
                   <a href="mailto:support@puranveshana.com" className="text-orange-600 hover:text-orange-700">support@puranveshana.com</a>
                 </div>
               </div>
@@ -774,7 +840,7 @@ export default function Home() {
                   <Phone className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1">Phone</h3>
+                  <h3 className="font-bold text-slate-900 mb-1">Phone</h3>
                   <a href="tel:+911234567890" className="text-orange-600 hover:text-orange-700">+91 123 456 7890</a>
                 </div>
               </div>
@@ -784,13 +850,13 @@ export default function Home() {
                   <MapPin className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1">Address</h3>
-                  <p className="text-gray-600 text-sm">Heritage Preservation Society<br />New Delhi, India</p>
+                  <h3 className="font-bold text-slate-900 mb-1">Address</h3>
+                  <p className="text-slate-600 text-sm">Heritage Preservation Society<br />New Delhi, India</p>
                 </div>
               </div>
 
               <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mt-6">
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-slate-700">
                   <strong className="text-orange-700">Support Hours:</strong><br />
                   Monday - Friday: 9:00 AM - 6:00 PM IST<br />
                   Response time: Within 24 hours
@@ -806,13 +872,13 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowGuidelines(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Contribution Guidelines</h2>
-              <button onClick={() => setShowGuidelines(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Contribution Guidelines</h2>
+              <button onClick={() => setShowGuidelines(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <div className="prose prose-sm sm:prose max-w-none text-gray-700 space-y-4">
-              <h3 className="text-lg font-bold text-gray-900">What to Upload</h3>
+            <div className="prose prose-sm sm:prose max-w-none text-slate-700 space-y-4">
+              <h3 className="text-lg font-bold text-slate-900">What to Upload</h3>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Ancient temples, ruins, and historical structures</li>
                 <li>Rock art, cave paintings, and inscriptions</li>
@@ -821,7 +887,7 @@ export default function Home() {
                 <li>Historical landmarks not widely documented</li>
               </ul>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Photography Guidelines</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Photography Guidelines</h3>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Keep GPS location ON while capturing photos</li>
                 <li>Take multiple angles of the site (5+ photos recommended)</li>
@@ -830,7 +896,7 @@ export default function Home() {
                 <li>Use high resolution (minimum 1920x1080)</li>
               </ul>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Description Best Practices</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Description Best Practices</h3>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Provide exact location details</li>
                 <li>Include historical context if known</li>
@@ -839,7 +905,7 @@ export default function Home() {
                 <li>Note any unique architectural features</li>
               </ul>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">What NOT to Upload</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">What NOT to Upload</h3>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Images downloaded from internet</li>
                 <li>AI-generated or manipulated photos</li>
@@ -857,38 +923,38 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowHelp(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Help Center</h2>
-              <button onClick={() => setShowHelp(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Help Center</h2>
+              <button onClick={() => setShowHelp(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
             <div className="space-y-6">
               <div className="bg-orange-50 border-l-4 border-orange-600 p-4 rounded-r-lg">
-                <h3 className="font-bold text-gray-900 mb-2">Quick Start</h3>
-                <p className="text-sm text-gray-700">New to PurAnveshana? Check out our <a href="#how-it-works" onClick={() => setShowHelp(false)} className="text-orange-600 font-semibold">How It Works</a> section to get started!</p>
+                <h3 className="font-bold text-slate-900 mb-2">Quick Start</h3>
+                <p className="text-sm text-slate-700">New to PurAnveshana? Check out our <a href="#how-it-works" onClick={() => setShowHelp(false)} className="text-orange-600 font-semibold">How It Works</a> section to get started!</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Common Questions</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-3">Common Questions</h3>
                 <div className="space-y-3">
-                  <details className="group bg-gray-50 rounded-lg p-4">
-                    <summary className="font-semibold cursor-pointer text-gray-900">How do I upload a site?</summary>
-                    <p className="mt-2 text-sm text-gray-700">Sign up, go to your dashboard, click "Upload New Site", add photos with GPS enabled, write a description, and submit for verification.</p>
+                  <details className="group bg-slate-50 rounded-lg p-4">
+                    <summary className="font-semibold cursor-pointer text-slate-900">How do I upload a site?</summary>
+                    <p className="mt-2 text-sm text-slate-700">Sign up, go to your dashboard, click "Upload New Site", add photos with GPS enabled, write a description, and submit for verification.</p>
                   </details>
 
-                  <details className="group bg-gray-50 rounded-lg p-4">
-                    <summary className="font-semibold cursor-pointer text-gray-900">When will I get paid?</summary>
-                    <p className="mt-2 text-sm text-gray-700">Payments are processed within 15 days after your upload is verified. You'll receive a notification once verification is complete.</p>
+                  <details className="group bg-slate-50 rounded-lg p-4">
+                    <summary className="font-semibold cursor-pointer text-slate-900">When will I get paid?</summary>
+                    <p className="mt-2 text-sm text-slate-700">Payments are processed within 15 days after your upload is verified. You'll receive a notification once verification is complete.</p>
                   </details>
 
-                  <details className="group bg-gray-50 rounded-lg p-4">
-                    <summary className="font-semibold cursor-pointer text-gray-900">Why was my upload rejected?</summary>
-                    <p className="mt-2 text-sm text-gray-700">Common reasons include: missing GPS data, duplicate content, poor image quality, or downloaded images. Check your email for specific feedback.</p>
+                  <details className="group bg-slate-50 rounded-lg p-4">
+                    <summary className="font-semibold cursor-pointer text-slate-900">Why was my upload rejected?</summary>
+                    <p className="mt-2 text-sm text-slate-700">Common reasons include: missing GPS data, duplicate content, poor image quality, or downloaded images. Check your email for specific feedback.</p>
                   </details>
 
-                  <details className="group bg-gray-50 rounded-lg p-4">
-                    <summary className="font-semibold cursor-pointer text-gray-900">How do I become a Platinum member?</summary>
-                    <p className="mt-2 text-sm text-gray-700">Membership tiers are based on verified uploads: Silver (5+), Gold (20+), Platinum (50+). Keep contributing authentic discoveries!</p>
+                  <details className="group bg-slate-50 rounded-lg p-4">
+                    <summary className="font-semibold cursor-pointer text-slate-900">How do I become a Platinum member?</summary>
+                    <p className="mt-2 text-sm text-slate-700">Membership tiers are based on verified uploads: Silver (5+), Gold (20+), Platinum (50+). Keep contributing authentic discoveries!</p>
                   </details>
                 </div>
               </div>
@@ -910,15 +976,15 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowSitemap(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Sitemap</h2>
-              <button onClick={() => setShowSitemap(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Sitemap</h2>
+              <button onClick={() => setShowSitemap(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Main Pages</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <h3 className="text-lg font-bold text-slate-900 mb-3">Main Pages</h3>
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li><a href="/" className="hover:text-orange-600 transition-colors">Home</a></li>
                   <li><a href="#features" onClick={() => setShowSitemap(false)} className="hover:text-orange-600 transition-colors">Features</a></li>
                   <li><a href="#how-it-works" onClick={() => setShowSitemap(false)} className="hover:text-orange-600 transition-colors">How It Works</a></li>
@@ -928,16 +994,16 @@ export default function Home() {
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Account</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <h3 className="text-lg font-bold text-slate-900 mb-3">Account</h3>
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li><Link href="/signup" className="hover:text-orange-600 transition-colors">Sign Up</Link></li>
                   <li><Link href="/login" className="hover:text-orange-600 transition-colors">Login</Link></li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Resources</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <h3 className="text-lg font-bold text-slate-900 mb-3">Resources</h3>
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li><button onClick={() => { setShowSitemap(false); setShowGuidelines(true); }} className="hover:text-orange-600 transition-colors">Contribution Guidelines</button></li>
                   <li><button onClick={() => { setShowSitemap(false); setShowContributors(true); }} className="hover:text-orange-600 transition-colors">Contributors</button></li>
                   <li><button onClick={() => { setShowSitemap(false); setShowStories(true); }} className="hover:text-orange-600 transition-colors">Success Stories</button></li>
@@ -946,8 +1012,8 @@ export default function Home() {
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Legal & Support</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <h3 className="text-lg font-bold text-slate-900 mb-3">Legal & Support</h3>
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li><button onClick={() => { setShowSitemap(false); setShowPrivacy(true); }} className="hover:text-orange-600 transition-colors">Privacy Policy</button></li>
                   <li><button onClick={() => { setShowSitemap(false); setShowTerms(true); }} className="hover:text-orange-600 transition-colors">Terms of Service</button></li>
                   <li><button onClick={() => { setShowSitemap(false); setShowCookies(true); }} className="hover:text-orange-600 transition-colors">Cookie Policy</button></li>
@@ -966,21 +1032,21 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowAccessibility(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Accessibility Statement</h2>
-              <button onClick={() => setShowAccessibility(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Accessibility Statement</h2>
+              <button onClick={() => setShowAccessibility(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <div className="prose prose-sm sm:prose max-w-none text-gray-700 space-y-4">
-              <p className="text-sm text-gray-500">Last updated: November 6, 2025</p>
+            <div className="prose prose-sm sm:prose max-w-none text-slate-700 space-y-4">
+              <p className="text-sm text-slate-500">Last updated: November 6, 2025</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Our Commitment</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Our Commitment</h3>
               <p>PurAnveshana is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Conformance Status</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Conformance Status</h3>
               <p>We aim to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA. These guidelines explain how to make web content more accessible for people with disabilities and user-friendly for everyone.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Accessibility Features</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Accessibility Features</h3>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Keyboard navigation support</li>
                 <li>Screen reader compatible</li>
@@ -990,11 +1056,11 @@ export default function Home() {
                 <li>High contrast color scheme options</li>
               </ul>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Feedback</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Feedback</h3>
               <p>We welcome your feedback on the accessibility of PurAnveshana. Please contact us if you encounter accessibility barriers:</p>
               <p>Email: <a href="mailto:accessibility@puranveshana.com" className="text-orange-600">accessibility@puranveshana.com</a></p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Technical Specifications</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Technical Specifications</h3>
               <p>PurAnveshana relies on the following technologies to work with web browsers and assistive technologies:</p>
               <ul className="list-disc pl-5 space-y-2">
                 <li>HTML5</li>
@@ -1012,56 +1078,56 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowCookies(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Cookie Policy</h2>
-              <button onClick={() => setShowCookies(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Cookie Policy</h2>
+              <button onClick={() => setShowCookies(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <div className="prose prose-sm sm:prose max-w-none text-gray-700 space-y-4">
-              <p className="text-sm text-gray-500">Last updated: November 6, 2025</p>
+            <div className="prose prose-sm sm:prose max-w-none text-slate-700 space-y-4">
+              <p className="text-sm text-slate-500">Last updated: November 6, 2025</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">What Are Cookies</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">What Are Cookies</h3>
               <p>Cookies are small text files that are stored on your device when you visit our website. They help us provide you with a better experience by remembering your preferences and understanding how you use our platform.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">How We Use Cookies</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">How We Use Cookies</h3>
               <p>We use cookies for the following purposes:</p>
 
               <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border border-gray-200 rounded-lg mt-4">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full bg-white border border-slate-200 rounded-lg mt-4">
+                  <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b">Cookie Type</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b">Purpose</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-slate-900 border-b">Cookie Type</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-slate-900 border-b">Purpose</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-slate-200">
                     <tr>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">Essential</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">Required for authentication and basic site functionality</td>
+                      <td className="px-4 py-3 text-sm font-medium text-slate-900">Essential</td>
+                      <td className="px-4 py-3 text-sm text-slate-700">Required for authentication and basic site functionality</td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">Functional</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">Remember your preferences and settings</td>
+                      <td className="px-4 py-3 text-sm font-medium text-slate-900">Functional</td>
+                      <td className="px-4 py-3 text-sm text-slate-700">Remember your preferences and settings</td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">Analytics</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">Help us understand how you use the platform</td>
+                      <td className="px-4 py-3 text-sm font-medium text-slate-900">Analytics</td>
+                      <td className="px-4 py-3 text-sm text-slate-700">Help us understand how you use the platform</td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">Performance</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">Improve site speed and user experience</td>
+                      <td className="px-4 py-3 text-sm font-medium text-slate-900">Performance</td>
+                      <td className="px-4 py-3 text-sm text-slate-700">Improve site speed and user experience</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Managing Cookies</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Managing Cookies</h3>
               <p>You can control and manage cookies in your browser settings. Please note that disabling certain cookies may affect the functionality of our platform.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Third-Party Cookies</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Third-Party Cookies</h3>
               <p>We may use third-party services that also set cookies on your device. These include analytics providers and authentication services. These third parties have their own privacy policies.</p>
 
-              <h3 className="text-lg font-bold text-gray-900 mt-6">Contact Us</h3>
+              <h3 className="text-lg font-bold text-slate-900 mt-6">Contact Us</h3>
               <p>If you have questions about our use of cookies, please contact us at <a href="mailto:privacy@puranveshana.com" className="text-orange-600">privacy@puranveshana.com</a></p>
             </div>
           </div>
@@ -1073,8 +1139,8 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowMap(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">India's Hidden Heritage Map</h2>
-              <button onClick={() => setShowMap(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">India's Hidden Heritage Map</h2>
+              <button onClick={() => setShowMap(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -1085,52 +1151,52 @@ export default function Home() {
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Coming Soon!</h3>
-                    <p className="text-gray-700">We are building an interactive map to showcase all the heritage sites discovered by PurAnveshis across India.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">Coming Soon!</h3>
+                    <p className="text-slate-700">We are building an interactive map to showcase all the heritage sites discovered by PurAnveshis across India.</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Planned Features</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Planned Features</h3>
                 <div className="space-y-3">
-                  <div className="flex items-start gap-3 bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-start gap-3 bg-slate-50 rounded-lg p-4">
                     <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-gray-900">Interactive Map View</h4>
-                      <p className="text-sm text-gray-700">Explore heritage sites on an interactive map of India with zoom and filter options</p>
+                      <h4 className="font-semibold text-slate-900">Interactive Map View</h4>
+                      <p className="text-sm text-slate-700">Explore heritage sites on an interactive map of India with zoom and filter options</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-start gap-3 bg-slate-50 rounded-lg p-4">
                     <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-gray-900">GPS-Tagged Locations</h4>
-                      <p className="text-sm text-gray-700">Every verified site will appear with exact GPS coordinates and detailed information</p>
+                      <h4 className="font-semibold text-slate-900">GPS-Tagged Locations</h4>
+                      <p className="text-sm text-slate-700">Every verified site will appear with exact GPS coordinates and detailed information</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-start gap-3 bg-slate-50 rounded-lg p-4">
                     <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-gray-900">Filter by Category</h4>
-                      <p className="text-sm text-gray-700">Search for temples, ruins, inscriptions, rock art, and more</p>
+                      <h4 className="font-semibold text-slate-900">Filter by Category</h4>
+                      <p className="text-sm text-slate-700">Search for temples, ruins, inscriptions, rock art, and more</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-start gap-3 bg-slate-50 rounded-lg p-4">
                     <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-gray-900">Contributor Credits</h4>
-                      <p className="text-sm text-gray-700">See which PurAnveshi discovered each site and read their stories</p>
+                      <h4 className="font-semibold text-slate-900">Contributor Credits</h4>
+                      <p className="text-sm text-slate-700">See which PurAnveshi discovered each site and read their stories</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-start gap-3 bg-slate-50 rounded-lg p-4">
                     <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-gray-900">Virtual Tours</h4>
-                      <p className="text-sm text-gray-700">View photo galleries and 360-degree images of documented sites</p>
+                      <h4 className="font-semibold text-slate-900">Virtual Tours</h4>
+                      <p className="text-sm text-slate-700">View photo galleries and 360-degree images of documented sites</p>
                     </div>
                   </div>
                 </div>
@@ -1155,49 +1221,49 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowContributors(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Our Contributors</h2>
-              <button onClick={() => setShowContributors(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Our Contributors</h2>
+              <button onClick={() => setShowContributors(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
             <div className="space-y-6">
               <div className="bg-linear-to-br from-orange-50 to-amber-50 rounded-xl p-6 border-2 border-orange-200">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Join the PurAnveshi Community</h3>
-                <p className="text-gray-700">Thousands of passionate explorers are documenting India's forgotten heritage. Become part of this movement to preserve our cultural legacy.</p>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">Join the PurAnveshi Community</h3>
+                <p className="text-slate-700">Thousands of passionate explorers are documenting India's forgotten heritage. Become part of this movement to preserve our cultural legacy.</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Membership Tiers</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Membership Tiers</h3>
                 <div className="space-y-3">
-                  <div className="bg-gray-100 border-2 border-gray-300 rounded-xl p-4">
+                  <div className="bg-slate-100 border-2 border-slate-300 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-lg font-bold text-gray-900">Silver PurAnveshi</h4>
-                      <span className="px-3 py-1 bg-gray-400 text-white rounded-full text-xs font-bold">5+ Uploads</span>
+                      <h4 className="text-lg font-bold text-slate-900">Silver PurAnveshi</h4>
+                      <span className="px-3 py-1 bg-slate-400 text-white rounded-full text-xs font-bold">5+ Uploads</span>
                     </div>
-                    <p className="text-sm text-gray-700">Entry-level contributors documenting local heritage sites</p>
+                    <p className="text-sm text-slate-700">Entry-level contributors documenting local heritage sites</p>
                   </div>
 
                   <div className="bg-yellow-50 border-2 border-yellow-400 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-lg font-bold text-gray-900">Gold PurAnveshi</h4>
+                      <h4 className="text-lg font-bold text-slate-900">Gold PurAnveshi</h4>
                       <span className="px-3 py-1 bg-yellow-500 text-white rounded-full text-xs font-bold">20+ Uploads</span>
                     </div>
-                    <p className="text-sm text-gray-700">Active contributors with verified discoveries across multiple locations</p>
+                    <p className="text-sm text-slate-700">Active contributors with verified discoveries across multiple locations</p>
                   </div>
 
                   <div className="bg-purple-50 border-2 border-purple-400 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-lg font-bold text-gray-900">Platinum PurAnveshi</h4>
+                      <h4 className="text-lg font-bold text-slate-900">Platinum PurAnveshi</h4>
                       <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-xs font-bold">50+ Uploads</span>
                     </div>
-                    <p className="text-sm text-gray-700">Elite contributors dedicated to heritage preservation with exceptional discoveries</p>
+                    <p className="text-sm text-slate-700">Elite contributors dedicated to heritage preservation with exceptional discoveries</p>
                   </div>
                 </div>
               </div>
 
               <div className="bg-linear-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-200">
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Benefits of Higher Tiers</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <h3 className="text-lg font-bold text-slate-900 mb-3">Benefits of Higher Tiers</h3>
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                     <span>Priority verification for new uploads</span>
@@ -1236,13 +1302,13 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowStories(false)}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Success Stories</h2>
-              <button onClick={() => setShowStories(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Success Stories</h2>
+              <button onClick={() => setShowStories(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
             <div className="space-y-6">
-              <p className="text-gray-700">Inspiring stories from PurAnveshis who are making a difference in heritage preservation.</p>
+              <p className="text-slate-700">Inspiring stories from PurAnveshis who are making a difference in heritage preservation.</p>
 
               <div className="bg-linear-to-br from-orange-50 to-amber-50 rounded-xl p-6 border-l-4 border-orange-500">
                 <div className="flex items-start gap-4 mb-3">
@@ -1250,16 +1316,16 @@ export default function Home() {
                     <Users className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">Ramesh's Ancient Temple Discovery</h3>
+                    <h3 className="text-lg font-bold text-slate-900">Ramesh's Ancient Temple Discovery</h3>
                     <p className="text-sm text-orange-600 font-semibold">Chhattisgarh</p>
                   </div>
                 </div>
-                <p className="text-gray-700 mb-3">Ramesh, a school teacher from rural Chhattisgarh, discovered a 10th-century stone temple hidden in the forest near his village. His detailed documentation with GPS data earned him recognition and a reward of 150 rupees. The site is now being studied by archaeologists.</p>
+                <p className="text-slate-700 mb-3">Ramesh, a school teacher from rural Chhattisgarh, discovered a 10th-century stone temple hidden in the forest near his village. His detailed documentation with GPS data earned him recognition and a reward of 150 rupees. The site is now being studied by archaeologists.</p>
                 <div className="flex items-center gap-2 text-sm">
                   <Award className="w-4 h-4 text-green-600" />
                   <span className="text-green-600 font-semibold">Verified Discovery</span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-600">150 rupees earned</span>
+                  <span className="text-slate-400">•</span>
+                  <span className="text-slate-600">150 rupees earned</span>
                 </div>
               </div>
 
@@ -1269,16 +1335,16 @@ export default function Home() {
                     <Camera className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">Priya's Rock Art Documentation</h3>
+                    <h3 className="text-lg font-bold text-slate-900">Priya's Rock Art Documentation</h3>
                     <p className="text-sm text-blue-600 font-semibold">Madhya Pradesh</p>
                   </div>
                 </div>
-                <p className="text-gray-700 mb-3">Priya, a college student and photography enthusiast, documented prehistoric rock paintings in a remote cave system. Her comprehensive photo series helped researchers date the art to over 8,000 years old. She received a rare find bonus of 600 rupees and achieved Gold PurAnveshi status.</p>
+                <p className="text-slate-700 mb-3">Priya, a college student and photography enthusiast, documented prehistoric rock paintings in a remote cave system. Her comprehensive photo series helped researchers date the art to over 8,000 years old. She received a rare find bonus of 600 rupees and achieved Gold PurAnveshi status.</p>
                 <div className="flex items-center gap-2 text-sm">
                   <Award className="w-4 h-4 text-yellow-600" />
                   <span className="text-yellow-600 font-semibold">Rare Discovery</span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-600">600 rupees earned</span>
+                  <span className="text-slate-400">•</span>
+                  <span className="text-slate-600">600 rupees earned</span>
                 </div>
               </div>
 
@@ -1288,16 +1354,16 @@ export default function Home() {
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">Vikram's Heritage Village Project</h3>
+                    <h3 className="text-lg font-bold text-slate-900">Vikram's Heritage Village Project</h3>
                     <p className="text-sm text-green-600 font-semibold">Rajasthan</p>
                   </div>
                 </div>
-                <p className="text-gray-700 mb-3">Vikram systematically documented 35 forgotten step-wells and water structures in his district over 6 months. His dedication earned him Platinum PurAnveshi status and his work is now featured in a heritage conservation report by the state government.</p>
+                <p className="text-slate-700 mb-3">Vikram systematically documented 35 forgotten step-wells and water structures in his district over 6 months. His dedication earned him Platinum PurAnveshi status and his work is now featured in a heritage conservation report by the state government.</p>
                 <div className="flex items-center gap-2 text-sm">
                   <Award className="w-4 h-4 text-purple-600" />
                   <span className="text-purple-600 font-semibold">Platinum PurAnveshi</span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-600">35+ sites documented</span>
+                  <span className="text-slate-400">•</span>
+                  <span className="text-slate-600">35+ sites documented</span>
                 </div>
               </div>
 

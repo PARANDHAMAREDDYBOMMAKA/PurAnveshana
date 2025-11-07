@@ -84,7 +84,7 @@ export default function SignupPage() {
           <h2 className="text-center text-2xl sm:text-3xl font-extrabold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
             Join Puranveshana
           </h2>
-          <p className="mt-2 sm:mt-3 text-center text-xs sm:text-sm text-gray-600">
+          <p className="mt-2 sm:mt-3 text-center text-xs sm:text-sm text-slate-600">
             Already have an account?{' '}
             <Link href="/login" className="font-bold text-orange-600 hover:text-orange-500 transition-colors">
               Sign in
@@ -95,7 +95,7 @@ export default function SignupPage() {
         <form className="mt-6 sm:mt-8 space-y-4 sm:space-y-5" onSubmit={handleSignup}>
           <div className="space-y-3 sm:space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5 sm:mb-2">
+              <label htmlFor="email" className="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5 sm:mb-2">
                 Email address
               </label>
               <input
@@ -111,7 +111,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="mobile" className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5 sm:mb-2">
+              <label htmlFor="mobile" className="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5 sm:mb-2">
                 Mobile Number
               </label>
               <input
@@ -127,7 +127,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5 sm:mb-2">
+              <label htmlFor="password" className="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5 sm:mb-2">
                 Password
               </label>
               <input
@@ -143,7 +143,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5 sm:mb-2">
+              <label htmlFor="confirmPassword" className="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5 sm:mb-2">
                 Confirm Password
               </label>
               <input

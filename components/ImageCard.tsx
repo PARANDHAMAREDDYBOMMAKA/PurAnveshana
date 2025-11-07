@@ -28,19 +28,31 @@ export default function ImageCard({
 }: ImageCardProps) {
   const [showFullImage, setShowFullImage] = useState(false)
 
+  // Helper function to detect if URL is a video
+  const isVideo = (url: string) => url.includes('/video/upload/')
+
   return (
     <>
       <div className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
         {/* Image */}
         <div className="relative h-64 w-full bg-linear-to-br from-orange-100 to-amber-100 overflow-hidden">
-          <Image
-            src={image.cloudinaryUrl}
-            alt={image.title}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onClick={() => setShowFullImage(true)}
-          />
+          {isVideo(image.cloudinaryUrl) ? (
+            <video
+              src={image.cloudinaryUrl}
+              className="absolute inset-0 w-full h-full object-cover cursor-pointer"
+              controls
+              onClick={() => setShowFullImage(true)}
+            />
+          ) : (
+            <Image
+              src={image.cloudinaryUrl}
+              alt={image.title}
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              onClick={() => setShowFullImage(true)}
+            />
+          )}
           {/* Verified Badge */}
           {image.isVerified && (
             <div className="absolute top-3 right-3 bg-linear-to-r from-green-500 to-emerald-600 text-white px-3 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-xl">
@@ -69,9 +81,9 @@ export default function ImageCard({
         {/* Content */}
         <div className="p-6">
           <div className="flex items-start justify-between mb-3">
-            <h3 className="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-orange-600 transition-colors flex-1">{image.title}</h3>
+            <h3 className="text-xl font-bold text-slate-900 line-clamp-2 group-hover:text-orange-600 transition-colors flex-1">{image.title}</h3>
           </div>
-          <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">{image.description}</p>
+          <p className="text-sm text-slate-600 mb-4 line-clamp-3 leading-relaxed">{image.description}</p>
 
           {/* Metadata */}
           <div className="space-y-2.5 text-sm border-t-2 border-orange-100 pt-4">
@@ -82,7 +94,7 @@ export default function ImageCard({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               <div className="flex-1">
-                <span className="text-gray-900 font-semibold block">{image.location}</span>
+                <span className="text-slate-900 font-semibold block">{image.location}</span>
                 {image.latitude && image.longitude && (
                   <a
                     href={`https://www.google.com/maps?q=${image.latitude},${image.longitude}`}
@@ -106,7 +118,7 @@ export default function ImageCard({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span className="text-gray-900 font-semibold">{image.cameraModel}</span>
+                <span className="text-slate-900 font-semibold">{image.cameraModel}</span>
               </div>
             )}
 
@@ -115,7 +127,7 @@ export default function ImageCard({
               <svg className="w-5 h-5 text-purple-600 mt-0.5 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <span className="text-gray-900 font-semibold">
+              <span className="text-slate-900 font-semibold">
                 {new Date(image.createdAt).toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
@@ -134,7 +146,7 @@ export default function ImageCard({
                 </svg>
                 <div className="flex-1">
                   <span className="text-xs text-amber-700 font-semibold block mb-0.5">Submitted by</span>
-                  <span className="text-gray-900 font-bold">{image.profiles.email}</span>
+                  <span className="text-slate-900 font-bold">{image.profiles.email}</span>
                 </div>
               </div>
             )}
@@ -158,14 +170,23 @@ export default function ImageCard({
               </svg>
             </button>
             <div className="relative w-full h-full max-h-[90vh]">
-              <Image
-                src={image.cloudinaryUrl}
-                alt={image.title}
-                width={1920}
-                height={1080}
-                className="object-contain w-full h-full rounded-lg"
-                onClick={(e) => e.stopPropagation()}
-              />
+              {isVideo(image.cloudinaryUrl) ? (
+                <video
+                  src={image.cloudinaryUrl}
+                  controls
+                  className="w-full h-full max-h-[90vh] object-contain rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : (
+                <Image
+                  src={image.cloudinaryUrl}
+                  alt={image.title}
+                  width={1920}
+                  height={1080}
+                  className="object-contain w-full h-full rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-6 rounded-b-lg">
               <h3 className="text-2xl font-bold text-white mb-2">{image.title}</h3>

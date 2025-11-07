@@ -14,6 +14,8 @@ interface FileWithPreview {
   preview: string
   autoDetectedLocation: string | null
   exifData: any
+  isVideo: boolean
+  videoDuration?: number
 }
 
 export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormProps) {
@@ -29,16 +31,153 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     if (!files || files.length === 0) return
 
     const newFiles: FileWithPreview[] = []
+    const MAX_VIDEO_DURATION = 300 // 5 minutes in seconds
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
+      const isVideo = file.type.startsWith('video/')
+      const isImage = file.type.startsWith('image/')
 
-      // Check if it's an image
-      if (!file.type.startsWith('image/')) {
-        toast.error(`${file.name} is not an image file`)
+      // Check if it's an image or video
+      if (!isImage && !isVideo) {
+        toast.error(`${file.name} is not an image or video file`)
         continue
       }
 
+      // Handle video files
+      if (isVideo) {
+        // Check video duration and extract metadata
+        const videoData = await new Promise<{duration: number, metadata: any}>((resolve) => {
+          const video = document.createElement('video')
+          video.preload = 'metadata'
+
+          video.onloadedmetadata = () => {
+            window.URL.revokeObjectURL(video.src)
+            resolve({
+              duration: video.duration,
+              metadata: {
+                width: video.videoWidth,
+                height: video.videoHeight,
+              }
+            })
+          }
+
+          video.onerror = () => {
+            resolve({duration: 0, metadata: null})
+          }
+
+          video.src = URL.createObjectURL(file)
+        })
+
+        if (videoData.duration === 0) {
+          toast.error(`${file.name}: Unable to read video metadata`)
+          continue
+        }
+
+        if (videoData.duration > MAX_VIDEO_DURATION) {
+          toast.error(`${file.name}: Video duration (${Math.round(videoData.duration)}s) exceeds 5 minute limit`)
+          continue
+        }
+
+        // For videos, verify using multiple strict checks
+        let videoExifData: any = {}
+
+        // Check 1: File must be very recently created (within 7 days)
+        // Phone videos are typically uploaded shortly after recording
+        const now = new Date().getTime()
+        const fileModified = file.lastModified
+        const daysSinceModified = (now - fileModified) / (1000 * 60 * 60 * 24)
+
+        console.log(`Video file info:`, {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          lastModified: new Date(file.lastModified).toLocaleString(),
+          daysSinceModified: daysSinceModified.toFixed(1),
+        })
+
+        if (daysSinceModified > 7) {
+          toast.error(`${file.name}: Video must be recorded within last 7 days (this is ${Math.floor(daysSinceModified)} days old)`)
+          continue
+        }
+
+        // Check 2: File size validation (phone videos are typically > 500KB)
+        if (file.size < 500000) { // Less than 500KB
+          toast.error(`${file.name}: Video file too small - must be at least 500KB`)
+          continue
+        }
+
+        // Check 3: File naming pattern check
+        // Phone videos typically have patterns like:
+        // Android:
+        // - VID20251107150627.mp4 (no separator)
+        // - VID_20250107_123456.mp4 (with separator)
+        // iPhone:
+        // - IMG_1234.MOV (standard)
+        // - IMG_E1234.MOV (edited)
+        // - TRIM.1234.MOV (trimmed)
+        // - RPReplay_Final1234567890.MOV (screen recording)
+        const phoneVideoPatterns = [
+          // Android patterns
+          /^VID\d{8}\d{6}/i,            // VID20251107150627 (Android no separator)
+          /^VID[_-]\d{8}[_-]\d{6}/i,    // VID_20250107_123456
+          /^\d{8}[_-]?\d{6}/,           // 20250107_123456 or 20250107123456
+          /^video[_-]?\d+/i,            // video_1234 or video1234
+          /^MOV[_-]?\d{3,5}/i,          // MOV_1234 or MOV1234
+          /^VID[_-]?\d{3,5}/i,          // VID_1234 or VID1234
+
+          // iPhone patterns
+          /^IMG[_-]?\d{3,5}\./i,        // IMG_1234.MOV or IMG1234.MOV
+          /^IMG[_-]?E\d{3,5}\./i,       // IMG_E1234.MOV (edited on iPhone)
+          /^TRIM\.\d{3,5}\./i,          // TRIM.1234.MOV (trimmed)
+          /^RPReplay.*\d+/i,            // RPReplay_Final1234567890.MOV (screen recording)
+          /^\d{5}APPLE/i,               // 100APPLE/IMG_0001.MOV format
+          /^LivePhoto_/i,               // LivePhoto_1234.MOV
+          /^Slomo_/i,                   // Slomo_1234.MOV (slow motion)
+        ]
+
+        const hasPhonePattern = phoneVideoPatterns.some(pattern => pattern.test(file.name))
+
+        if (!hasPhonePattern) {
+          toast.error(`${file.name}: Video filename doesn't match phone camera pattern (must be directly from phone camera)`)
+          continue
+        }
+
+        // Check 4: File type must be standard phone video format
+        const allowedTypes = ['video/mp4', 'video/quicktime', 'video/x-m4v', 'video/3gpp']
+        if (!allowedTypes.includes(file.type)) {
+          toast.error(`${file.name}: Video format not supported (must be MP4, MOV, or 3GP from phone)`)
+          continue
+        }
+
+        // All checks passed - video is verified
+        videoExifData = {
+          isVerified: true,
+          cameraModel: 'Mobile Device',
+          latitude: null,
+          longitude: null,
+          captureDate: new Date(file.lastModified),
+        }
+
+        console.log('Video verified with strict checks:', videoExifData)
+
+        // Create video preview
+        const preview = URL.createObjectURL(file)
+
+        newFiles.push({
+          file,
+          preview,
+          autoDetectedLocation: null,
+          exifData: videoExifData,
+          isVideo: true,
+          videoDuration: videoData.duration
+        })
+
+        toast.success(`Video ${file.name} added (${Math.round(videoData.duration)}s) ✓ Verified`)
+        continue
+      }
+
+      // Handle image files
       // Create preview
       const reader = new FileReader()
       const preview = await new Promise<string>((resolve) => {
@@ -53,7 +192,11 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       try {
         exifData = await extractExifData(file)
 
-        // Handle location if available - set as shared location if first image with GPS
+        if (!exifData.isVerified) {
+          toast.error(`${file.name}: Image rejected - No valid camera EXIF data (Make/Model required)`)
+          continue
+        }
+
         if (exifData.latitude && exifData.longitude) {
           const locationName = await reverseGeocode(exifData.latitude, exifData.longitude)
           if (locationName) {
@@ -66,20 +209,23 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         }
       } catch (error) {
         console.error('Error extracting EXIF:', error)
+        toast.error(`${file.name}: Failed to extract EXIF data`)
+        continue
       }
 
       newFiles.push({
         file,
         preview,
         autoDetectedLocation,
-        exifData
+        exifData,
+        isVideo: false
       })
     }
 
     setSelectedFiles(prev => [...prev, ...newFiles])
 
     if (newFiles.length > 0) {
-      toast.success(`${newFiles.length} image${newFiles.length > 1 ? 's' : ''} selected`)
+      toast.success(`${newFiles.length} file${newFiles.length > 1 ? 's' : ''} selected`)
     }
   }
 
@@ -91,7 +237,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     e.preventDefault()
 
     if (selectedFiles.length === 0) {
-      toast.error('Please select at least one image')
+      toast.error('Please select at least one file')
       return
     }
 
@@ -103,15 +249,15 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     setLoading(true)
 
     try {
-      // Upload all images to Cloudinary first
-      const uploadedImages = []
+      // Upload all files to Cloudinary first
+      const uploadedFiles = []
       let uploadFailures = 0
 
       for (const fileData of selectedFiles) {
         try {
           const uploadResult = await uploadToCloudinary(fileData.file)
-          uploadedImages.push({
-            location: sharedLocation, // Use shared location for all images
+          uploadedFiles.push({
+            location: sharedLocation, // Use shared location for all files
             cloudinaryUrl: uploadResult.url,
             cloudinaryPublicId: uploadResult.publicId,
             isVerified: fileData.exifData.isVerified || false,
@@ -125,12 +271,12 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         }
       }
 
-      if (uploadedImages.length === 0) {
-        toast.error('All image uploads failed')
+      if (uploadedFiles.length === 0) {
+        toast.error('All file uploads failed')
         return
       }
 
-      // Create heritage site with all images in one request
+      // Create heritage site with all files in one request
       const response = await fetch('/api/images', {
         method: 'POST',
         headers: {
@@ -139,7 +285,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         body: JSON.stringify({
           title: sharedTitle,
           description: sharedDescription,
-          images: uploadedImages,
+          images: uploadedFiles,
         }),
       })
 
@@ -150,11 +296,11 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       }
 
       toast.success(
-        `Heritage site "${sharedTitle}" created with ${uploadedImages.length} image${uploadedImages.length > 1 ? 's' : ''}!`
+        `Heritage site "${sharedTitle}" created with ${uploadedFiles.length} file${uploadedFiles.length > 1 ? 's' : ''}!`
       )
 
       if (uploadFailures > 0) {
-        toast.error(`${uploadFailures} image${uploadFailures > 1 ? 's' : ''} failed to upload`)
+        toast.error(`${uploadFailures} file${uploadFailures > 1 ? 's' : ''} failed to upload`)
       }
 
       // Reset form
@@ -172,7 +318,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       }
     } catch (error: any) {
       console.error('Upload error:', error)
-      toast.error(error.message || 'Failed to upload images')
+      toast.error(error.message || 'Failed to upload files')
     } finally {
       setLoading(false)
     }
@@ -187,22 +333,22 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           </svg>
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Document Heritage Sites</h2>
-          <p className="text-sm text-gray-600">Upload multiple images with a single title and description</p>
+          <h2 className="text-2xl font-bold text-slate-900">Document Heritage Sites</h2>
+          <p className="text-sm text-slate-600">Upload multiple images with a single title and description</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Shared Title */}
         <div>
-          <label htmlFor="title" className="block text-sm font-bold text-gray-900 mb-2">
+          <label htmlFor="title" className="block text-sm font-bold text-slate-900 mb-2">
             Heritage Site Title *
           </label>
           <input
             type="text"
             id="title"
             required
-            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium placeholder-gray-400 bg-white transition-all"
+            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-slate-900 font-medium placeholder-slate-400 bg-white transition-all"
             placeholder="Enter the heritage site name"
             value={sharedTitle}
             onChange={(e) => setSharedTitle(e.target.value)}
@@ -211,14 +357,14 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
         {/* Shared Description */}
         <div>
-          <label htmlFor="description" className="block text-sm font-bold text-gray-900 mb-2">
+          <label htmlFor="description" className="block text-sm font-bold text-slate-900 mb-2">
             Description *
           </label>
           <textarea
             id="description"
             required
             rows={4}
-            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium placeholder-gray-400 bg-white transition-all resize-none"
+            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-slate-900 font-medium placeholder-slate-400 bg-white transition-all resize-none"
             placeholder="Describe the heritage site, its history, and significance"
             value={sharedDescription}
             onChange={(e) => setSharedDescription(e.target.value)}
@@ -227,7 +373,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
         {/* Site Location */}
         <div>
-          <label htmlFor="location" className="block text-sm font-bold text-gray-900 mb-2">
+          <label htmlFor="location" className="block text-sm font-bold text-slate-900 mb-2">
             Site Location *
             {selectedFiles.some(f => f.autoDetectedLocation) && (
               <span className="ml-2 text-green-600 text-xs">✓ Auto-detected from GPS</span>
@@ -237,38 +383,40 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             type="text"
             id="location"
             required
-            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium placeholder-gray-400 bg-white transition-all"
+            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-slate-900 font-medium placeholder-slate-400 bg-white transition-all"
             placeholder="Enter the location of this heritage site"
             value={sharedLocation}
             onChange={(e) => setSharedLocation(e.target.value)}
           />
-          <p className="mt-2 text-xs text-gray-500">This location will be used for all images of this site</p>
+          <p className="mt-2 text-xs text-slate-500">This location will be used for all images of this site</p>
         </div>
 
         {/* File Input */}
         <div>
-          <label className="block text-sm font-bold text-gray-900 mb-3">
-            Select Images *
+          <label className="block text-sm font-bold text-slate-900 mb-3">
+            Select Images or Videos *
           </label>
           <div className="relative">
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               multiple
               onChange={handleFileSelect}
-              className="block w-full text-sm text-gray-900 file:mr-4 file:py-4 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-linear-to-r file:from-orange-500 file:to-amber-600 file:text-white hover:file:from-orange-600 hover:file:to-amber-700 file:transition-all file:shadow-lg file:cursor-pointer cursor-pointer border-2 border-dashed border-orange-300 rounded-xl p-4 hover:border-orange-500 transition-colors bg-orange-50/50"
+              className="block w-full text-sm text-slate-900 file:mr-4 file:py-4 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-linear-to-r file:from-orange-500 file:to-amber-600 file:text-white hover:file:from-orange-600 hover:file:to-amber-700 file:transition-all file:shadow-lg file:cursor-pointer cursor-pointer border-2 border-dashed border-orange-300 rounded-xl p-4 hover:border-orange-500 transition-colors bg-orange-50/50"
             />
           </div>
-          <p className="mt-2 text-xs text-gray-500">You can select multiple images of the same heritage site</p>
+          <p className="mt-2 text-xs text-slate-500">
+            Select multiple images (with EXIF data) or videos (max 5 minutes) of the same heritage site
+          </p>
         </div>
 
         {/* Selected Files Preview */}
         {selectedFiles.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900">
-                Selected Images ({selectedFiles.length})
+              <h3 className="text-lg font-bold text-slate-900">
+                Selected Files ({selectedFiles.length})
               </h3>
               <button
                 type="button"
@@ -282,13 +430,24 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {selectedFiles.map((fileData, index) => (
                 <div key={index} className="relative bg-white rounded-xl border-2 border-orange-200 overflow-hidden shadow-sm hover:shadow-md transition-all group">
-                  {/* Preview Image */}
+                  {/* Preview Image or Video */}
                   <div className="relative aspect-square">
-                    <img
-                      src={fileData.preview}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+                    {fileData.isVideo ? (
+                      <video
+                        src={fileData.preview}
+                        className="w-full h-full object-cover"
+                        muted
+                        loop
+                        onMouseEnter={(e) => e.currentTarget.play()}
+                        onMouseLeave={(e) => e.currentTarget.pause()}
+                      />
+                    ) : (
+                      <img
+                        src={fileData.preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                     {fileData.exifData.isVerified && (
                       <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -308,10 +467,17 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                       </svg>
                     </button>
 
-                    {/* Image number overlay */}
+                    {/* File type and info overlay */}
                     <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/70 to-transparent p-2">
-                      <span className="text-white text-xs font-bold">Image {index + 1}</span>
-                      {fileData.autoDetectedLocation && (
+                      <span className="text-white text-xs font-bold">
+                        {fileData.isVideo ? `Video ${index + 1}` : `Image ${index + 1}`}
+                      </span>
+                      {fileData.isVideo && fileData.videoDuration && (
+                        <span className="ml-2 text-blue-400 text-xs">
+                          {Math.round(fileData.videoDuration)}s
+                        </span>
+                      )}
+                      {!fileData.isVideo && fileData.autoDetectedLocation && (
                         <span className="ml-2 text-green-400 text-xs">📍 GPS</span>
                       )}
                     </div>
@@ -329,7 +495,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-blue-900 mb-1">About this upload</p>
                   <p className="text-sm text-blue-800">
-                    All {selectedFiles.length} image{selectedFiles.length > 1 ? 's' : ''} will be uploaded with the shared title, description, and location "{sharedLocation || 'site location'}".
+                    All {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} will be uploaded with the shared title, description, and location "{sharedLocation || 'site location'}".
                   </p>
                 </div>
               </div>
