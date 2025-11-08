@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://puranveshana.com",
+    url: "https://puranveshana.vercel.app",
     siteName: "Puranveshana",
     title: "Puranveshana - Heritage Discovery & Archaeological Site Verification",
     description: "Discover, document, and verify India's rich heritage sites with Puranveshana. Upload archaeological images with EXIF metadata verification.",

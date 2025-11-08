@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://puranveshana.com' // Update this with your actual domain
+  const baseUrl = 'https://puranveshana.vercel.app'
 
   return [
     {
