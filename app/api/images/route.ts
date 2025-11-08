@@ -40,6 +40,7 @@ export async function GET(request: Request) {
                 select: {
                   email: true,
                   role: true,
+                  mobileNumber: true,
                 },
               },
               images: {
@@ -72,16 +73,43 @@ export async function GET(request: Request) {
           })
         )
       }
+
+      // Fetch payment amounts for each heritage site
+      const sitesWithPayments = await Promise.all(
+        sites.map(async (site) => {
+          const payments = await withRetry(() =>
+            prisma.payment.findMany({
+              where: {
+                heritageSiteId: site.id,
+                status: 'COMPLETED',
+              },
+              select: {
+                amount: true,
+              },
+            })
+          )
+          const totalAmount = payments.reduce((sum, payment) => sum + payment.amount, 0)
+          return {
+            ...site,
+            paymentAmount: totalAmount,
+          }
+        })
+      )
+
+      return NextResponse.json({
+        success: true,
+        sites: sitesWithPayments || [],
+        userRole: profile.role,
+      })
     } catch (err) {
       console.error('Error fetching from new schema:', err)
       sites = []
+      return NextResponse.json({
+        success: true,
+        sites: sites || [],
+        userRole: profile.role,
+      })
     }
-
-    return NextResponse.json({
-      success: true,
-      sites: sites || [],
-      userRole: profile.role,
-    })
   } catch (error: any) {
     console.error('Error in GET /api/images:', error)
     return NextResponse.json(

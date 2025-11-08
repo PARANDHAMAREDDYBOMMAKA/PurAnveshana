@@ -31,6 +31,40 @@ export default function SignupPage() {
       return
     }
 
+    // Validate email - prevent test/fake emails
+    const email = formData.email.toLowerCase()
+    const allowedDomains = [
+      'gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com',
+      'icloud.com', 'protonmail.com', 'live.com', 'msn.com',
+      'aol.com', 'zoho.com', 'yandex.com'
+    ]
+
+    const emailDomain = email.split('@')[1]
+    const emailPrefix = email.split('@')[0]
+
+    // Check if domain is allowed
+    if (!allowedDomains.includes(emailDomain)) {
+      toast.error('Please use a valid email provider (Gmail, Outlook, Yahoo, etc.)')
+      setLoading(false)
+      return
+    }
+
+    // Block test/fake email patterns
+    const testPatterns = ['test', 'fake', 'demo', 'example', 'temp', 'throwaway', 'disposable']
+    if (testPatterns.some(pattern => emailPrefix.includes(pattern))) {
+      toast.error('Test or temporary emails are not allowed')
+      setLoading(false)
+      return
+    }
+
+    // Validate mobile number - must be exactly 10 digits
+    const mobileDigits = formData.mobileNumber.replace(/\D/g, '')
+    if (mobileDigits.length !== 10) {
+      toast.error('Mobile number must be exactly 10 digits')
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -40,7 +74,7 @@ export default function SignupPage() {
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          mobileNumber: formData.mobileNumber,
+          mobileNumber: `+91${formData.mobileNumber}`,
         }),
       })
 
@@ -104,7 +138,7 @@ export default function SignupPage() {
                 type="email"
                 required
                 className="appearance-none relative block w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-orange-200 placeholder-orange-300 text-black font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-                placeholder="you@example.com"
+                placeholder="yourname@gmail.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
@@ -114,16 +148,26 @@ export default function SignupPage() {
               <label htmlFor="mobile" className="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5 sm:mb-2">
                 Mobile Number
               </label>
-              <input
-                id="mobile"
-                name="mobile"
-                type="tel"
-                required
-                className="appearance-none relative block w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-orange-200 placeholder-orange-300 text-black font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-                placeholder="+1 (555) 123-4567"
-                value={formData.mobileNumber}
-                onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
+                  <span className="text-sm sm:text-base text-slate-700 font-semibold">+91</span>
+                </div>
+                <input
+                  id="mobile"
+                  name="mobile"
+                  type="tel"
+                  required
+                  maxLength={10}
+                  className="appearance-none relative block w-full pl-14 sm:pl-16 pr-3 sm:pr-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-orange-200 placeholder-orange-300 text-black font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                  placeholder="9876543210"
+                  value={formData.mobileNumber}
+                  onChange={(e) => {
+                    // Only allow digits and limit to 10 characters
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 10)
+                    setFormData({ ...formData, mobileNumber: value })
+                  }}
+                />
+              </div>
             </div>
 
             <div>

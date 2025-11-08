@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PurAnveshana",
+  title: "Puranveshana",
   description: "Upload and verify images with EXIF metadata",
 };
 

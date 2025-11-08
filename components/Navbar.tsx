@@ -22,7 +22,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
       }
 
       toast.success('Logged out successfully')
-      router.push('/login')
+      router.push('/')
       router.refresh()
     } catch (error) {
       toast.error('Error logging out')
@@ -41,7 +41,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
             </div>
             <div className="flex flex-col">
               <h1 className="text-lg sm:text-2xl font-extrabold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
-                PurAnveshana
+                Puranveshana
               </h1>
               <span className="text-[10px] sm:text-xs text-orange-600 font-semibold -mt-1">
                 पुरातन अन्वेषण

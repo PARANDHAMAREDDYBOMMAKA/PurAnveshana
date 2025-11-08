@@ -12,6 +12,7 @@ interface HeritageSiteCardProps {
     description: string
     createdAt: string
     paymentStatus?: string
+    paymentAmount?: number
     images: Array<{
       id: string
       location: string
@@ -24,6 +25,7 @@ interface HeritageSiteCardProps {
     }>
     profile?: {
       email: string
+      mobileNumber?: string | null
     }
   }
   showUser?: boolean
@@ -53,7 +55,8 @@ export default function HeritageSiteCard({
   const [paymentNotes, setPaymentNotes] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const canEdit = isOwner && site.paymentStatus === 'NOT_STARTED'
+  // Disable edit/delete for all users - only admins can edit/delete via admin panel
+  const canEdit = false
 
   const handleEdit = async () => {
     setIsLoading(true)
@@ -203,16 +206,10 @@ export default function HeritageSiteCard({
               </div>
             )}
 
-            {/* Image Counter & Count */}
-            <div className="absolute top-4 left-4 flex gap-3">
+            {/* Image Counter */}
+            <div className="absolute top-4 left-4">
               <div className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-bold">
                 {selectedImage + 1} / {site.images.length}
-              </div>
-              <div className="bg-orange-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                {site.images.length}
               </div>
             </div>
 
@@ -272,26 +269,26 @@ export default function HeritageSiteCard({
         </div>
 
         {/* Title and Description */}
-        <div className="p-3 sm:p-4 border-b-2 border-orange-100">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 flex-1 line-clamp-2 leading-tight">{site.title}</h3>
+        <div className="p-4 sm:p-5 border-b border-orange-100/50">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 flex-1 leading-tight">{site.title}</h3>
             {canEdit && (
               <div className="flex gap-2 shrink-0">
                 <button
                   onClick={() => setShowEditModal(true)}
-                  className="p-2 sm:p-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-sm hover:shadow-md"
+                  className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-all duration-200"
                   title="Edit"
                 >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="p-2 sm:p-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-sm hover:shadow-md"
+                  className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all duration-200"
                   title="Delete"
                 >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
@@ -299,13 +296,13 @@ export default function HeritageSiteCard({
             )}
           </div>
           <div className="relative">
-            <p className={`text-xs sm:text-sm text-slate-600 leading-relaxed ${!isDescriptionExpanded && site.description.length > 100 ? 'line-clamp-2' : ''}`}>
+            <p className={`text-sm text-slate-600 leading-relaxed ${!isDescriptionExpanded && site.description.length > 100 ? 'line-clamp-2' : ''}`}>
               {site.description}
             </p>
             {site.description.length > 150 && (
               <button
                 onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                className="text-orange-600 hover:text-orange-700 font-semibold text-sm sm:text-base mt-2 inline-flex items-center gap-1"
+                className="text-orange-600 hover:text-orange-700 font-medium text-sm mt-2 inline-flex items-center gap-1"
               >
                 {isDescriptionExpanded ? (
                   <>
@@ -328,128 +325,161 @@ export default function HeritageSiteCard({
         </div>
 
         {/* Current Image Details */}
-        <div className="p-2.5 sm:p-3 space-y-2">
-          <div className="grid grid-cols-1 gap-2">
-            {/* Location */}
-            <div className="bg-linear-to-br from-orange-50 to-amber-50 rounded-lg p-2 sm:p-2.5 border border-orange-200 hover:border-orange-300 transition-all duration-300">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span className="text-[10px] sm:text-xs font-bold text-orange-600 uppercase tracking-wide">Location</span>
-                {currentImage.gpsLatitude && currentImage.gpsLongitude && (
-                  <span className="bg-linear-to-r from-green-500 to-emerald-600 text-white text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full font-bold flex items-center gap-0.5 shrink-0 ml-auto">
-                    <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    GPS
-                  </span>
-                )}
-              </div>
-              <p className="text-slate-900 font-bold text-xs sm:text-sm leading-tight mb-2 wrap-break-word line-clamp-1">{currentImage.location}</p>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                {currentImage.gpsLatitude && currentImage.gpsLongitude ? (
-                  <a
-                    href={`https://www.google.com/maps?q=${currentImage.gpsLatitude},${currentImage.gpsLongitude}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 rounded text-[10px] sm:text-xs font-bold transition-all duration-200 shadow-sm"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
-                    <span className="hidden sm:inline">Google Maps</span>
-                    <span className="sm:hidden">Maps</span>
-                  </a>
-                ) : (
-                  <a
-                    href={`https://www.google.com/maps/search/${encodeURIComponent(currentImage.location)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 rounded text-[10px] sm:text-xs font-bold transition-all duration-200 shadow-sm"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <span className="hidden sm:inline">Search on Maps</span>
-                    <span className="sm:hidden">Search</span>
-                  </a>
-                )}
-                {showUser && (
-                  <Link
-                    href={`/maps/${site.id}`}
-                    className="inline-flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-[10px] sm:text-xs font-bold transition-all duration-200 shadow-sm"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
-                    <span className="hidden sm:inline">Route from Bengaluru</span>
-                    <span className="sm:hidden">Route</span>
-                  </Link>
-                )}
-              </div>
+        <div className="p-4 sm:p-5 space-y-3">
+          {/* Location */}
+          <div className="bg-linear-to-br from-orange-50 to-amber-50 rounded-lg p-3 sm:p-4 border border-orange-200">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-5 h-5 text-orange-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="text-sm font-semibold text-orange-700">Location</span>
+              {currentImage.gpsLatitude && currentImage.gpsLongitude && (
+                <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ml-auto">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  GPS Verified
+                </span>
+              )}
+            </div>
+            <p className="text-slate-900 font-medium text-sm mb-3">{currentImage.location}</p>
+            <div className="flex flex-wrap gap-2">
+              {currentImage.gpsLatitude && currentImage.gpsLongitude ? (
+                <a
+                  href={`https://www.google.com/maps?q=${currentImage.gpsLatitude},${currentImage.gpsLongitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  <span>Open in Maps</span>
+                </a>
+              ) : (
+                <a
+                  href={`https://www.google.com/maps/search/${encodeURIComponent(currentImage.location)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <span>Search on Maps</span>
+                </a>
+              )}
+              {showUser && (
+                <Link
+                  href={`/maps/${site.id}`}
+                  className="inline-flex items-center gap-1.5 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  <span>Route from Bengaluru</span>
+                </Link>
+              )}
             </div>
           </div>
 
           {/* Site Metadata */}
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2 border-t border-orange-100">
-            <div className="flex items-center gap-1 text-slate-600">
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span className="font-semibold text-[10px] sm:text-xs">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="bg-slate-50 rounded-lg p-2.5 sm:p-3 border border-slate-200">
+              <div className="flex items-center gap-1.5 mb-1">
+                <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-xs text-slate-500 font-medium">Created</span>
+              </div>
+              <p className="text-sm font-semibold text-slate-900">
                 {new Date(site.createdAt).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',
                   year: 'numeric',
                 })}
-              </span>
+              </p>
             </div>
 
-            <div className="flex items-center gap-1 text-slate-600">
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span className="font-semibold text-[10px] sm:text-xs">{verifiedCount}/{site.images.length} Verified</span>
-            </div>
-
-            {showUser && currentImage.cameraModel && (
-              <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded border border-blue-300">
-                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            <div className="bg-green-50 rounded-lg p-2.5 sm:p-3 border border-green-200">
+              <div className="flex items-center gap-1.5 mb-1">
+                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span className="text-[10px] sm:text-xs text-slate-900 font-bold truncate max-w-[140px] sm:max-w-40">{currentImage.cameraModel}</span>
+                <span className="text-xs text-green-600 font-medium">Verified</span>
               </div>
-            )}
+              <p className="text-sm font-semibold text-green-900">{verifiedCount} of {site.images.length}</p>
+            </div>
 
             {showUser && site.profile && (
-              <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 rounded border border-amber-300">
-                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span className="text-[10px] sm:text-xs text-slate-900 font-bold truncate max-w-[120px] sm:max-w-[140px]">{site.profile.email}</span>
+              <div className="bg-amber-50 rounded-lg p-2.5 sm:p-3 border border-amber-200 col-span-2">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className="text-xs text-amber-600 font-medium">Submitted by</span>
+                </div>
+                <p className="text-sm font-semibold text-amber-900 truncate">{site.profile.email}</p>
+                {site.profile.mobileNumber && (
+                  <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-amber-200">
+                    <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span className="text-sm font-semibold text-amber-900">{site.profile.mobileNumber}</span>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(site.profile?.mobileNumber || '')
+                        toast.success('Mobile number copied!')
+                      }}
+                      className="text-xs text-amber-700 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded transition-colors"
+                    >
+                      Copy for UPI
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
-            <div className={`flex items-center gap-1 px-2 py-1 rounded border ${
-              site.paymentStatus === 'COMPLETED' ? 'bg-green-50 border-green-300' :
-              site.paymentStatus === 'IN_PROGRESS' ? 'bg-blue-50 border-blue-300' :
-              'bg-slate-50 border-slate-300'
+            <div className={`rounded-lg p-2.5 sm:p-3 border col-span-2 ${
+              site.paymentStatus === 'COMPLETED' ? 'bg-green-50 border-green-200' :
+              site.paymentStatus === 'IN_PROGRESS' ? 'bg-blue-50 border-blue-200' :
+              'bg-slate-50 border-slate-200'
             }`}>
-              <svg className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${
-                site.paymentStatus === 'COMPLETED' ? 'text-green-700' :
-                site.paymentStatus === 'IN_PROGRESS' ? 'text-blue-700' :
-                'text-slate-700'
-              }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="text-[10px] sm:text-xs text-slate-900 font-bold">{site.paymentStatus?.replace('_', ' ')}</span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <svg className={`w-4 h-4 ${
+                    site.paymentStatus === 'COMPLETED' ? 'text-green-600' :
+                    site.paymentStatus === 'IN_PROGRESS' ? 'text-blue-600' :
+                    'text-slate-600'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className={`text-xs font-medium ${
+                    site.paymentStatus === 'COMPLETED' ? 'text-green-600' :
+                    site.paymentStatus === 'IN_PROGRESS' ? 'text-blue-600' :
+                    'text-slate-600'
+                  }`}>Payment</span>
+                </div>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded ${
+                  site.paymentStatus === 'COMPLETED' ? 'bg-green-200 text-green-800' :
+                  site.paymentStatus === 'IN_PROGRESS' ? 'bg-blue-200 text-blue-800' :
+                  'bg-slate-200 text-slate-800'
+                }`}>
+                  {site.paymentStatus?.replace('_', ' ')}
+                </span>
+              </div>
+              <p className={`text-lg font-bold ${
+                site.paymentStatus === 'COMPLETED' ? 'text-green-900' :
+                site.paymentStatus === 'IN_PROGRESS' ? 'text-blue-900' :
+                'text-slate-900'
+              }`}>
+                ₹{site.paymentAmount?.toLocaleString('en-IN') || '0'}
+              </p>
             </div>
           </div>
 
-          {showUser && (
+          {showUser && site.paymentStatus !== 'COMPLETED' && (
             <div className="pt-2 border-t border-orange-100 mt-2">
               <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1.5">Admin Payment Actions</h4>
               <div className="flex flex-wrap gap-1.5">

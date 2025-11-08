@@ -246,6 +246,27 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       return
     }
 
+    // Validate description word count (minimum 50 words)
+    const wordCount = sharedDescription.trim().split(/\s+/).filter(word => word.length > 0).length
+    if (wordCount < 50) {
+      toast.error(`Description must be at least 50 words. Current: ${wordCount} words`)
+      return
+    }
+
+    // Validate location format (Place, District, State, Pincode)
+    const locationParts = sharedLocation.split(',').map(part => part.trim()).filter(part => part.length > 0)
+    if (locationParts.length < 4) {
+      toast.error('Location must include: Place, District, State, and Pincode (separated by commas)')
+      return
+    }
+
+    // Validate that the last part (pincode) contains numbers
+    const pincode = locationParts[locationParts.length - 1]
+    if (!/\d{6}/.test(pincode)) {
+      toast.error('Location must end with a valid 6-digit pincode')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -358,14 +379,17 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         {/* Shared Description */}
         <div>
           <label htmlFor="description" className="block text-sm font-bold text-slate-900 mb-2">
-            Description *
+            Description * (Minimum 50 words)
+            <span className={`ml-2 text-xs ${sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
+              {sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length} / 50 words
+            </span>
           </label>
           <textarea
             id="description"
             required
             rows={4}
             className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-slate-900 font-medium placeholder-slate-400 bg-white transition-all resize-none"
-            placeholder="Describe the heritage site, its history, and significance"
+            placeholder="Describe the heritage site, its history, and significance (minimum 50 words)"
             value={sharedDescription}
             onChange={(e) => setSharedDescription(e.target.value)}
           />
@@ -384,11 +408,11 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             id="location"
             required
             className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-slate-900 font-medium placeholder-slate-400 bg-white transition-all"
-            placeholder="Enter the location of this heritage site"
+            placeholder="Place, District, State, Pincode (e.g., Hampi, Vijayanagara, Karnataka, 583239)"
             value={sharedLocation}
             onChange={(e) => setSharedLocation(e.target.value)}
           />
-          <p className="mt-2 text-xs text-slate-500">This location will be used for all images of this site</p>
+          <p className="mt-2 text-xs text-slate-500">Format: Place, District, State, Pincode. This location will be used for all images.</p>
         </div>
 
         {/* File Input */}
@@ -407,7 +431,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             />
           </div>
           <p className="mt-2 text-xs text-slate-500">
-            Select multiple images (with EXIF data) or videos (max 5 minutes) of the same heritage site
+            Select multiple images or videos (max 5 minutes) of the same heritage site
           </p>
         </div>
 

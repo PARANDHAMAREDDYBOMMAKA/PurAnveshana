@@ -1,7 +1,345 @@
 "use client";
 import Link from 'next/link'
-import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone } from 'lucide-react';
+import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins } from 'lucide-react';
 import { useState, useEffect } from 'react';
+
+// Client-only Video Player
+function VideoPlayer({ src, title }: { src: string; title: string }) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div className="absolute top-0 left-0 w-full h-full bg-slate-100 flex items-center justify-center">
+        <div className="text-slate-400">Loading video...</div>
+      </div>
+    );
+  }
+
+  return (
+    <video
+      controls
+      className="absolute top-0 left-0 w-full h-full object-cover"
+      preload="metadata"
+    >
+      <source src={src} type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  );
+}
+
+// India Map Animation Component
+function IndiaMapAnimation() {
+  const [activePoint, setActivePoint] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  // Historical locations in India with actual lat/lng coordinates and Unsplash images
+  const historicalSites = [
+    {
+      name: "Taj Mahal",
+      lat: 27.1751,
+      lng: 78.0421,
+      state: "Uttar Pradesh",
+      image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Red Fort",
+      lat: 28.6562,
+      lng: 77.2410,
+      state: "Delhi",
+      image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Qutub Minar",
+      lat: 28.5244,
+      lng: 77.1855,
+      state: "Delhi",
+      image: "https://images.unsplash.com/photo-1596436889106-be35e843f974?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Ajanta Caves",
+      lat: 20.5519,
+      lng: 75.7033,
+      state: "Maharashtra",
+      image: "https://images.unsplash.com/photo-1609920658906-8223bd289001?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Hampi",
+      lat: 15.3350,
+      lng: 76.4600,
+      state: "Karnataka",
+      image: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Konark Temple",
+      lat: 19.8876,
+      lng: 86.0945,
+      state: "Odisha",
+      image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Khajuraho",
+      lat: 24.8318,
+      lng: 79.9199,
+      state: "Madhya Pradesh",
+      image: "https://images.unsplash.com/photo-1605649487212-47f7da67ad3f?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Mysore Palace",
+      lat: 12.3051,
+      lng: 76.6551,
+      state: "Karnataka",
+      image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Gateway of India",
+      lat: 18.9220,
+      lng: 72.8347,
+      state: "Maharashtra",
+      image: "https://images.unsplash.com/photo-1595658658481-d53d3f999875?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Hawa Mahal",
+      lat: 26.9239,
+      lng: 75.8267,
+      state: "Rajasthan",
+      image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=200&h=200&fit=crop"
+    },
+  ];
+
+  useEffect(() => {
+    setMounted(true);
+    const interval = setInterval(() => {
+      setActivePoint((prev) => (prev + 1) % historicalSites.length);
+    }, 5000); // Changed to 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && typeof window !== 'undefined') {
+      // Dynamically import Leaflet CSS
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+  }, [mounted]);
+
+  if (!mounted) {
+    return (
+      <div className="relative order-1 lg:order-2">
+        <div className="absolute inset-0 bg-linear-to-r from-orange-400 to-amber-500 rounded-2xl sm:rounded-3xl transform rotate-3 opacity-20"></div>
+        <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8">
+          <div className="relative w-full aspect-3/4 max-h-[500px] flex items-center justify-center">
+            <div className="text-slate-400">Loading map...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative order-1 lg:order-2">
+      <div className="absolute inset-0 bg-linear-to-r from-orange-400 to-amber-500 rounded-2xl sm:rounded-3xl transform rotate-3 opacity-20"></div>
+      <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8">
+        <div className="relative w-full aspect-3/4 max-h-[500px] overflow-hidden rounded-xl">
+          <LeafletMap sites={historicalSites} activePoint={activePoint} />
+
+          {/* Location info box */}
+          <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-4 rounded-b-xl z-1000">
+            <div className="text-white">
+              <div className="flex items-center gap-2 mb-1">
+                <MapPin className="w-4 h-4 text-orange-400" />
+                <h3 className="text-sm sm:text-base font-bold">{historicalSites[activePoint].name}</h3>
+              </div>
+              <p className="text-xs sm:text-sm text-orange-200">{historicalSites[activePoint].state}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Leaflet Map Component
+function LeafletMap({ sites, activePoint }: { sites: any[], activePoint: number }) {
+  const mapInstanceRef = useState<any>(null);
+  const markersRef = useState<any[]>([]);
+
+  // Initialize map only once
+  useEffect(() => {
+    if (typeof window === 'undefined' || mapInstanceRef[0]) return;
+
+    const L = require('leaflet');
+
+    // Fix for default marker icon
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    });
+
+    // Get the container element
+    const container = document.getElementById('india-map');
+    if (!container) return;
+
+    // Remove any existing map instance from the container
+    if ((container as any)._leaflet_id) {
+      const existingMap = (L as any).DomUtil.get('india-map');
+      if (existingMap) {
+        existingMap._leaflet_id = null;
+      }
+    }
+
+    const map = L.map('india-map', {
+      center: [20.5937, 78.9629], // Center of India
+      zoom: 5,
+      zoomControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    mapInstanceRef[1](map);
+
+    // Cleanup
+    return () => {
+      if (mapInstanceRef[0]) {
+        mapInstanceRef[0].remove();
+        mapInstanceRef[1](null);
+      }
+    };
+  }, []);
+
+  // Update markers when activePoint changes
+  useEffect(() => {
+    if (!mapInstanceRef[0] || typeof window === 'undefined') return;
+
+    const L = require('leaflet');
+
+    // Helper function to create pin icon
+    const createPinIcon = (site: any) => {
+      return L.divIcon({
+        className: 'custom-pin-marker',
+        html: `
+          <div style="position: relative; animation: fadeInBounce 0.6s ease-out;">
+            <!-- Pin container -->
+            <div style="position: relative; width: 60px; height: 80px;">
+              <!-- Pin background with image -->
+              <div style="
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
+                height: 60px;
+                background-color: white;
+                border-radius: 50% 50% 50% 0;
+                border: 4px solid #EF4444;
+                transform: translateX(-50%) rotate(-45deg);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+              ">
+                <!-- Image inside pin -->
+                <div style="
+                  width: 100%;
+                  height: 100%;
+                  transform: rotate(45deg);
+                  background-image: url('${site.image}');
+                  background-size: cover;
+                  background-position: center;
+                  border-radius: 50%;
+                  scale: 1.4;
+                "></div>
+              </div>
+
+              <!-- Pin point -->
+              <div style="
+                position: absolute;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 8px;
+                height: 8px;
+                background-color: #EF4444;
+                border-radius: 50%;
+                border: 2px solid white;
+              "></div>
+            </div>
+
+            <!-- Pulse effect -->
+            <div style="
+              position: absolute;
+              top: 0;
+              left: 50%;
+              transform: translateX(-50%) rotate(-45deg);
+              width: 60px;
+              height: 60px;
+              border-radius: 50% 50% 50% 0;
+              border: 3px solid #EF4444;
+              opacity: 0.6;
+              animation: pulse 2s infinite;
+            "></div>
+          </div>
+
+          <style>
+            @keyframes pulse {
+              0%, 100% {
+                transform: translateX(-50%) rotate(-45deg) scale(1);
+                opacity: 0.6;
+              }
+              50% {
+                transform: translateX(-50%) rotate(-45deg) scale(1.2);
+                opacity: 0.2;
+              }
+            }
+
+            @keyframes fadeInBounce {
+              0% {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.8);
+              }
+              60% {
+                opacity: 1;
+                transform: translateY(5px) scale(1.05);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+              }
+            }
+          </style>
+        `,
+        iconSize: [60, 80],
+        iconAnchor: [30, 80],
+      });
+    };
+
+    // Remove existing markers
+    markersRef[0].forEach((marker: any) => marker.remove());
+
+    // Add only the active marker
+    const activeSite = sites[activePoint];
+    const marker = L.marker([activeSite.lat, activeSite.lng], {
+      icon: createPinIcon(activeSite),
+    }).addTo(mapInstanceRef[0]);
+
+    markersRef[1]([marker]);
+  }, [activePoint, sites]);
+
+  return <div id="india-map" className="w-full h-full rounded-xl" />;
+}
 
 export default function Home() {
    const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,10 +387,10 @@ export default function Home() {
   ];
 
   const howItWorks = [
-    { step: "1", title: "Discover", desc: "Find ancient or historical sites in your area" },
-    { step: "2", title: "Document", desc: "Capture photos and write descriptions" },
+    { icon: Search, title: "Discover", desc: "Find ancient or historical sites in your area" },
+    { icon: Camera, title: "Document", desc: "Capture photos and write descriptions" },
     // { step: "3", title: "Verify", desc: "Our system validates using EXIF data" },
-    { step: "3", title: "Earn", desc: "Get rewards for verified contributions" }
+    { icon: Coins, title: "Earn", desc: "Get rewards for verified contributions" }
   ];
 
   return (
@@ -67,7 +405,7 @@ export default function Home() {
               </div>
               <div className="flex flex-col">
                 <span className="text-xl sm:text-2xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
-                  PurAnveshana
+                  Puranveshana
                 </span>
                 <span className="text-[10px] sm:text-xs text-orange-600 font-semibold -mt-1">
                   पुरातन अन्वेषण
@@ -112,16 +450,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-20"
-          >
-            <source src="/Video_Generation_With_Minimum_Duration.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-linear-to-br from-amber-50/90 via-orange-50/85 to-white/90"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-amber-50 via-orange-50 to-white"></div>
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
@@ -155,22 +484,13 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative order-1 lg:order-2">
-              <div className="absolute inset-0 bg-linear-to-r from-orange-400 to-amber-500 rounded-2xl sm:rounded-3xl transform rotate-3 opacity-20"></div>
-              <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8">
-                <img
-                  src="https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&h=400&fit=crop"
-                  alt="Ancient Indian Temple"
-                  className="w-full h-full object-cover rounded-xl sm:rounded-2xl"
-                />
-              </div>
-            </div>
+            <IndiaMapAnimation />
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-12 sm:py-16 lg:py-20 bg-white">
+      {/* <section id="features" className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">Why Puranveshana?</h2>
@@ -189,7 +509,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* How It Works */}
       <section id="how-it-works" className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-amber-50 via-orange-50/30 to-white relative overflow-hidden">
@@ -210,8 +530,8 @@ export default function Home() {
               <div key={idx} className="relative group">
                 <div className="bg-white rounded-xl p-5 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-orange-100 hover:border-orange-300">
                   <div className="flex flex-col items-center text-center">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center text-white text-lg sm:text-xl font-bold mb-3 sm:mb-4 shadow-lg group-hover:scale-105 transition-transform duration-300">
-                      {item.step}
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center text-white mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <item.icon className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
                     <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
                     <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
@@ -252,7 +572,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
-              See PurAnveshana in Action
+              See Puranveshana in Action
             </h2>
             <p className="text-base sm:text-lg text-slate-600">
               Watch how our platform helps preserve India's heritage
@@ -264,17 +584,13 @@ export default function Home() {
               <div className="p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Heritage Discovery & Rewards</h3>
                 <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-slate-100" style={{ paddingBottom: '56.25%' }}>
-                  <video
-                    controls
-                    className="absolute top-0 left-0 w-full h-full object-cover"
-                    preload="metadata"
-                  >
-                    <source src="/PurAnveshana_Heritage_Discovery_Rewards.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                  <VideoPlayer
+                    src="/PurAnveshana_Heritage_Discovery_Rewards.mp4"
+                    title="Heritage Discovery & Rewards"
+                  />
                 </div>
                 <p className="text-sm sm:text-base text-slate-600 mt-3 sm:mt-4">
-                  Learn how PurAnveshana rewards explorers for documenting ancient heritage sites across India.
+                  Learn how Puranveshana rewards explorers for documenting ancient heritage sites across India.
                 </p>
               </div>
             </div>
@@ -283,17 +599,13 @@ export default function Home() {
               <div className="p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Platform Overview</h3>
                 <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-slate-100" style={{ paddingBottom: '56.25%' }}>
-                  <video
-                    controls
-                    className="absolute top-0 left-0 w-full h-full object-cover"
-                    preload="metadata"
-                  >
-                    <source src="/Video_Generation_With_Minimum_Duration.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                  <VideoPlayer
+                    src="/Video_Generation_With_Minimum_Duration.mp4"
+                    title="Platform Overview"
+                  />
                 </div>
                 <p className="text-sm sm:text-base text-slate-600 mt-3 sm:mt-4">
-                  A comprehensive guide to using PurAnveshana for heritage documentation and preservation.
+                  A comprehensive guide to using Puranveshana for heritage documentation and preservation.
                 </p>
               </div>
             </div>

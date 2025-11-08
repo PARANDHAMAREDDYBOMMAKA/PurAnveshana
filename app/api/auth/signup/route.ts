@@ -15,11 +15,57 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate email domain and prevent test emails
+    const emailLower = email.toLowerCase()
+    const allowedDomains = [
+      'gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com',
+      'icloud.com', 'protonmail.com', 'live.com', 'msn.com',
+      'aol.com', 'zoho.com', 'yandex.com'
+    ]
+
+    const emailParts = emailLower.split('@')
+    if (emailParts.length !== 2) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      )
+    }
+
+    const [emailPrefix, emailDomain] = emailParts
+
+    // Check if domain is allowed
+    if (!allowedDomains.includes(emailDomain)) {
+      return NextResponse.json(
+        { error: 'Please use a valid email provider (Gmail, Outlook, Yahoo, etc.)' },
+        { status: 400 }
+      )
+    }
+
+    // Block test/fake email patterns
+    const testPatterns = ['test', 'fake', 'demo', 'example', 'temp', 'throwaway', 'disposable', 'spam']
+    if (testPatterns.some(pattern => emailPrefix.includes(pattern))) {
+      return NextResponse.json(
+        { error: 'Test or temporary emails are not allowed' },
+        { status: 400 }
+      )
+    }
+
     if (password.length < 6) {
       return NextResponse.json(
         { error: 'Password must be at least 6 characters' },
         { status: 400 }
       )
+    }
+
+    // Validate mobile number format: +91 followed by exactly 10 digits
+    if (mobileNumber) {
+      const mobileRegex = /^\+91\d{10}$/
+      if (!mobileRegex.test(mobileNumber)) {
+        return NextResponse.json(
+          { error: 'Mobile number must be in format +91 followed by 10 digits' },
+          { status: 400 }
+        )
+      }
     }
 
     const existingUser = await withRetry(() =>

@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from 'react'
 import HeritageSiteCard from './HeritageSiteCard'
 import ImageUploadForm from './ImageUploadForm'
 import PaymentHistory from './PaymentHistory'
+import { defaultHeritageSites } from '@/lib/defaultHeritageSites'
 
 interface DashboardClientProps {
   images: any[]
@@ -12,12 +13,20 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({ images: initialSites, isAdmin, onUploadSuccess }: DashboardClientProps) {
-  const [sites, setSites] = useState(initialSites)
+  // For non-admin users with no uploads, show default sites
+  const displaySites = !isAdmin && (!initialSites || initialSites.length === 0)
+    ? defaultHeritageSites
+    : initialSites
+
+  const [sites, setSites] = useState(displaySites)
 
   // Update sites state when initialSites prop changes
   useEffect(() => {
-    setSites(initialSites)
-  }, [initialSites])
+    const newDisplaySites = !isAdmin && (!initialSites || initialSites.length === 0)
+      ? defaultHeritageSites
+      : initialSites
+    setSites(newDisplaySites)
+  }, [initialSites, isAdmin])
 
   const handleUploadComplete = useCallback(() => {
     if (onUploadSuccess) {
@@ -25,9 +34,13 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     }
   }, [onUploadSuccess])
 
-  // Count total images across all sites
-  const totalImages = sites?.reduce((acc, site) => acc + (site.images?.length || 0), 0) || 0
-  const verifiedImages = sites?.reduce((acc, site) =>
+  // Check if showing default sites
+  const isShowingDefaults = !isAdmin && (!initialSites || initialSites.length === 0)
+
+  // Count total images across all sites (use user's actual sites for stats, not defaults)
+  const statsSource = isShowingDefaults ? [] : initialSites
+  const totalImages = statsSource?.reduce((acc, site) => acc + (site.images?.length || 0), 0) || 0
+  const verifiedImages = statsSource?.reduce((acc, site) =>
     acc + (site.images?.filter((img: any) => img.isVerified).length || 0), 0
   ) || 0
 
@@ -98,8 +111,17 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
       {/* Heritage Sites Grid */}
       <div className="mb-4 sm:mb-6">
         <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 sm:mb-4">
-          {isAdmin ? 'All Heritage Sites' : 'Your Heritage Sites'}
+          {isAdmin
+            ? 'All Heritage Sites'
+            : isShowingDefaults
+              ? 'Example Heritage Sites - Get Inspired!'
+              : 'Your Heritage Sites'}
         </h2>
+        {isShowingDefaults && (
+          <p className="text-sm text-slate-600 mb-4">
+            These are example heritage sites to inspire you. Upload your first site to start documenting your discoveries!
+          </p>
+        )}
       </div>
 
       {sites && sites.length > 0 ? (
@@ -109,7 +131,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
               key={site.id}
               site={site}
               showUser={isAdmin}
-              isOwner={!isAdmin}
+              isOwner={!isAdmin && !isShowingDefaults}
               onUpdate={onUploadSuccess}
               userId={site.userId}
             />
