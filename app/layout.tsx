@@ -16,23 +16,29 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://puranveshana.vercel.app'),
   title: {
-    default: "Puranveshana - Heritage Discovery & Archaeological Site Verification",
+    default: "Puranveshana - Discover Indian History & Hidden Heritage Sites",
     template: "%s | Puranveshana"
   },
-  description: "Discover, document, and verify India's rich heritage sites with Puranveshana. Upload archaeological images with EXIF metadata verification, explore historical locations, and earn rewards for heritage preservation.",
+  description: "Uncover Indian history and explore India's hidden history with Puranveshana. Discover, document, and verify heritage sites, ancient monuments, and archaeological locations. Upload images of historical sites and earn rewards for heritage preservation.",
   keywords: [
     "puranveshaa",
     "puranveshana",
+    "Indian history",
+    "Indian hidden history",
     "heritage discovery",
     "archaeological sites India",
     "historical monuments",
-    "EXIF metadata verification",
     "heritage preservation",
     "Indian archaeology",
     "monument documentation",
     "cultural heritage India",
     "heritage mapping",
-    "archaeological verification"
+    "archaeological sites",
+    "ancient India",
+    "historical sites India",
+    "Indian heritage sites",
+    "forgotten monuments India",
+    "heritage sites India"
   ],
   authors: [{ name: "Puranveshana Team" }],
   creator: "Puranveshana",
@@ -47,21 +53,21 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://puranveshana.vercel.app",
     siteName: "Puranveshana",
-    title: "Puranveshana - Heritage Discovery & Archaeological Site Verification",
-    description: "Discover, document, and verify India's rich heritage sites with Puranveshana. Upload archaeological images with EXIF metadata verification.",
+    title: "Puranveshana - Uncover Indian History & Hidden Heritage Sites",
+    description: "Explore Indian history and discover India's hidden history. Document ancient monuments, verify archaeological sites, and preserve our rich cultural heritage.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Puranveshana - Heritage Discovery Platform",
+        alt: "Puranveshana - Discover Indian History and Heritage",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Puranveshana - Heritage Discovery & Archaeological Site Verification",
-    description: "Discover, document, and verify India's rich heritage sites with Puranveshana.",
+    title: "Puranveshana - Uncover Indian History & Hidden Heritage Sites",
+    description: "Explore Indian history and discover India's hidden history. Document ancient monuments and verify archaeological sites.",
     images: ["/og-image.jpg"],
     creator: "@puranveshana",
   },
@@ -77,9 +83,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-site-verification-code', // Add your Google Search Console verification code
-    // yandex: 'your-yandex-verification-code',
-    // bing: 'your-bing-verification-code',
+    google: 'google3eea601a87f2daa0',
   },
 };
 
@@ -94,7 +98,13 @@ export default function RootLayout({
     name: 'Puranveshana',
     alternateName: 'Puranveshaa',
     url: 'https://puranveshana.vercel.app',
-    description: 'Discover, document, and verify India\'s rich heritage sites with EXIF metadata verification.',
+    description: 'Uncover Indian history and explore India\'s hidden history. Discover, document, and verify heritage sites, ancient monuments, and archaeological locations across India.',
+    about: {
+      '@type': 'Thing',
+      name: 'Indian History',
+      description: 'Platform dedicated to exploring and preserving Indian history, heritage sites, and hidden historical monuments across India.'
+    },
+    keywords: 'Indian history, Indian hidden history, heritage discovery, archaeological sites India, ancient monuments',
     potentialAction: {
       '@type': 'SearchAction',
       target: {

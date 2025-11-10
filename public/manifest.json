@@ -1,7 +1,7 @@
 {
-  "name": "Puranveshana - Heritage Discovery Platform",
+  "name": "Puranveshana - Discover Indian History & Heritage Sites",
   "short_name": "Puranveshana",
-  "description": "Discover, document, and verify India's rich heritage sites with EXIF metadata verification",
+  "description": "Uncover Indian history and explore India's hidden history. Discover, document, and verify heritage sites and ancient monuments across India",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
