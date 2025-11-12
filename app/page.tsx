@@ -524,9 +524,9 @@ export default function Home() {
       <section className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+            {/* <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
               पुरान्वेषी भव — Be a PurAnveshi
-            </div>
+            </div> */}
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 px-2 flex items-center justify-center gap-2">
              <div><BadgeIndianRupee className='text-yellow-600 h-14 w-14'/></div> Reward Highlights
             </h2>
@@ -670,7 +670,7 @@ export default function Home() {
           </div> */}
 
           {/* Additional Info */}
-          {/* <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 text-white text-center shadow-xl">
+          <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 text-white text-center shadow-xl">
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3">Start Your Heritage Journey Today</h3>
             <p className="text-xs sm:text-sm lg:text-base text-orange-100 mb-4 sm:mb-6 max-w-2xl mx-auto">
               Join a community of passionate explorers documenting India's forgotten heritage. Every upload helps preserve our cultural legacy.
@@ -687,7 +687,7 @@ export default function Home() {
                 </button>
               </Link>
             </div>
-          </div> */}
+          </div>
         </div>
       </section>
             {/* Mobile descriptions */}
