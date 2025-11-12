@@ -88,14 +88,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         const fileModified = file.lastModified
         const daysSinceModified = (now - fileModified) / (1000 * 60 * 60 * 24)
 
-        console.log(`Video file info:`, {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          lastModified: new Date(file.lastModified).toLocaleString(),
-          daysSinceModified: daysSinceModified.toFixed(1),
-        })
-
         if (daysSinceModified > 7) {
           toast.error(`${file.name}: Video must be recorded within last 7 days (this is ${Math.floor(daysSinceModified)} days old)`)
           continue
@@ -159,8 +151,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           captureDate: new Date(file.lastModified),
         }
 
-        console.log('Video verified with strict checks:', videoExifData)
-
         // Create video preview
         const preview = URL.createObjectURL(file)
 
@@ -208,7 +198,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           }
         }
       } catch (error) {
-        console.error('Error extracting EXIF:', error)
         toast.error(`${file.name}: Failed to extract EXIF data`)
         continue
       }
@@ -241,8 +230,8 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       return
     }
 
-    if (!sharedTitle || !sharedDescription || !sharedLocation) {
-      toast.error('Please fill in title, description, and location')
+    if (!sharedTitle || !sharedDescription) {
+      toast.error('Please fill in title and description')
       return
     }
 
@@ -253,18 +242,29 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       return
     }
 
-    // Validate location format (Place, District, State, Pincode)
-    const locationParts = sharedLocation.split(',').map(part => part.trim()).filter(part => part.length > 0)
-    if (locationParts.length < 4) {
-      toast.error('Location must include: Place, District, State, and Pincode (separated by commas)')
+    // Check if any file has GPS location data
+    const hasGPSLocation = selectedFiles.some(f => f.autoDetectedLocation)
+
+    // Only require manual location if no GPS data exists
+    if (!hasGPSLocation && !sharedLocation) {
+      toast.error('Please enter location (no GPS data found in images)')
       return
     }
 
-    // Validate that the last part (pincode) contains numbers
-    const pincode = locationParts[locationParts.length - 1]
-    if (!/\d{6}/.test(pincode)) {
-      toast.error('Location must end with a valid 6-digit pincode')
-      return
+    // If location is provided (either manual or GPS), validate the format
+    if (sharedLocation) {
+      const locationParts = sharedLocation.split(',').map(part => part.trim()).filter(part => part.length > 0)
+      if (locationParts.length < 4) {
+        toast.error('Location must include: Place, District, State, and Pincode (separated by commas)')
+        return
+      }
+
+      // Validate that the last part (pincode) contains numbers
+      const pincode = locationParts[locationParts.length - 1]
+      if (!/\d{6}/.test(pincode)) {
+        toast.error('Location must end with a valid 6-digit pincode')
+        return
+      }
     }
 
     setLoading(true)
@@ -274,11 +274,14 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       const uploadedFiles = []
       let uploadFailures = 0
 
+      // Use shared location if provided, otherwise use first available GPS location
+      const finalLocation = sharedLocation || selectedFiles.find(f => f.autoDetectedLocation)?.autoDetectedLocation || ''
+
       for (const fileData of selectedFiles) {
         try {
           const uploadResult = await uploadToCloudinary(fileData.file)
           uploadedFiles.push({
-            location: sharedLocation, // Use shared location for all files
+            location: finalLocation, // Use final location (manual or GPS)
             cloudinaryUrl: uploadResult.url,
             cloudinaryPublicId: uploadResult.publicId,
             isVerified: fileData.exifData.isVerified || false,
@@ -287,7 +290,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             longitude: fileData.exifData.longitude || null,
           })
         } catch (error: any) {
-          console.error('Upload error:', error)
           uploadFailures++
         }
       }
@@ -398,7 +400,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         {/* Site Location */}
         <div>
           <label htmlFor="location" className="block text-sm font-bold text-slate-900 mb-2">
-            Site Location *
+            Site Location {!selectedFiles.some(f => f.autoDetectedLocation) && '*'}
             {selectedFiles.some(f => f.autoDetectedLocation) && (
               <span className="ml-2 text-green-600 text-xs">✓ Auto-detected from GPS</span>
             )}
@@ -406,13 +408,17 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           <input
             type="text"
             id="location"
-            required
+            required={!selectedFiles.some(f => f.autoDetectedLocation)}
             className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-slate-900 font-medium placeholder-slate-400 bg-white transition-all"
             placeholder="Place, District, State, Pincode (e.g., Hampi, Vijayanagara, Karnataka, 583239)"
             value={sharedLocation}
             onChange={(e) => setSharedLocation(e.target.value)}
           />
-          <p className="mt-2 text-xs text-slate-500">Format: Place, District, State, Pincode. This location will be used for all images.</p>
+          <p className="mt-2 text-xs text-slate-500">
+            {selectedFiles.some(f => f.autoDetectedLocation)
+              ? 'Location auto-detected from GPS. You can edit if needed.'
+              : 'Format: Place, District, State, Pincode. This location will be used for all images.'}
+          </p>
         </div>
 
         {/* File Input */}
@@ -519,7 +525,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-blue-900 mb-1">About this upload</p>
                   <p className="text-sm text-blue-800">
-                    All {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} will be uploaded with the shared title, description, and location "{sharedLocation || 'site location'}".
+                    All {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} will be uploaded with the shared title, description, and location "{sharedLocation || selectedFiles.find(f => f.autoDetectedLocation)?.autoDetectedLocation || 'to be specified'}".
                   </p>
                 </div>
               </div>
@@ -530,7 +536,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={loading || selectedFiles.length === 0 || !sharedTitle || !sharedDescription || !sharedLocation}
+          disabled={loading || selectedFiles.length === 0 || !sharedTitle || !sharedDescription || (!sharedLocation && !selectedFiles.some(f => f.autoDetectedLocation))}
           className="w-full py-4 px-6 border border-transparent rounded-xl shadow-lg text-base font-bold text-white bg-linear-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all transform hover:scale-105"
         >
           {loading ? (

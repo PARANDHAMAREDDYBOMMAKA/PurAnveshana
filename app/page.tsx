@@ -196,20 +196,35 @@ function LeafletMap({ sites, activePoint }: { sites: any[], activePoint: number 
       }
     }
 
+    // Define India's geographical bounds
+    const indiaBounds = L.latLngBounds(
+      L.latLng(6.5, 68.0),  // Southwest coordinates (southernmost point, westernmost point)
+      L.latLng(35.5, 97.5)  // Northeast coordinates (northernmost point, easternmost point)
+    );
+
     const map = L.map('india-map', {
-      center: [20.5937, 78.9629], // Center of India
-      zoom: 5,
+      center: [22.5, 82.5], // Adjusted center of India
+      zoom: 4.5,
       zoomControl: false,
       dragging: false,
       scrollWheelZoom: false,
       doubleClickZoom: false,
       touchZoom: false,
+      maxBounds: indiaBounds, // Restrict view to India bounds
+      maxBoundsViscosity: 1.0, // Make bounds solid
+      minZoom: 4.5,
+      maxZoom: 4.5,
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
-      maxZoom: 18,
+      bounds: indiaBounds, // Only load tiles within India bounds
     }).addTo(map);
+
+    // Fit map to India bounds with padding to prevent cutting
+    map.fitBounds(indiaBounds, {
+      padding: [20, 20], // Add padding to prevent edges from being cut off
+    });
 
     mapInstanceRef[1](map);
 
@@ -414,9 +429,7 @@ export default function Home() {
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-slate-700 hover:text-orange-600 transition">Features</a>
               <a href="#how-it-works" className="text-slate-700 hover:text-orange-600 transition">How It Works</a>
-              <a href="#about" className="text-slate-700 hover:text-orange-600 transition">About</a>
               <Link href="/signup">
                 <button className="px-6 py-2 bg-linear-to-r cursor-pointer from-orange-500 to-amber-600 text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                   Join Now
@@ -434,9 +447,7 @@ export default function Home() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t">
             <div className="px-4 py-4 space-y-3">
-              <a href="#features" className="block text-slate-700 hover:text-orange-600">Features</a>
               <a href="#how-it-works" className="block text-slate-700 hover:text-orange-600">How It Works</a>
-              <a href="#about" className="block text-slate-700 hover:text-orange-600">About</a>
               <Link href="/signup">
                 <button className="w-full px-6 py-2 cursor-pointer bg-linear-to-r from-orange-500 to-amber-600 text-white rounded-full">
                   Join Now
@@ -457,17 +468,17 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
               <div className="inline-block px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold">
-                Preserving Heritage Together
+                पुरान्वेषी भव — Be a PurAnveshi
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
-                Discover and<br />
+                Rediscover India's<br />
                 <span className="bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
-                  Document India's
+                  Forgotten Heritage
                 </span><br />
-                Ancient Heritage
+                Get Rewarded for Preserving It
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed">
-                Join our community in documenting and preserving ancient sites. Share your discoveries, earn rewards, and help preserve our cultural legacy for future generations.
+                Puranveshana is a people-powered movement to uncover India's ancient wonders — temples, inscriptions, rock art, ruins, and forgotten monuments. Every photo you capture helps bring Bharat's untold stories back to life.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Link href="/signup" className="w-full sm:w-auto">
@@ -688,9 +699,33 @@ export default function Home() {
                           <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Rare Find</span>
                         </div>
                       </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹500+</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹500–₹5,000+</td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        For exceptional discoveries — ancient inscriptions, rare idols, or undocumented sites.
+                        Exceptional discoveries — rare idols, inscriptions, undocumented ruins.
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-orange-50 transition-colors bg-linear-to-r from-orange-50 to-amber-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 shrink-0" />
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Monthly Heritage Award</span>
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-orange-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹10,000+</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                        For top PurAnveshi of the month.
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-orange-50 transition-colors bg-linear-to-r from-orange-50 to-amber-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 shrink-0" />
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Yearly Grand Award</span>
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-orange-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹25,000+</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                        For outstanding contribution to India's heritage discovery.
                       </td>
                     </tr>
                   </tbody>
@@ -709,7 +744,10 @@ export default function Home() {
                 <strong className="text-red-600">Fake/Fraud:</strong> May result in suspension
               </div>
               <div className="text-xs text-slate-600">
-                <strong className="text-amber-600">Rare Find:</strong> Exceptional discoveries get higher rewards
+                <strong className="text-amber-600">Rare Find:</strong> Exceptional discoveries (₹500–₹5,000+)
+              </div>
+              <div className="text-xs text-slate-600">
+                <strong className="text-orange-600">Monthly/Yearly Awards:</strong> ₹10,000+ and ₹25,000+ for top PurAnveshis
               </div>
             </div>
           </div>
@@ -953,6 +991,59 @@ export default function Home() {
                   </ul>
                 </div>
               )}
+            </div>
+
+            {/* FAQ Item 5 */}
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
+              <button
+                onClick={() => setOpenFaq(openFaq === 5 ? null : 5)}
+                className="w-full px-6 py-5 flex items-center justify-between hover:bg-orange-50 transition-colors"
+              >
+                <h3 className="text-lg font-bold text-slate-900 text-left">
+                  What happens to the images I upload?
+                </h3>
+                <ChevronDown
+                  className={`w-5 h-5 text-orange-600 transition-transform duration-300 ${
+                    openFaq === 5 ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+              {openFaq === 5 && (
+                <div className="px-6 pb-5 text-slate-700 leading-relaxed space-y-3">
+                  <p>Right now, all images you upload are stored privately for review and research. They will not be shared publicly until verified and properly documented.</p>
+                  <p>Later, selected discoveries may appear on the PurAnveshana Heritage Map, with credit to the explorer — but without revealing exact coordinates or sensitive site details. This ensures both privacy and protection for the ancient sites.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Hall of Heritage Section */}
+      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">Hall of Heritage</h2>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-600">Celebrating India's Explorers</p>
+          </div>
+
+          <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-white text-center shadow-2xl">
+            <div className="max-w-3xl mx-auto">
+              <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-sm rounded-full mb-4 sm:mb-6">
+                <Award className="w-8 h-8 sm:w-10 sm:h-10" />
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Monthly Winner</h3>
+              <p className="text-4xl sm:text-5xl font-bold mb-2 sm:mb-3">₹10,000</p>
+              <p className="text-lg sm:text-xl mb-6 sm:mb-8 text-orange-100">+ Certificate of Recognition</p>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/20">
+                <p className="text-sm sm:text-base font-semibold mb-2 text-orange-100">Featured Discovery</p>
+                <p className="text-lg sm:text-2xl font-bold">9th-century temple ruins near Bellary, Karnataka</p>
+              </div>
+
+              <p className="mt-6 sm:mt-8 text-sm sm:text-base text-orange-100">
+                Each month, we honor the top PurAnveshis who bring ancient India to light
+              </p>
             </div>
           </div>
         </div>

@@ -11,8 +11,10 @@ export interface ExifData {
 
 export async function extractExifData(file: File): Promise<ExifData> {
   try {
+    // Parse EXIF data - exifr automatically extracts GPS coordinates
     const exif = await exifr.parse(file, {
-      pick: ['Make', 'Model', 'latitude', 'longitude', 'DateTimeOriginal', 'Software', 'ISO', 'FNumber', 'ExposureTime'],
+      gps: true, // Enable GPS parsing
+      pick: ['Make', 'Model', 'DateTimeOriginal', 'Software', 'ISO', 'FNumber', 'ExposureTime'],
     })
 
     if (!exif) {
@@ -33,9 +35,9 @@ export async function extractExifData(file: File): Promise<ExifData> {
       ? `${exif.Make} ${exif.Model}`
       : null
 
-    // Extract GPS coordinates
-    const latitude = exif.latitude || null
-    const longitude = exif.longitude || null
+    // Extract GPS coordinates - exifr automatically converts to decimal degrees
+    let latitude = exif.latitude || null
+    let longitude = exif.longitude || null
 
     // Return verification based on presence of camera details
     return {
@@ -46,7 +48,6 @@ export async function extractExifData(file: File): Promise<ExifData> {
       captureDate: exif.DateTimeOriginal || null
     }
   } catch (error) {
-    console.error('Error extracting EXIF data:', error)
     return {
       isVerified: false,
       cameraModel: null,
