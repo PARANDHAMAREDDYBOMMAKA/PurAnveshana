@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link'
-import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins } from 'lucide-react';
+import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins,BadgeIndianRupee } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 // Client-only Video Player
@@ -471,19 +471,17 @@ export default function Home() {
                 पुरान्वेषी भव — Be a PurAnveshi
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
-                Rediscover India's<br />
-                <span className="bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
-                  Forgotten Heritage
-                </span><br />
-                Get Rewarded for Preserving It
+               Rediscover India’s Hidden Heritage — and <strong className='text-orange-700'>Get Rewarded!</strong>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed">
-                Puranveshana is a people-powered movement to uncover India's ancient wonders — temples, inscriptions, rock art, ruins, and forgotten monuments. Every photo you capture helps bring Bharat's untold stories back to life.
+                Every forgotten temple, ruin, or inscription you uncover could earn you a cash reward —
+ because real explorers like you are helping us protect Bharat’s lost heritage.
+
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Link href="/signup" className="w-full sm:w-auto">
                   <button className="w-full sm:w-auto cursor-pointer px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-orange-500 to-amber-600 text-white rounded-full font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
-                    Start Exploring
+                    Upload a Hidden Place
                     <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </Link>
@@ -522,7 +520,118 @@ export default function Home() {
         </div>
       </section> */}
 
-      {/* How It Works */}
+      {/* Earn by Exploring Section */}
+      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+              पुरान्वेषी भव — Be a PurAnveshi
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 px-2 flex items-center justify-center gap-2">
+             <div><BadgeIndianRupee className='text-yellow-600 h-14 w-14'/></div> Reward Highlights
+            </h2>
+            <strong><h1 className="text-base sm:text-lg lg:text-xl text-slate-900 mb-3 sm:mb-4">How Much Can You Earn?</h1></strong>
+            <p className="text-sm sm:text-base lg:text-lg text-orange-600 mt-2 sm:mt-4 max-w-4xl mx-auto px-2">
+              Your discovery = Your reward. The rarer your find, the higher your payout.
+            </p>
+          </div>
+
+          {/* Reward System Table */}
+          <div className="mb-8 sm:mb-12 lg:mb-16">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 text-center px-2">Reward System</h3>
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+                <table className="min-w-full bg-white rounded-xl shadow-lg overflow-hidden">
+                  <thead className="bg-linear-to-r from-orange-500 to-amber-600 text-white">
+                    <tr>
+                      <th className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm lg:text-base font-semibold">Type of Upload</th>
+                      <th className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm lg:text-base font-semibold">Reward</th>
+                      <th className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm lg:text-base font-semibold hidden md:table-cell">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    <tr className="hover:bg-orange-50 transition-colors">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 shrink-0" />
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Unique + Verified</span>
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-green-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹50–₹200</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                        Original photo or video, captured by you, with location data and clear details.
+                      </td>
+                    </tr>
+                    {/* <tr className="hover:bg-orange-50 transition-colors">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <X className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 shrink-0" />
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Duplicate / Copied</span>
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-500 font-bold text-xs sm:text-sm lg:text-base">₹0</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                        Already exists on the web or submitted by others.
+                      </td>
+                    </tr> */}
+                    <tr className="hover:bg-orange-50 transition-colors">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <X className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 shrink-0" />
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Fake / Fraud</span>
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-red-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹0</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                        Misuse or AI-generated images may result in temporary suspension.
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-orange-50 transition-colors bg-amber-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 shrink-0" />
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Rare Find</span>
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">upto ₹5,000</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                        Exceptional discoveries — rare idols, inscriptions, undocumented ruins.
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-orange-50 transition-colors bg-linear-to-r from-orange-50 to-amber-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 shrink-0" />
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Monthly Heritage Award</span>
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-orange-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">5x</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                        For top PurAnveshi of the month.
+                      </td>
+                    </tr>
+                    {/* <tr className="hover:bg-orange-50 transition-colors bg-linear-to-r from-orange-50 to-amber-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 shrink-0" />
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Yearly Grand Award</span>
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-orange-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹25,000+</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
+                        For outstanding contribution to India's heritage discovery.
+                      </td>
+                    </tr> */}
+                  </tbody>
+                </table>
+
+                <div className='p-5'>
+                  <p className='flex items-start justify-start text-amber-500'>All uploads are verified. Only genuine, unique discoveries are rewarded.</p>
+                </div>
+              </div>
+            </div>
+
+                        {/* How It Works */}
       <section id="how-it-works" className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-amber-50 via-orange-50/30 to-white relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -556,9 +665,12 @@ export default function Home() {
               </div>
             ))}
           </div>
+          {/* <div>
+            <p className='flex items-start justify-start text-red-500'>“No risk, no complexity — upload → verify → earn.”</p>
+          </div> */}
 
           {/* Additional Info */}
-          <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 text-white text-center shadow-xl">
+          {/* <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 text-white text-center shadow-xl">
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3">Start Your Heritage Journey Today</h3>
             <p className="text-xs sm:text-sm lg:text-base text-orange-100 mb-4 sm:mb-6 max-w-2xl mx-auto">
               Join a community of passionate explorers documenting India's forgotten heritage. Every upload helps preserve our cultural legacy.
@@ -575,163 +687,9 @@ export default function Home() {
                 </button>
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
-
-      <section className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-white via-orange-50/20 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
-              See Puranveshana in Action
-            </h2>
-            <p className="text-base sm:text-lg text-slate-600">
-              Watch how our platform helps preserve India's heritage
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-            <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300">
-              <div className="p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Heritage Discovery & Rewards</h3>
-                <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-slate-100" style={{ paddingBottom: '56.25%' }}>
-                  <VideoPlayer
-                    src="/PurAnveshana_Heritage_Discovery_Rewards.mp4"
-                    title="Heritage Discovery & Rewards"
-                  />
-                </div>
-                <p className="text-sm sm:text-base text-slate-600 mt-3 sm:mt-4">
-                  Learn how Puranveshana rewards explorers for documenting ancient heritage sites across India.
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300">
-              <div className="p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Platform Overview</h3>
-                <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-slate-100" style={{ paddingBottom: '56.25%' }}>
-                  <VideoPlayer
-                    src="/Video_Generation_With_Minimum_Duration.mp4"
-                    title="Platform Overview"
-                  />
-                </div>
-                <p className="text-sm sm:text-base text-slate-600 mt-3 sm:mt-4">
-                  A comprehensive guide to using Puranveshana for heritage documentation and preservation.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Earn by Exploring Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-              पुरान्वेषी भव — Be a PurAnveshi
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 px-2">
-              Earn by Exploring India's Hidden Heritage
-            </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-slate-600 mb-3 sm:mb-4">Discover, Upload, Earn, Preserve</p>
-            <p className="text-sm sm:text-base lg:text-lg text-slate-600 mt-2 sm:mt-4 max-w-4xl mx-auto px-2">
-              We invite you to become a <span className="font-semibold text-orange-600">PurAnveshi</span> — an explorer of ancient India.
-              Every time you discover and upload a unique ancient site — a temple, ruin, inscription, rock art, or forgotten monument —
-              you earn rewards for helping preserve our heritage.
-            </p>
-          </div>
-
-          {/* Reward System Table */}
-          <div className="mb-8 sm:mb-12 lg:mb-16">
-            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 text-center px-2">Reward System</h3>
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <div className="inline-block min-w-full align-middle px-4 sm:px-0">
-                <table className="min-w-full bg-white rounded-xl shadow-lg overflow-hidden">
-                  <thead className="bg-linear-to-r from-orange-500 to-amber-600 text-white">
-                    <tr>
-                      <th className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm lg:text-base font-semibold">Type of Upload</th>
-                      <th className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm lg:text-base font-semibold">Reward</th>
-                      <th className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm lg:text-base font-semibold hidden md:table-cell">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200">
-                    <tr className="hover:bg-orange-50 transition-colors">
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 shrink-0" />
-                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Unique + Verified</span>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-green-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹50–₹200</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        Original photo or video, captured by you, with location data and clear details.
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-orange-50 transition-colors">
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          <X className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 shrink-0" />
-                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Duplicate / Copied</span>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-500 font-bold text-xs sm:text-sm lg:text-base">₹0</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        Already exists on the web or submitted by others.
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-orange-50 transition-colors">
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          <X className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 shrink-0" />
-                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Fake / Fraud</span>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-red-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">Deduct Points</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        Misuse or AI-generated images may result in temporary suspension.
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-orange-50 transition-colors bg-amber-50">
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 shrink-0" />
-                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Rare Find</span>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹500–₹5,000+</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        Exceptional discoveries — rare idols, inscriptions, undocumented ruins.
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-orange-50 transition-colors bg-linear-to-r from-orange-50 to-amber-50">
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 shrink-0" />
-                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Monthly Heritage Award</span>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-orange-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹10,000+</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        For top PurAnveshi of the month.
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-orange-50 transition-colors bg-linear-to-r from-orange-50 to-amber-50">
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 shrink-0" />
-                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Yearly Grand Award</span>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-orange-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹25,000+</td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        For outstanding contribution to India's heritage discovery.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
             {/* Mobile descriptions */}
             <div className="mt-4 space-y-3 md:hidden px-2">
               <div className="text-xs text-slate-600">
@@ -867,6 +825,51 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* <section className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-white via-orange-50/20 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
+              See Puranveshana in Action
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600">
+              Watch how our platform helps preserve India's heritage
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300">
+              <div className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Heritage Discovery & Rewards</h3>
+                <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-slate-100" style={{ paddingBottom: '56.25%' }}>
+                  <VideoPlayer
+                    src="/PurAnveshana_Heritage_Discovery_Rewards.mp4"
+                    title="Heritage Discovery & Rewards"
+                  />
+                </div>
+                <p className="text-sm sm:text-base text-slate-600 mt-3 sm:mt-4">
+                  Learn how Puranveshana rewards explorers for documenting ancient heritage sites across India.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300">
+              <div className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Platform Overview</h3>
+                <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-slate-100" style={{ paddingBottom: '56.25%' }}>
+                  <VideoPlayer
+                    src="/Video_Generation_With_Minimum_Duration.mp4"
+                    title="Platform Overview"
+                  />
+                </div>
+                <p className="text-sm sm:text-base text-slate-600 mt-3 sm:mt-4">
+                  A comprehensive guide to using Puranveshana for heritage documentation and preservation.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> */}
+
 
       {/* FAQ Section */}
       <section id="faq" className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-white to-amber-50">
@@ -1020,7 +1023,7 @@ export default function Home() {
       </section>
 
       {/* Hall of Heritage Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+      {/* <section className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">Hall of Heritage</h2>
@@ -1047,7 +1050,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-12 sm:py-16 lg:py-20 bg-linear-to-r from-orange-500 to-amber-600">
