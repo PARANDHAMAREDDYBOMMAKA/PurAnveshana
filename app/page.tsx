@@ -430,6 +430,11 @@ export default function Home() {
             
             <div className="hidden md:flex items-center space-x-8">
               <a href="#how-it-works" className="text-slate-700 hover:text-orange-600 transition">How It Works</a>
+              <a href="#rewards" className="text-slate-700 hover:text-orange-600 transition flex items-center gap-1">
+                <Award className="w-4 h-4" />
+                Rewards
+              </a>
+              <a href="#why-join" className="text-slate-700 hover:text-orange-600 transition">Why Join Puranveshana</a>
               <Link href="/signup">
                 <button className="px-6 py-2 bg-linear-to-r cursor-pointer from-orange-500 to-amber-600 text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                   Join Now
@@ -448,6 +453,11 @@ export default function Home() {
           <div className="md:hidden bg-white border-t">
             <div className="px-4 py-4 space-y-3">
               <a href="#how-it-works" className="block text-slate-700 hover:text-orange-600">How It Works</a>
+              <a href="#rewards" className="flex items-center gap-2 text-slate-700 hover:text-orange-600">
+                <Award className="w-4 h-4" />
+                Rewards
+              </a>
+              <a href="#why-join" className="block text-slate-700 hover:text-orange-600">Why Join Puranveshana</a>
               <Link href="/signup">
                 <button className="w-full px-6 py-2 cursor-pointer bg-linear-to-r from-orange-500 to-amber-600 text-white rounded-full">
                   Join Now
@@ -462,31 +472,32 @@ export default function Home() {
       <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-linear-to-br from-amber-50 via-orange-50 to-white"></div>
+          <div className="absolute top-20 left-10 w-64 h-64 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute bottom-20 right-10 w-72 h-72 bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
-              <div className="inline-block px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold">
+              <div className="inline-block px-4 py-2 bg-linear-to-r from-orange-100 to-amber-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold shadow-sm border border-orange-200">
                 पुरान्वेषी भव — Be a PurAnveshi
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
-               Rediscover India’s Hidden Heritage — and <strong className='text-orange-700'>Get Rewarded!</strong>
+               Rediscover India's <span className="bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Hidden Heritage</span> — and <strong className='text-orange-600'>Get Rewarded!</strong>
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl text-slate-700 leading-relaxed">
                 Every forgotten temple, ruin, or inscription you uncover could earn you a cash reward —
- because real explorers like you are helping us protect Bharat’s lost heritage.
-
+ because real explorers like you are helping us protect Bharat's lost heritage.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
                 <Link href="/signup" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto cursor-pointer px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-orange-500 to-amber-600 text-white rounded-full font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
+                  <button className="w-full sm:w-auto cursor-pointer px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-orange-500 to-amber-600 text-white rounded-full font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg">
                     Upload a Hidden Place
                     <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </Link>
                 <Link href="/login" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border-2 border-orange-500 text-orange-600 rounded-full font-semibold hover:bg-orange-50 transition-all duration-300 cursor-pointer">
+                  <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border-2 border-orange-500 text-orange-600 rounded-full font-bold hover:bg-orange-50 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
                     Login
                   </button>
                 </Link>
@@ -530,14 +541,18 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 px-2 flex items-center justify-center gap-2">
              <div><BadgeIndianRupee className='text-yellow-600 h-14 w-14'/></div> Reward Highlights
             </h2>
-            <strong><h1 className="text-base sm:text-lg lg:text-xl text-slate-900 mb-3 sm:mb-4">How Much Can You Earn?</h1></strong>
-            <p className="text-sm sm:text-base lg:text-lg text-orange-600 mt-2 sm:mt-4 max-w-4xl mx-auto px-2">
-              Your discovery = Your reward. The rarer your find, the higher your payout.
-            </p>
+            <div className="bg-linear-to-r from-orange-100 via-amber-100 to-orange-100 rounded-2xl p-4 sm:p-6 max-w-3xl mx-auto mb-2 sm:mb-4 border-2 border-orange-200">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 mb-2 sm:mb-3">
+                💰 How Much Can You Earn?
+              </h1>
+              <p className="text-sm sm:text-base lg:text-lg font-semibold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                Your discovery = Your reward. The rarer your find, the higher your payout.
+              </p>
+            </div>
           </div>
 
           {/* Reward System Table */}
-          <div className="mb-8 sm:mb-12 lg:mb-16">
+          <div id="rewards" className="mb-8 sm:mb-12 lg:mb-16">
             <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 text-center px-2">Reward System</h3>
             <div className="overflow-x-auto -mx-4 sm:mx-0">
               <div className="inline-block min-w-full align-middle px-4 sm:px-0">
@@ -625,13 +640,21 @@ export default function Home() {
                   </tbody>
                 </table>
 
-                <div className='p-5'>
-                  <p className='flex items-start justify-start text-amber-500'>All uploads are verified. Only genuine, unique discoveries are rewarded.</p>
+                <div className='p-4 sm:p-5 lg:p-6'>
+                  <div className='bg-linear-to-r from-amber-50 to-orange-50 rounded-xl p-4 sm:p-5 border-l-4 border-amber-500 shadow-sm'>
+                    <p className='flex items-center gap-2 text-sm sm:text-base lg:text-lg font-semibold text-amber-700'>
+                      <span className='text-xl sm:text-2xl'>✓</span>
+                      All uploads are verified. Only genuine, unique discoveries are rewarded.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-                        {/* How It Works */}
+      {/* How It Works */}
       <section id="how-it-works" className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-amber-50 via-orange-50/30 to-white relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -666,8 +689,31 @@ export default function Home() {
             ))}
           </div>
           {/* <div>
-            <p className='flex items-start justify-start text-red-500'>“No risk, no complexity — upload → verify → earn.”</p>
+            <p className='flex items-start justify-start text-red-500'>"No risk, no complexity — upload → verify → earn."</p>
           </div> */}
+
+          {/* Mobile descriptions - Shown on mobile after How It Works */}
+          <div className="md:hidden bg-white py-6 px-4 mb-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="space-y-3">
+                <div className="text-xs text-slate-600">
+                  <strong className="text-green-600">Unique + Verified:</strong> Original photo/video with location data
+                </div>
+                <div className="text-xs text-slate-600">
+                  <strong className="text-slate-500">Duplicate:</strong> Already exists on web
+                </div>
+                <div className="text-xs text-slate-600">
+                  <strong className="text-red-600">Fake/Fraud:</strong> May result in suspension
+                </div>
+                <div className="text-xs text-slate-600">
+                  <strong className="text-amber-600">Rare Find:</strong> Exceptional discoveries (₹500–₹5,000+)
+                </div>
+                <div className="text-xs text-slate-600">
+                  <strong className="text-orange-600">Monthly/Yearly Awards:</strong> ₹10,000+ and ₹25,000+ for top PurAnveshis
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Additional Info */}
           <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 text-white text-center shadow-xl">
@@ -690,27 +736,128 @@ export default function Home() {
           </div>
         </div>
       </section>
-            {/* Mobile descriptions */}
-            <div className="mt-4 space-y-3 md:hidden px-2">
-              <div className="text-xs text-slate-600">
-                <strong className="text-green-600">Unique + Verified:</strong> Original photo/video with location data
+
+      {/* Why Join PurAnveshana */}
+      <section id="why-join" className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-white via-slate-50 to-amber-50/30 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-20 right-10 w-72 h-72 bg-linear-to-br from-orange-300 to-amber-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute bottom-20 left-10 w-72 h-72 bg-linear-to-br from-amber-300 to-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
+              Why Join PurAnveshana
+            </h2>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto">
+              Be part of a movement preserving India's forgotten heritage while earning rewards
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
+            {/* Earn Real Money */}
+            <div className="group relative bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 hover:border-green-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-green-100 to-emerald-100 rounded-full -translate-y-16 translate-x-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 sm:gap-4 mb-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <BadgeIndianRupee className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Earn Real Money</h3>
+                </div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed mb-4">
+                  Simple, transparent, direct-to-UPI payments for every verified contribution you make.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-green-100 text-green-800 text-xs sm:text-sm font-semibold rounded-full">Instant Payouts</span>
+                  <span className="px-3 py-1 bg-green-100 text-green-800 text-xs sm:text-sm font-semibold rounded-full">No Hidden Fees</span>
+                </div>
               </div>
-              <div className="text-xs text-slate-600">
-                <strong className="text-slate-500">Duplicate:</strong> Already exists on web
+            </div>
+
+            {/* Preserve Heritage */}
+            <div className="group relative bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 hover:border-amber-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-amber-100 to-orange-100 rounded-full -translate-y-16 translate-x-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 sm:gap-4 mb-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <MapPin className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Preserve Heritage</h3>
+                </div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed mb-4">
+                  Your discoveries help us build the comprehensive map of forgotten India's cultural treasures.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-amber-100 text-amber-800 text-xs sm:text-sm font-semibold rounded-full">Cultural Impact</span>
+                  <span className="px-3 py-1 bg-amber-100 text-amber-800 text-xs sm:text-sm font-semibold rounded-full">Legacy Builder</span>
+                </div>
               </div>
-              <div className="text-xs text-slate-600">
-                <strong className="text-red-600">Fake/Fraud:</strong> May result in suspension
+            </div>
+
+            {/* Get Recognized */}
+            <div className="group relative bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 hover:border-purple-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-purple-100 to-violet-100 rounded-full -translate-y-16 translate-x-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 sm:gap-4 mb-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Award className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Get Recognized</h3>
+                </div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed mb-4">
+                  Be featured on our "Hall of Heritage" page and showcase your contributions to the nation.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs sm:text-sm font-semibold rounded-full">Public Recognition</span>
+                  <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs sm:text-sm font-semibold rounded-full">Top Contributor</span>
+                </div>
               </div>
-              <div className="text-xs text-slate-600">
-                <strong className="text-amber-600">Rare Find:</strong> Exceptional discoveries (₹500–₹5,000+)
-              </div>
-              <div className="text-xs text-slate-600">
-                <strong className="text-orange-600">Monthly/Yearly Awards:</strong> ₹10,000+ and ₹25,000+ for top PurAnveshis
+            </div>
+
+            {/* Join the Movement */}
+            <div className="group relative bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 hover:border-blue-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-100 to-cyan-100 rounded-full -translate-y-16 translate-x-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 sm:gap-4 mb-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Join the Movement</h3>
+                </div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed mb-4">
+                  Become one of India's first citizen-archaeologists and shape the future of heritage preservation.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs sm:text-sm font-semibold rounded-full">Community First</span>
+                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs sm:text-sm font-semibold rounded-full">Pioneer Status</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* What Verified Means */}
+          {/* Call to Action */}
+          <div className="mt-10 sm:mt-12 lg:mt-16 text-center">
+            <div className="bg-linear-to-r from-orange-500 via-amber-600 to-orange-500 rounded-2xl sm:rounded-3xl p-8 sm:p-10 lg:p-12 shadow-2xl">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6">
+                Ready to Make an Impact?
+              </h3>
+              <p className="text-base sm:text-lg text-orange-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
+                Join thousands of PurAnveshis across India who are documenting our shared heritage and earning rewards for their contributions.
+              </p>
+              <Link href="/signup">
+                <button className="px-8 sm:px-10 lg:px-12 py-3 sm:py-4 bg-white text-orange-600 rounded-full font-bold text-base sm:text-lg hover:bg-orange-50 transition-all duration-300 transform hover:scale-105 shadow-xl inline-flex items-center gap-3">
+                  Start Your Journey Today
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What Verified Means */}
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8 sm:mb-12 lg:mb-16">
             <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 text-center px-2">What "Verified" Means</h3>
             <p className="text-center text-sm sm:text-base text-slate-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
@@ -825,6 +972,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+
       {/* <section className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-white via-orange-50/20 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
