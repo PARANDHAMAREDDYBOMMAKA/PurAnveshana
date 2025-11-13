@@ -574,7 +574,7 @@ export default function Home() {
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-green-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹50–₹200</td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        Original photo or video, captured by you, with location data and clear details.
+                        Your original photo/video with GPS location — temples, statues, ruins, inscriptions. Every genuine discovery counts!
                       </td>
                     </tr>
                     {/* <tr className="hover:bg-orange-50 transition-colors">
@@ -598,19 +598,19 @@ export default function Home() {
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-red-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹0</td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        Misuse or AI-generated images may result in temporary suspension.
+                        AI-generated, manipulated, or misleading content will result in account suspension. Authenticity is key.
                       </td>
                     </tr>
                     <tr className="hover:bg-orange-50 transition-colors bg-amber-50">
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
                         <div className="flex items-center gap-1.5 sm:gap-2">
                           <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 shrink-0" />
-                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Rare Find</span>
+                          <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Rare Find 🏆</span>
                         </div>
                       </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">upto ₹5,000</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹500–₹5,000</td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        Exceptional discoveries — rare idols, inscriptions, undocumented ruins.
+                        Extraordinary finds — hidden temples, ancient inscriptions, rare idols, or undocumented archaeological sites. Make history!
                       </td>
                     </tr>
                     <tr className="hover:bg-orange-50 transition-colors bg-linear-to-r from-orange-50 to-amber-50">
@@ -620,9 +620,9 @@ export default function Home() {
                           <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Monthly Heritage Award</span>
                         </div>
                       </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-orange-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">5x</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-orange-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">5x Bonus</td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
-                        For top PurAnveshi of the month.
+                        Top monthly contributor gets 5x their total earnings! Be the best explorer and multiply your rewards.
                       </td>
                     </tr>
                     {/* <tr className="hover:bg-orange-50 transition-colors bg-linear-to-r from-orange-50 to-amber-50">
@@ -646,6 +646,32 @@ export default function Home() {
                       <span className='text-xl sm:text-2xl'>✓</span>
                       All uploads are verified. Only genuine, unique discoveries are rewarded.
                     </p>
+                  </div>
+
+                  {/* Upload Status Descriptions - Mobile Only */}
+                  <div className="mt-6 bg-white rounded-xl p-5 shadow-md border border-orange-100 md:hidden">
+                    <div className="space-y-3">
+                      <div className="text-sm">
+                        <span className="font-semibold text-green-600">Unique + Verified:</span>
+                        <span className="text-slate-600"> Your original photo/video with GPS location — temples, statues, ruins, inscriptions. Every genuine discovery counts!</span>
+                      </div>
+                      <div className="text-sm">
+                        <span className="font-semibold text-slate-500">Duplicate:</span>
+                        <span className="text-slate-600"> Already exists on web</span>
+                      </div>
+                      <div className="text-sm">
+                        <span className="font-semibold text-red-500">Fake/Fraud:</span>
+                        <span className="text-slate-600"> AI-generated, manipulated, or misleading content will result in account suspension. Authenticity is key.</span>
+                      </div>
+                      <div className="text-sm">
+                        <span className="font-semibold text-amber-600">Rare Find:</span>
+                        <span className="text-slate-600"> Extraordinary finds — hidden temples, ancient inscriptions, rare idols, or undocumented archaeological sites. Make history!</span>
+                      </div>
+                      <div className="text-sm">
+                        <span className="font-semibold text-orange-600">Monthly Heritage Award:</span>
+                        <span className="text-slate-600"> Top monthly contributor gets 5x their total earnings! Be the best explorer and multiply your rewards.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -693,7 +719,7 @@ export default function Home() {
           </div> */}
 
           {/* Mobile descriptions - Shown on mobile after How It Works */}
-          <div className="md:hidden bg-white py-6 px-4 mb-6">
+          {/* <div className="md:hidden bg-white py-6 px-4 mb-6">
             <div className="max-w-7xl mx-auto">
               <div className="space-y-3">
                 <div className="text-xs text-slate-600">
@@ -713,7 +739,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Additional Info */}
           <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 text-white text-center shadow-xl">
