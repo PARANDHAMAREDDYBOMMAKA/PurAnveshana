@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://puranveshana.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://puranveshana.com'),
   title: {
     default: "Puranveshana - Discover Indian History & Hidden Heritage Sites",
     template: "%s | Puranveshana"
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://puranveshana.vercel.app",
+    url: "https://puranveshana.com",
     siteName: "Puranveshana",
     title: "Puranveshana - Uncover Indian History & Hidden Heritage Sites",
     description: "Explore Indian history and discover India's hidden history. Document ancient monuments, verify archaeological sites, and preserve our rich cultural heritage.",
@@ -85,6 +85,9 @@ export const metadata: Metadata = {
   verification: {
     google: 'google3eea601a87f2daa0',
   },
+  alternates: {
+    canonical: 'https://puranveshana.com',
+  },
 };
 
 export default function RootLayout({
@@ -92,12 +95,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://puranveshana.com';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Puranveshana',
     alternateName: 'Puranveshaa',
-    url: 'https://puranveshana.vercel.app',
+    url: siteUrl,
     description: 'Uncover Indian history and explore India\'s hidden history. Discover, document, and verify heritage sites, ancient monuments, and archaeological locations across India.',
     about: {
       '@type': 'Thing',
@@ -109,7 +113,7 @@ export default function RootLayout({
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://puranveshana.vercel.app/search?q={search_term_string}'
+        urlTemplate: `${siteUrl}/search?q={search_term_string}`
       },
       'query-input': 'required name=search_term_string'
     },
@@ -118,7 +122,7 @@ export default function RootLayout({
       name: 'Puranveshana',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://puranveshana.vercel.app/logo.png'
+        url: `${siteUrl}/logo.png`
       }
     }
   };

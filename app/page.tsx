@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins,BadgeIndianRupee } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import GoogleTranslate from '@/components/GoogleTranslate';
 
 // Client-only Video Player
 function VideoPlayer({ src, title }: { src: string; title: string }) {
@@ -435,6 +436,7 @@ export default function Home() {
                 Rewards
               </a>
               <a href="#why-join" className="text-slate-700 hover:text-orange-600 transition">Why Join Puranveshana</a>
+              <GoogleTranslate />
               <Link href="/signup">
                 <button className="px-6 py-2 bg-linear-to-r cursor-pointer from-orange-500 to-amber-600 text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                   Join Now
@@ -442,9 +444,12 @@ export default function Home() {
               </Link>
             </div>
 
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden">
-              {isMenuOpen ? <X /> : <Menu />}
-            </button>
+            <div className="md:hidden flex items-center space-x-2">
+              <GoogleTranslate />
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                {isMenuOpen ? <X /> : <Menu />}
+              </button>
+            </div>
           </div>
         </div>
 
