@@ -41,6 +41,7 @@ export default function GoogleTranslate() {
   const [isTranslating, setIsTranslating] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const removalIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const scriptLoadedRef = useRef(false);
 
   // Set initial language from cookie on mount
   useEffect(() => {
@@ -48,7 +49,11 @@ export default function GoogleTranslate() {
     setCurrentLanguage(initialLang);
   }, []);
 
+  // Load Google Translate script once
   useEffect(() => {
+    // Only load the script once
+    if (scriptLoadedRef.current) return;
+
     // Initialize Google Translate
     window.googleTranslateElementInit = () => {
       if (window.google?.translate?.TranslateElement) {
@@ -71,10 +76,16 @@ export default function GoogleTranslate() {
       script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
       script.async = true;
       document.body.appendChild(script);
+      scriptLoadedRef.current = true;
     }
+  }, []); // Run only once
 
+  // Handle element removal and language detection
+  useEffect(() => {
     // Aggressively remove all Google Translate UI elements (but preserve the select)
     const removeGoogleElements = () => {
+      if (isTranslating) return; // Don't remove during translation
+
       // Remove all iframes
       const iframes = document.querySelectorAll('iframe.goog-te-banner-frame, iframe.skiptranslate, iframe[id^="goog-gt-"]');
       iframes.forEach(iframe => iframe.remove());
@@ -110,12 +121,10 @@ export default function GoogleTranslate() {
       document.body.style.position = 'static';
     };
 
-    // Run removal function continuously (unless translating)
+    // Run removal function less frequently
     removalIntervalRef.current = setInterval(() => {
-      if (!isTranslating) {
-        removeGoogleElements();
-      }
-    }, 100);
+      removeGoogleElements();
+    }, 500); // Changed from 100ms to 500ms to reduce page thrashing
 
     // Check for language change from cookies
     const checkLanguage = setInterval(() => {
@@ -129,7 +138,7 @@ export default function GoogleTranslate() {
           setCurrentLanguage(lang);
         }
       }
-    }, 500);
+    }, 1000); // Changed from 500ms to 1000ms
 
     return () => {
       clearInterval(checkLanguage);
@@ -137,7 +146,7 @@ export default function GoogleTranslate() {
         clearInterval(removalIntervalRef.current);
       }
     };
-  }, [currentLanguage, isTranslating]);
+  }, [isTranslating, currentLanguage]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -212,10 +221,10 @@ export default function GoogleTranslate() {
           selectElement.style.opacity = '';
           selectElement.style.visibility = '';
 
-          // Resume element removal after 2 seconds (give Google time to translate)
+          // Resume element removal after 5 seconds (give Google more time to translate)
           setTimeout(() => {
             setIsTranslating(false);
-          }, 2000);
+          }, 5000);
         }, 500);
 
         // Update our state

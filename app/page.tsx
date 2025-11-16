@@ -411,6 +411,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-amber-50 via-orange-50 to-white">
+      {/* Google Translate - Single Instance for entire page */}
+      <div className="fixed top-4 right-4 z-60">
+        <GoogleTranslate />
+      </div>
+
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -428,7 +433,7 @@ export default function Home() {
                 </span>
               </div>
             </div>
-            
+
             <div className="hidden md:flex items-center space-x-8">
               <a href="#how-it-works" className="text-slate-700 hover:text-orange-600 transition">How It Works</a>
               <a href="#rewards" className="text-slate-700 hover:text-orange-600 transition flex items-center gap-1">
@@ -436,7 +441,6 @@ export default function Home() {
                 Rewards
               </a>
               <a href="#why-join" className="text-slate-700 hover:text-orange-600 transition">Why Join Puranveshana</a>
-              <GoogleTranslate />
               <Link href="/signup">
                 <button className="px-6 py-2 bg-linear-to-r cursor-pointer from-orange-500 to-amber-600 text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                   Join Now
@@ -445,7 +449,6 @@ export default function Home() {
             </div>
 
             <div className="md:hidden flex items-center space-x-2">
-              <GoogleTranslate />
               <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
                 {isMenuOpen ? <X /> : <Menu />}
               </button>
