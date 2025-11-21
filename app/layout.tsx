@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast'
+import TranslateErrorBoundary from '@/components/TranslateErrorBoundary';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -128,7 +129,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -138,12 +139,36 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Suppress Google Translate DOM manipulation errors */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined') {
+                const originalError = window.onerror;
+                window.onerror = function(message, source, lineno, colno, error) {
+                  if (error && error.message && (
+                    error.message.includes('removeChild') ||
+                    error.message.includes('insertBefore') ||
+                    error.message.includes('The node to be removed is not a child')
+                  )) {
+                    return true;
+                  }
+                  if (originalError) return originalError(message, source, lineno, colno, error);
+                  return false;
+                };
+              }
+            `
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
-        <Toaster position="top-right" />
-        {children}
+        <TranslateErrorBoundary>
+          <Toaster position="top-right" />
+          {children}
+        </TranslateErrorBoundary>
       </body>
     </html>
   );

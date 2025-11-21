@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/* Google Translate Fixes - Hide Google Translate UI elements */
+.goog-te-banner-frame,
+.skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+/* Prevent font tags from breaking layout */
+font {
+  display: contents !important;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
