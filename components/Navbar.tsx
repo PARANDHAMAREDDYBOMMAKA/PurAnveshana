@@ -44,7 +44,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               <h1 className="text-lg sm:text-2xl font-extrabold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
                 Puranveshana
               </h1>
-              <span className="text-[10px] sm:text-xs text-orange-600 font-semibold -mt-1">
+              <span className="text-[10px] sm:text-xs text-orange-600 font-semibold -mt-1 notranslate" translate="no">
                 पुरातन अन्वेषण
               </span>
             </div>

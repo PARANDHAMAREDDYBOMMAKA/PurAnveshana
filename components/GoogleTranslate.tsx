@@ -80,51 +80,64 @@ export default function GoogleTranslate() {
     }
   }, []); // Run only once
 
-  // Handle element removal and language detection
+  // Handle element hiding (using CSS instead of removal to avoid React conflicts) and language detection
   useEffect(() => {
-    // Aggressively remove all Google Translate UI elements (but preserve the select)
-    const removeGoogleElements = () => {
-      if (isTranslating) return; // Don't remove during translation
+    // Hide Google Translate UI elements using CSS instead of removing them
+    const hideGoogleElements = () => {
+      if (isTranslating) return;
 
-      // Remove all iframes
-      const iframes = document.querySelectorAll('iframe.goog-te-banner-frame, iframe.skiptranslate, iframe[id^="goog-gt-"]');
-      iframes.forEach(iframe => iframe.remove());
+      try {
+        // Hide all iframes
+        const iframes = document.querySelectorAll('iframe.goog-te-banner-frame, iframe.skiptranslate, iframe[id^="goog-gt-"]');
+        iframes.forEach(iframe => {
+          (iframe as HTMLElement).style.display = 'none';
+        });
 
-      // Remove top banner
-      const topBanner = document.querySelector('.goog-te-banner-frame');
-      if (topBanner) topBanner.remove();
+        // Hide top banner
+        const topBanner = document.querySelector('.goog-te-banner-frame') as HTMLElement;
+        if (topBanner) topBanner.style.display = 'none';
 
-      // Remove skiptranslate divs but preserve the one with goog-te-combo select
-      const skipTranslate = document.querySelectorAll('body > .skiptranslate');
-      skipTranslate.forEach(el => {
-        // Don't remove if it contains the select element
-        const hasSelect = el.querySelector('.goog-te-combo');
-        if (!hasSelect) {
-          el.remove();
-        }
-      });
+        // Hide skiptranslate divs but preserve the one with goog-te-combo select
+        const skipTranslate = document.querySelectorAll('body > .skiptranslate');
+        skipTranslate.forEach(el => {
+          const hasSelect = el.querySelector('.goog-te-combo');
+          if (!hasSelect) {
+            (el as HTMLElement).style.display = 'none';
+          }
+        });
 
-      // Remove spinner and loading elements
-      const spinners = document.querySelectorAll('.goog-te-spinner-pos, .goog-te-spinner');
-      spinners.forEach(el => el.remove());
+        // Hide spinner and loading elements
+        const spinners = document.querySelectorAll('.goog-te-spinner-pos, .goog-te-spinner');
+        spinners.forEach(el => {
+          (el as HTMLElement).style.display = 'none';
+        });
 
-      // Remove any element with ID starting with goog-gt- except necessary ones
-      document.querySelectorAll('[id^="goog-gt-"]').forEach(el => {
-        const parent = el.closest('#google_translate_element');
-        if (!parent && !el.classList.contains('goog-te-combo')) {
-          el.remove();
-        }
-      });
+        // Hide any element with ID starting with goog-gt- except necessary ones
+        document.querySelectorAll('[id^="goog-gt-"]').forEach(el => {
+          const parent = el.closest('#google_translate_element');
+          if (!parent && !el.classList.contains('goog-te-combo')) {
+            (el as HTMLElement).style.display = 'none';
+          }
+        });
 
-      // Reset body position
-      document.body.style.top = '0';
-      document.body.style.position = 'static';
+        // Reset body position
+        document.body.style.top = '0';
+        document.body.style.position = 'static';
+      } catch { /* ignore DOM errors */ }
     };
 
-    // Run removal function less frequently
-    removalIntervalRef.current = setInterval(() => {
-      removeGoogleElements();
-    }, 500); // Changed from 100ms to 500ms to reduce page thrashing
+    // Run hide function
+    const runHide = () => {
+      if (!isTranslating) {
+        hideGoogleElements();
+      }
+    };
+
+    // Initial cleanup after a delay
+    const initialTimeout = setTimeout(runHide, 1000);
+
+    // Run hide function periodically
+    removalIntervalRef.current = setInterval(runHide, 2000);
 
     // Check for language change from cookies
     const checkLanguage = setInterval(() => {
@@ -138,9 +151,10 @@ export default function GoogleTranslate() {
           setCurrentLanguage(lang);
         }
       }
-    }, 1000); // Changed from 500ms to 1000ms
+    }, 1000);
 
     return () => {
+      clearTimeout(initialTimeout);
       clearInterval(checkLanguage);
       if (removalIntervalRef.current) {
         clearInterval(removalIntervalRef.current);
@@ -253,8 +267,9 @@ export default function GoogleTranslate() {
       {/* Custom Language Selector Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
+        className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-sm notranslate"
         aria-label="Select Language"
+        translate="no"
       >
         <Globe className="w-5 h-5 text-black" />
         <span className="text-sm font-medium text-black">
@@ -264,7 +279,7 @@ export default function GoogleTranslate() {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-50">
+        <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-50 notranslate" translate="no">
           <div className="py-1">
             <button
               onClick={() => changeLanguage('en')}
