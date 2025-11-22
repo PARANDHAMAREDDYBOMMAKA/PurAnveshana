@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import GoogleTranslate from './GoogleTranslate'
 
 interface NavbarProps {
   userEmail?: string
@@ -43,7 +44,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               <h1 className="text-lg sm:text-2xl font-extrabold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
                 Puranveshana
               </h1>
-              <span className="text-[10px] sm:text-xs text-orange-600 font-semibold -mt-1">
+              <span className="text-[10px] sm:text-xs text-orange-600 font-semibold -mt-1 notranslate" translate="no">
                 पुरातन अन्वेषण
               </span>
             </div>
@@ -60,6 +61,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                 ADMIN
               </span>
             )}
+            <GoogleTranslate />
             <div className="hidden md:flex items-center gap-2 bg-orange-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-orange-200">
               <svg className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />

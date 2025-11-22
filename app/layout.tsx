@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast'
+import TranslateErrorBoundary from '@/components/TranslateErrorBoundary';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://puranveshana.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://puranveshana.com'),
   title: {
     default: "Puranveshana - Discover Indian History & Hidden Heritage Sites",
     template: "%s | Puranveshana"
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://puranveshana.vercel.app",
+    url: "https://puranveshana.com",
     siteName: "Puranveshana",
     title: "Puranveshana - Uncover Indian History & Hidden Heritage Sites",
     description: "Explore Indian history and discover India's hidden history. Document ancient monuments, verify archaeological sites, and preserve our rich cultural heritage.",
@@ -85,6 +86,9 @@ export const metadata: Metadata = {
   verification: {
     google: 'google3eea601a87f2daa0',
   },
+  alternates: {
+    canonical: 'https://puranveshana.com',
+  },
 };
 
 export default function RootLayout({
@@ -92,12 +96,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://puranveshana.com';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Puranveshana',
     alternateName: 'Puranveshaa',
-    url: 'https://puranveshana.vercel.app',
+    url: siteUrl,
     description: 'Uncover Indian history and explore India\'s hidden history. Discover, document, and verify heritage sites, ancient monuments, and archaeological locations across India.',
     about: {
       '@type': 'Thing',
@@ -109,7 +114,7 @@ export default function RootLayout({
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://puranveshana.vercel.app/search?q={search_term_string}'
+        urlTemplate: `${siteUrl}/search?q={search_term_string}`
       },
       'query-input': 'required name=search_term_string'
     },
@@ -118,15 +123,15 @@ export default function RootLayout({
       name: 'Puranveshana',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://puranveshana.vercel.app/logo.png'
+        url: `${siteUrl}/logo.png`
       }
     }
   };
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1e293b" />
@@ -134,12 +139,36 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Suppress Google Translate DOM manipulation errors */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined') {
+                const originalError = window.onerror;
+                window.onerror = function(message, source, lineno, colno, error) {
+                  if (error && error.message && (
+                    error.message.includes('removeChild') ||
+                    error.message.includes('insertBefore') ||
+                    error.message.includes('The node to be removed is not a child')
+                  )) {
+                    return true;
+                  }
+                  if (originalError) return originalError(message, source, lineno, colno, error);
+                  return false;
+                };
+              }
+            `
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
-        <Toaster position="top-right" />
-        {children}
+        <TranslateErrorBoundary>
+          <Toaster position="top-right" />
+          {children}
+        </TranslateErrorBoundary>
       </body>
     </html>
   );

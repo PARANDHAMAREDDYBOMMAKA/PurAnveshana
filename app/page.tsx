@@ -2,6 +2,8 @@
 import Link from 'next/link'
 import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins,BadgeIndianRupee } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import GoogleTranslate from '@/components/GoogleTranslate';
+import AppDemo from '@/components/AppDemo';
 
 // Client-only Video Player
 function VideoPlayer({ src, title }: { src: string; title: string }) {
@@ -410,6 +412,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-amber-50 via-orange-50 to-white">
+      {/* Google Translate - Single Instance for entire page */}
+      <div className="fixed top-4 right-4 z-60">
+        <GoogleTranslate />
+      </div>
+
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -422,12 +429,12 @@ export default function Home() {
                 <span className="text-xl sm:text-2xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
                   Puranveshana
                 </span>
-                <span className="text-[10px] sm:text-xs text-orange-600 font-semibold -mt-1">
+                <span className="text-[10px] sm:text-xs text-orange-600 font-semibold -mt-1 notranslate" translate="no">
                   पुरातन अन्वेषण
                 </span>
               </div>
             </div>
-            
+
             <div className="hidden md:flex items-center space-x-8">
               <a href="#how-it-works" className="text-slate-700 hover:text-orange-600 transition">How It Works</a>
               <a href="#rewards" className="text-slate-700 hover:text-orange-600 transition flex items-center gap-1">
@@ -442,9 +449,11 @@ export default function Home() {
               </Link>
             </div>
 
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden">
-              {isMenuOpen ? <X /> : <Menu />}
-            </button>
+            <div className="md:hidden flex items-center space-x-2">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                {isMenuOpen ? <X /> : <Menu />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -480,7 +489,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
               <div className="inline-block px-4 py-2 bg-linear-to-r from-orange-100 to-amber-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold shadow-sm border border-orange-200">
-                पुरान्वेषी भव — Be a PurAnveshi
+                <span className="notranslate" translate="no">पुरान्वेषी भव</span> — Be a PurAnveshi
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
                Rediscover India's <span className="bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Hidden Heritage</span> — and <strong className='text-orange-600'>Get Rewarded!</strong>
@@ -640,7 +649,7 @@ export default function Home() {
                   </tbody>
                 </table>
 
-                <div className='p-4 sm:p-5 lg:p-6'>
+                <div className='p-4 sm:p-5 lg:p-6 pb-2 sm:pb-3 lg:pb-4'>
                   <div className='bg-linear-to-r from-amber-50 to-orange-50 rounded-xl p-4 sm:p-5 border-l-4 border-amber-500 shadow-sm'>
                     <p className='flex items-center gap-2 text-sm sm:text-base lg:text-lg font-semibold text-amber-700'>
                       <span className='text-xl sm:text-2xl'>✓</span>
@@ -649,7 +658,7 @@ export default function Home() {
                   </div>
 
                   {/* Upload Status Descriptions - Mobile Only */}
-                  <div className="mt-6 bg-white rounded-xl p-5 shadow-md border border-orange-100 md:hidden">
+                  <div className="mt-4 bg-white rounded-xl p-5 shadow-md border border-orange-100 md:hidden">
                     <div className="space-y-3">
                       <div className="text-sm">
                         <span className="font-semibold text-green-600">Unique + Verified:</span>
@@ -759,6 +768,31 @@ export default function Home() {
                 </button>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* App Demo Section */}
+      <section id="see-it-in-action" className="py-12 sm:py-16 lg:py-20 bg-slate-50 relative overflow-hidden">
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
+              See It In Action
+            </h2>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto">
+              Watch how easy it is to document heritage sites and earn rewards
+            </p>
+          </div>
+
+          <AppDemo />
+
+          <div className="text-center mt-8 sm:mt-12">
+            <Link href="/signup">
+              <button className="px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-orange-500 to-amber-600 text-white rounded-full font-bold hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer">
+                Start Uploading Now
+              </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -897,7 +931,7 @@ export default function Home() {
                   <Check className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 shrink-0" />
                   <h4 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">1. Authentic Content</h4>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium">सत्य / वास्तविक</p>
+                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium notranslate" translate="no">सत्य / वास्तविक</p>
                 <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-slate-600">
                   <li className="flex items-start gap-2">
                     <span className="text-green-600 mt-0.5 shrink-0">•</span>
@@ -920,7 +954,7 @@ export default function Home() {
                   <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 shrink-0" />
                   <h4 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">2. Geotagged Location</h4>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium">भौगोलिकाङ्कित</p>
+                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium notranslate" translate="no">भौगोलिकाङ्कित</p>
                 <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-slate-600">
                   <li className="flex items-start gap-2">
                     <span className="text-blue-600 mt-0.5 shrink-0">•</span>
@@ -943,7 +977,7 @@ export default function Home() {
                   <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 shrink-0" />
                   <h4 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">3. Unique Discovery</h4>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium">पुरातन स्थान अन्वेषण</p>
+                <p className="text-xs sm:text-sm text-slate-700 mb-2 font-medium notranslate" translate="no">पुरातन स्थान अन्वेषण</p>
                 <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm lg:text-base text-slate-600">
                   <li className="flex items-start gap-2">
                     <span className="text-purple-600 mt-0.5 shrink-0">•</span>
@@ -983,7 +1017,7 @@ export default function Home() {
           {/* CTA */}
           <div className="text-center mt-8 sm:mt-10 lg:mt-12 px-2">
             <p className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">
-              पुरान्वेषी भव — Be a PurAnveshi
+              <span className="notranslate" translate="no">पुरान्वेषी भव</span> — Be a PurAnveshi
             </p>
             <p className="text-sm sm:text-base lg:text-lg text-slate-600 mb-4 sm:mb-6 max-w-2xl mx-auto">
               Explore, record, and preserve the stories of India's forgotten past.
@@ -1261,7 +1295,7 @@ export default function Home() {
                 Discover, document, and preserve India's hidden ancient heritage.
               </p>
               <p className="text-xs text-slate-400 italic mb-3 sm:mb-4">
-                पुरान्वेषी भव — Be a PurAnveshi
+                <span className="notranslate" translate="no">पुरान्वेषी भव</span> — Be a PurAnveshi
               </p>
               {/* Social Links */}
               <div className="flex gap-2 sm:gap-3">
@@ -1865,7 +1899,7 @@ export default function Home() {
               </div>
 
               <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-xl p-5 text-white text-center">
-                <h3 className="font-bold mb-2">पुरान्वेषी भव — Be a PurAnveshi</h3>
+                <h3 className="font-bold mb-2"><span className="notranslate" translate="no">पुरान्वेषी भव</span> — Be a PurAnveshi</h3>
                 <p className="text-sm mb-4">Start your journey today and join our growing community of heritage preservers</p>
                 <Link href="/signup">
                   <button onClick={() => setShowContributors(false)} className="bg-white text-orange-600 px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-orange-50 transition-colors">

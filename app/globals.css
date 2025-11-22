@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/* Google Translate Fixes - Hide Google Translate UI elements */
+.goog-te-banner-frame,
+.skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+/* Prevent font tags from breaking layout */
+font {
+  display: contents !important;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -151,4 +171,216 @@ body {
 .custom-marker {
   background: transparent !important;
   border: none !important;
+}
+
+/* Google Translate - Hide Default Banner and Elements */
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+#google_translate_element {
+  position: fixed !important;
+  top: -1000px !important;
+  left: -1000px !important;
+  z-index: -9999 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+.goog-logo-link {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  color: transparent !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+  display: none;
+}
+
+/* Hide the "Powered by Google" text */
+.goog-te-gadget span {
+  display: none !important;
+}
+
+.goog-te-gadget > div {
+  display: none !important;
+}
+
+/* Remove top padding added by Google Translate */
+body > .skiptranslate {
+  display: none !important;
+}
+
+/* Ensure the iframe doesn't show */
+iframe.goog-te-banner-frame {
+  display: none !important;
+}
+
+/* Fix positioning issues */
+body.translated-ltr {
+  top: 0 !important;
+}
+
+/* Hide Google Translate toolbar completely */
+.goog-te-ftab {
+  display: none !important;
+}
+
+#goog-gt-tt {
+  display: none !important;
+}
+
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+/* Hide all Google Translate branding and messages during translation */
+.goog-te-spinner-pos {
+  display: none !important;
+}
+
+.goog-te-spinner {
+  display: none !important;
+}
+
+/* Hide translation progress message */
+div#goog-gt- {
+  display: none !important;
+}
+
+/* Hide any Google Translate notification */
+.goog-te-menu-value span {
+  display: none !important;
+}
+
+.goog-te-menu-value {
+  display: none !important;
+}
+
+/* Hide Google Translate menu frame */
+.goog-te-menu-frame {
+  display: none !important;
+}
+
+/* Additional banner hiding for all states */
+#goog-gt-tt,
+#goog-gt-vt {
+  display: none !important;
+}
+
+/* Hide the "Show original" button and all toolbars */
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure no Google branding appears anywhere */
+[id^="goog-gt-"] {
+  display: none !important;
+}
+
+/* Hide any translation tooltips */
+.goog-tooltip {
+  display: none !important;
+}
+
+/* Force hide all skiptranslate elements except the one with select */
+body > .skiptranslate:not(:has(.goog-te-combo)) {
+  display: none !important;
+}
+
+/* Hide the skiptranslate div that contains the select, but keep the select functional */
+body > .skiptranslate:has(.goog-te-combo) {
+  position: fixed !important;
+  top: -1000px !important;
+  left: -1000px !important;
+  z-index: -9999 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+/* Override any inline styles from Google */
+body[style*="top"] {
+  top: 0 !important;
+}
+
+/* Hide notification bar during switching */
+body > .skiptranslate:first-child {
+  display: none !important;
+}
+
+/* Ensure translated state doesn't show banners */
+body.translated-ltr,
+body.translated-rtl {
+  top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Hide Google Translate select element */
+select.goog-te-combo {
+  display: none !important;
+}
+
+/* Additional specificity for hiding everything */
+html body .skiptranslate,
+html body iframe.skiptranslate,
+html body .goog-te-banner-frame {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+}
+
+/* Aggressively hide loading notification */
+body > div[style*="position: absolute"],
+body > div[style*="position:absolute"] {
+  display: none !important;
+}
+
+/* Hide the notification bar at the top */
+body > .skiptranslate[style],
+body > div.skiptranslate[style] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Target the specific loading bar that appears */
+body > div[style*="background-color"][style*="z-index"] {
+  display: none !important;
+}
+
+/* Hide any absolutely positioned divs from Google Translate */
+div[style*="border: none"][style*="box-sizing"][style*="z-index"] {
+  display: none !important;
+}
+
+/* More specific targeting for the top notification */
+body > div:first-child.skiptranslate,
+body > div:nth-child(1).skiptranslate,
+body > div:nth-child(2).skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }
