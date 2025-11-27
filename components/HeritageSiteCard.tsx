@@ -16,7 +16,8 @@ interface HeritageSiteCardProps {
     images: Array<{
       id: string
       location: string
-      cloudinaryUrl: string
+      cloudinaryUrl?: string | null
+      r2Url?: string | null
       isVerified: boolean
       cameraModel: string | null
       gpsLatitude: number | null
@@ -169,8 +170,16 @@ export default function HeritageSiteCard({
   const currentImage = site.images[selectedImage]
   const verifiedCount = site.images.filter(img => img.isVerified).length
 
+  // Helper function to get the image URL (R2 or Cloudinary)
+  const getImageUrl = (img: typeof currentImage) => img.r2Url || img.cloudinaryUrl || ''
+
   // Helper function to detect if URL is a video
-  const isVideo = (url: string) => url.includes('/video/upload/')
+  const isVideo = (url: string | null | undefined) => {
+    if (!url) return false
+    return url.includes('/video/') || url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.webm')
+  }
+
+  const currentImageUrl = getImageUrl(currentImage)
 
   return (
     <>
@@ -178,16 +187,16 @@ export default function HeritageSiteCard({
         {/* Main Image Display */}
         <div className="relative">
           <div className="relative h-36 sm:h-40 md:h-44 bg-linear-to-br from-orange-100 to-amber-100 overflow-hidden group">
-            {isVideo(currentImage.cloudinaryUrl) ? (
+            {isVideo(currentImageUrl) ? (
               <video
-                src={currentImage.cloudinaryUrl}
+                src={currentImageUrl}
                 className="absolute inset-0 w-full h-full object-cover cursor-pointer"
                 controls
                 onClick={() => setShowFullImage(true)}
               />
             ) : (
               <Image
-                src={currentImage.cloudinaryUrl}
+                src={currentImageUrl}
                 alt={site.title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
@@ -240,14 +249,14 @@ export default function HeritageSiteCard({
                         : 'border-slate-300 hover:border-orange-300 hover:shadow-lg'
                     }`}
                   >
-                    {isVideo(img.cloudinaryUrl) ? (
+                    {isVideo(getImageUrl(img)) ? (
                       <video
-                        src={img.cloudinaryUrl}
+                        src={getImageUrl(img)}
                         className="absolute inset-0 w-full h-full object-cover"
                       />
                     ) : (
                       <Image
-                        src={img.cloudinaryUrl}
+                        src={getImageUrl(img)}
                         alt={`${site.title} - Image ${index + 1}`}
                         fill
                         className="object-cover"
@@ -515,16 +524,16 @@ export default function HeritageSiteCard({
               </svg>
             </button>
             <div className="relative w-full h-full max-h-[90vh]">
-              {isVideo(currentImage.cloudinaryUrl) ? (
+              {isVideo(currentImageUrl) ? (
                 <video
-                  src={currentImage.cloudinaryUrl}
+                  src={currentImageUrl}
                   controls
                   className="w-full h-full max-h-[90vh] object-contain rounded-lg"
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : (
                 <Image
-                  src={currentImage.cloudinaryUrl}
+                  src={currentImageUrl}
                   alt={site.title}
                   width={1920}
                   height={1080}

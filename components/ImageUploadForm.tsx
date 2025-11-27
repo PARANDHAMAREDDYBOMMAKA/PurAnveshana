@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { uploadToCloudinary } from '@/lib/cloudinary/upload'
+import { uploadToR2 } from '@/lib/cloudinary/upload'
 import { extractExifData, reverseGeocode } from '@/lib/utils/exif'
 import toast from 'react-hot-toast'
 
@@ -270,7 +270,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     setLoading(true)
 
     try {
-      // Upload all files to Cloudinary first
+      // Upload all files to R2 first
       const uploadedFiles = []
       let uploadFailures = 0
 
@@ -279,11 +279,11 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
       for (const fileData of selectedFiles) {
         try {
-          const uploadResult = await uploadToCloudinary(fileData.file)
+          const uploadResult = await uploadToR2(fileData.file)
           uploadedFiles.push({
             location: finalLocation, // Use final location (manual or GPS)
-            cloudinaryUrl: uploadResult.url,
-            cloudinaryPublicId: uploadResult.publicId,
+            r2Url: uploadResult.r2Url,
+            r2Key: uploadResult.r2Key,
             isVerified: fileData.exifData.isVerified || false,
             cameraModel: fileData.exifData.cameraModel || null,
             latitude: fileData.exifData.latitude || null,
