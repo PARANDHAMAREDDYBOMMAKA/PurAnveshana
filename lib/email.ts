@@ -1,3 +1,5 @@
+import nodemailer from 'nodemailer'
+
 export async function sendPaymentNotificationEmail(
   userEmail: string,
   amount: number,
@@ -61,8 +63,6 @@ export async function sendPaymentNotificationEmail(
   `
 
   try {
-    const nodemailer = require('nodemailer')
-
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT),
