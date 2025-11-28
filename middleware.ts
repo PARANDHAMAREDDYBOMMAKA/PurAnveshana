@@ -137,11 +137,12 @@ function applySecurityHeaders(response: NextResponse) {
   // Content Security Policy
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com",
-    "style-src 'self' 'unsafe-inline'",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com",
+    "style-src 'self' 'unsafe-inline' https://unpkg.com https://www.gstatic.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
-    "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com",
+    "media-src 'self' https://res.cloudinary.com https://*.r2.dev https://*.r2.cloudflarestorage.com",
+    "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com",
     "frame-src 'self' https://challenges.cloudflare.com",
     "frame-ancestors 'self'",
     "base-uri 'self'",
