@@ -129,7 +129,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning style={{position: 'static', top: 0}}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -164,6 +164,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
+        style={{position: 'static', top: 0, marginTop: 0, paddingTop: 0}}
       >
         <TranslateErrorBoundary>
           <Toaster position="top-right" />

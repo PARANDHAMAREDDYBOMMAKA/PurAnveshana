@@ -73,7 +73,7 @@ export default function GoogleTranslate() {
     if (!document.getElementById('google-translate-script')) {
       const script = document.createElement('script');
       script.id = 'google-translate-script';
-      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
       script.async = true;
       document.body.appendChild(script);
       scriptLoadedRef.current = true;
@@ -194,19 +194,13 @@ export default function GoogleTranslate() {
         console.log('Current value:', selectElement.value);
         console.log('Select element:', selectElement);
 
-        // Make select temporarily visible and interactable
+        // Make select temporarily visible and interactable with !important override
         const parent = selectElement.parentElement;
         if (parent) {
-          parent.style.position = 'fixed';
-          parent.style.top = '0';
-          parent.style.left = '0';
-          parent.style.zIndex = '999999';
-          parent.style.opacity = '1';
-          parent.style.visibility = 'visible';
+          parent.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; z-index: 999999 !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;';
         }
 
-        selectElement.style.opacity = '1';
-        selectElement.style.visibility = 'visible';
+        selectElement.style.cssText = 'display: block !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;';
 
         // Focus on the select
         selectElement.focus();
@@ -214,26 +208,21 @@ export default function GoogleTranslate() {
         // Set the value
         selectElement.value = lang;
 
-        // Trigger multiple event types
-        selectElement.dispatchEvent(new Event('focus', { bubbles: true }));
-        selectElement.dispatchEvent(new Event('click', { bubbles: true }));
-        selectElement.dispatchEvent(new Event('change', { bubbles: true }));
-        selectElement.dispatchEvent(new Event('blur', { bubbles: true }));
+        // Trigger multiple event types with more comprehensive events
+        const events = ['focus', 'click', 'input', 'change', 'blur'];
+        events.forEach(eventType => {
+          const event = new Event(eventType, { bubbles: true, cancelable: true });
+          selectElement.dispatchEvent(event);
+        });
 
         console.log('Value after change:', selectElement.value);
 
         // Hide it again and resume element removal after translation completes
         setTimeout(() => {
           if (parent) {
-            parent.style.position = '';
-            parent.style.top = '';
-            parent.style.left = '';
-            parent.style.zIndex = '';
-            parent.style.opacity = '';
-            parent.style.visibility = '';
+            parent.style.cssText = '';
           }
-          selectElement.style.opacity = '';
-          selectElement.style.visibility = '';
+          selectElement.style.cssText = '';
 
           // Resume element removal after 5 seconds (give Google more time to translate)
           setTimeout(() => {

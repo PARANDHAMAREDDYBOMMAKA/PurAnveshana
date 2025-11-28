@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import { withRetry } from '@/lib/db-utils'
+import { deleteFromR2 } from '@/lib/r2'
 import { v2 as cloudinary } from 'cloudinary'
 
-// Configure Cloudinary
+// Configure Cloudinary (for backward compatibility with existing images)
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -154,9 +155,18 @@ export async function POST(request: Request) {
     }
 
     for (const img of images) {
-      if (!img.location || !img.cloudinaryUrl || !img.cloudinaryPublicId) {
+      if (!img.location) {
         return NextResponse.json(
-          { error: 'Each image must have location, cloudinaryUrl, and cloudinaryPublicId' },
+          { error: 'Each image must have a location' },
+          { status: 400 }
+        )
+      }
+      // Check that either R2 or Cloudinary fields are provided
+      const hasR2 = img.r2Url && img.r2Key
+      const hasCloudinary = img.cloudinaryUrl && img.cloudinaryPublicId
+      if (!hasR2 && !hasCloudinary) {
+        return NextResponse.json(
+          { error: 'Each image must have either R2 (r2Url, r2Key) or Cloudinary (cloudinaryUrl, cloudinaryPublicId) fields' },
           { status: 400 }
         )
       }
@@ -172,8 +182,11 @@ export async function POST(request: Request) {
           images: {
             create: images.map((img: any) => ({
               location: img.location,
-              cloudinaryUrl: img.cloudinaryUrl,
-              cloudinaryPublicId: img.cloudinaryPublicId,
+              // Use R2 if provided, otherwise use Cloudinary (for backward compatibility)
+              r2Url: img.r2Url || null,
+              r2Key: img.r2Key || null,
+              cloudinaryUrl: img.cloudinaryUrl || null,
+              cloudinaryPublicId: img.cloudinaryPublicId || null,
               isVerified: img.isVerified || false,
               cameraModel: img.cameraModel || null,
               gpsLatitude: img.latitude || null,
@@ -315,22 +328,29 @@ export async function DELETE(request: Request) {
       )
     }
 
-    // Delete all images/videos from Cloudinary
+    // Delete all images/videos from R2 or Cloudinary
     const deletePromises = site.images.map(async (image) => {
       try {
-        // Determine resource type based on the URL or public ID
-        const resourceType = image.cloudinaryUrl.includes('/video/') ? 'video' : 'image'
-        await cloudinary.uploader.destroy(image.cloudinaryPublicId, {
-          resource_type: resourceType,
-        })
-        console.log(`Deleted ${resourceType} from Cloudinary:`, image.cloudinaryPublicId)
+        // If image uses R2, delete from R2
+        if (image.r2Key) {
+          await deleteFromR2(image.r2Key)
+          console.log(`Deleted file from R2:`, image.r2Key)
+        }
+        // If image uses Cloudinary, delete from Cloudinary
+        else if (image.cloudinaryPublicId) {
+          const resourceType = image.cloudinaryUrl?.includes('/video/') ? 'video' : 'image'
+          await cloudinary.uploader.destroy(image.cloudinaryPublicId, {
+            resource_type: resourceType,
+          })
+          console.log(`Deleted ${resourceType} from Cloudinary:`, image.cloudinaryPublicId)
+        }
       } catch (error) {
-        console.error('Error deleting from Cloudinary:', error)
-        // Continue with deletion even if Cloudinary fails
+        console.error('Error deleting file:', error)
+        // Continue with deletion even if storage deletion fails
       }
     })
 
-    // Wait for all Cloudinary deletions to complete
+    // Wait for all storage deletions to complete
     await Promise.allSettled(deletePromises)
 
     // Delete from database

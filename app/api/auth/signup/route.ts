@@ -2,15 +2,33 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { withRetry } from '@/lib/db-utils'
+import { verifyTurnstileToken } from '@/lib/cloudflare/turnstile'
+import { getClientIp, logSecurityEvent } from '@/lib/cloudflare/security'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { email, password, mobileNumber } = body
+    const { name, email, password, mobileNumber, turnstileToken } = body
 
-    if (!email || !password) {
+    // Verify Turnstile token
+    const clientIp = getClientIp(request.headers)
+    if (turnstileToken) {
+      const verification = await verifyTurnstileToken(turnstileToken, clientIp)
+      if (!verification.success) {
+        await logSecurityEvent('turnstile_failed', clientIp, {
+          endpoint: '/api/auth/signup',
+          error: verification.error,
+        })
+        return NextResponse.json(
+          { error: verification.error || 'Verification failed' },
+          { status: 403 }
+        )
+      }
+    }
+
+    if (!name || !email || !password) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: 'Name, email and password are required' },
         { status: 400 }
       )
     }
@@ -86,6 +104,7 @@ export async function POST(request: Request) {
     const user = await withRetry(() =>
       prisma.profile.create({
         data: {
+          name,
           email,
           password: hashedPassword,
           role: email === process.env.ADMIN_EMAIL || email === 'rparandhama63@gmail.com' ? 'admin' : 'user',

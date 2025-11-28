@@ -10,9 +10,16 @@
   display: none !important;
 }
 
+html {
+  top: 0 !important;
+  position: static !important;
+}
+
 body {
   top: 0 !important;
   position: static !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* Prevent font tags from breaking layout */
@@ -317,8 +324,10 @@ body > .skiptranslate:has(.goog-te-combo) {
 }
 
 /* Override any inline styles from Google */
-body[style*="top"] {
+body[style*="top"],
+body[style*="position"] {
   top: 0 !important;
+  position: static !important;
 }
 
 /* Hide notification bar during switching */
@@ -331,11 +340,17 @@ body.translated-ltr,
 body.translated-rtl {
   top: 0 !important;
   margin-top: 0 !important;
+  position: static !important;
 }
 
-/* Hide Google Translate select element */
+/* Hide Google Translate select element - but allow programmatic override */
 select.goog-te-combo {
-  display: none !important;
+  display: none;
+  position: fixed;
+  top: -1000px;
+  left: -1000px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Additional specificity for hiding everything */
