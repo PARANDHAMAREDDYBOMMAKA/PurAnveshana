@@ -12,6 +12,10 @@ export async function middleware(request: NextRequest) {
   const clientIp = getClientIp(request.headers)
   const pathname = request.nextUrl.pathname
   const rayId = getRayId(request.headers)
+  const host = request.headers.get('host') || ''
+
+  // Whitelist Vercel deployment domain
+  const isVercelDeployment = host.includes('puranveshana.vercel.app')
 
   // Apply security headers
   const response = NextResponse.next()
@@ -29,8 +33,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/upload') ||
     pathname.startsWith('/signup')
   ) {
-    // Skip bot check in development
-    if (process.env.NODE_ENV === 'production') {
+    // Skip bot check in development or for Vercel deployment
+    if (process.env.NODE_ENV === 'production' && !isVercelDeployment) {
       const isLegitimate = verifyCloudflareBot(request.headers)
       if (!isLegitimate) {
         await logSecurityEvent('bot_detected', clientIp, {
