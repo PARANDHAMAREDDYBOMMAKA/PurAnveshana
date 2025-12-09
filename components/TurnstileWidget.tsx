@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { shouldEnableTurnstile, getTurnstileSiteKey } from '@/lib/cloudflare/turnstile-config';
 
 interface TurnstileWidgetProps {
   onVerify: (token: string) => void;
@@ -41,8 +42,26 @@ export function TurnstileWidget({
   const widgetIdRef = useRef<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const hasRendered = useRef(false);
+  const [isTurnstileEnabled, setIsTurnstileEnabled] = useState(false);
+
+  // Check if Turnstile should be enabled
+  useEffect(() => {
+    setIsTurnstileEnabled(shouldEnableTurnstile());
+  }, []);
+
+  // Auto-verify if Turnstile is disabled
+  useEffect(() => {
+    if (!isTurnstileEnabled) {
+      // Provide a dummy token when Turnstile is disabled (e.g., on Vercel deployments)
+      onVerify('turnstile-disabled');
+    }
+  }, [isTurnstileEnabled, onVerify]);
 
   useEffect(() => {
+    // Don't load Turnstile if it's disabled
+    if (!isTurnstileEnabled) {
+      return;
+    }
     // Load Turnstile script
     const scriptId = 'turnstile-script';
     if (!document.getElementById(scriptId)) {
@@ -73,8 +92,12 @@ export function TurnstileWidget({
   }, []);
 
   useEffect(() => {
+    if (!isTurnstileEnabled) {
+      return;
+    }
+
     if (isLoaded && containerRef.current && window.turnstile && !hasRendered.current) {
-      const siteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY;
+      const siteKey = getTurnstileSiteKey();
 
       if (!siteKey) {
         console.error('Turnstile site key not configured');
@@ -101,7 +124,12 @@ export function TurnstileWidget({
         console.error('Failed to render Turnstile:', e);
       }
     }
-  }, [isLoaded, onVerify, onError, onExpire, theme, size]);
+  }, [isLoaded, onVerify, onError, onExpire, theme, size, isTurnstileEnabled]);
+
+  // Don't render anything if Turnstile is disabled
+  if (!isTurnstileEnabled) {
+    return null;
+  }
 
   return (
     <div>
