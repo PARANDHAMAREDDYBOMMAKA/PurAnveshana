@@ -42,6 +42,14 @@ const nextConfig: NextConfig = {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN'
           },
+          {
+            key: 'Content-Security-Policy',
+            value: "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com https://nominatim.openstreetmap.org https://res.cloudinary.com https://api.cloudinary.com https://www.googletagmanager.com"
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(self), geolocation=(self), microphone=()'
+          },
         ],
       },
     ]
