@@ -93,26 +93,18 @@ export async function uploadToCloudinary(file: File): Promise<UploadResult> {
   }
 }
 
-// Smart upload function: Uses R2 for all environments
-export async function uploadFile(file: File): Promise<UploadResult> {
-  console.log('Using R2 storage')
-  return await uploadToR2(file)
-}
-
-// Legacy function kept for reference - can be removed if not needed
-// If you want to use Cloudinary for development, configure NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-// and uncomment the conditional logic below:
-/*
+// Smart upload function: Uses Cloudinary for localhost/main and R2 for production
 export async function uploadFile(file: File): Promise<UploadResult> {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
+
+  // Use R2 only for production domain (puranveshana.com)
   const useR2 = hostname === 'puranveshana.com' || hostname === 'www.puranveshana.com'
 
   if (useR2) {
     console.log('Using R2 storage for production')
     return await uploadToR2(file)
   } else {
-    console.log('Using Cloudinary storage for development/staging')
+    console.log('Using Cloudinary storage for development/main branch')
     return await uploadToCloudinary(file)
   }
 }
-*/
