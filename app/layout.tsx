@@ -21,6 +21,19 @@ export const metadata: Metadata = {
     template: "%s | Puranveshana"
   },
   description: "Uncover Indian history and explore India's hidden history with Puranveshana. Discover, document, and verify heritage sites, ancient monuments, and archaeological locations. Upload images of historical sites and earn rewards for heritage preservation.",
+  manifest: "/manifest.json",
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+    viewportFit: 'cover'
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Puranveshana'
+  },
   keywords: [
     "puranveshaa",
     "puranveshana",

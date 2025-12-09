@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { uploadToR2 } from '@/lib/cloudinary/upload'
+import { useState, useRef, useEffect } from 'react'
+import { uploadFile } from '@/lib/cloudinary/upload'
 import { extractExifData, reverseGeocode } from '@/lib/utils/exif'
 import toast from 'react-hot-toast'
 
@@ -16,6 +16,11 @@ interface FileWithPreview {
   exifData: any
   isVideo: boolean
   videoDuration?: number
+  capturedLive?: boolean
+  liveLocation?: {
+    latitude: number
+    longitude: number
+  }
 }
 
 export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormProps) {
@@ -24,7 +29,165 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
   const [sharedTitle, setSharedTitle] = useState('')
   const [sharedDescription, setSharedDescription] = useState('')
   const [sharedLocation, setSharedLocation] = useState('')
+  const [showUploadOptions, setShowUploadOptions] = useState(false)
+  const [showCameraModal, setShowCameraModal] = useState(false)
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
+  const [currentLocation, setCurrentLocation] = useState<{latitude: number, longitude: number} | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  // Cleanup camera stream on unmount
+  useEffect(() => {
+    return () => {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop())
+      }
+    }
+  }, [cameraStream])
+
+  // Get current location
+  const getCurrentLocation = (): Promise<{latitude: number, longitude: number}> => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by your browser'))
+        return
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          })
+        },
+        (error) => {
+          reject(error)
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      )
+    })
+  }
+
+  // Open camera modal
+  const openCamera = async () => {
+    try {
+      // Request location first
+      toast.loading('Requesting location access...')
+      const location = await getCurrentLocation()
+      setCurrentLocation(location)
+      toast.dismiss()
+      toast.success('Location acquired!')
+
+      // Get location name
+      const locationName = await reverseGeocode(location.latitude, location.longitude)
+      if (locationName && !sharedLocation) {
+        setSharedLocation(locationName)
+      }
+
+      // Request camera access
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
+        audio: false
+      })
+
+      setCameraStream(stream)
+      setShowCameraModal(true)
+      setShowUploadOptions(false)
+
+      // Set video stream
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+        }
+      }, 100)
+    } catch (error: any) {
+      toast.dismiss()
+      if (error.code === 1 || error.message.includes('denied')) {
+        toast.error('Camera or location permission denied. Please allow access in your browser settings.')
+      } else {
+        toast.error(error.message || 'Failed to access camera or location')
+      }
+      console.error('Camera/Location error:', error)
+    }
+  }
+
+  // Close camera modal
+  const closeCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop())
+      setCameraStream(null)
+    }
+    setShowCameraModal(false)
+  }
+
+  // Capture photo from camera
+  const capturePhoto = async () => {
+    if (!videoRef.current || !canvasRef.current || !currentLocation) return
+
+    const video = videoRef.current
+    const canvas = canvasRef.current
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+
+    // Draw video frame to canvas
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+    // Convert canvas to blob
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        toast.error('Failed to capture photo')
+        return
+      }
+
+      // Create file from blob
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      const file = new File([blob], `IMG_${timestamp}.jpg`, { type: 'image/jpeg' })
+
+      // Create preview
+      const preview = URL.createObjectURL(blob)
+
+      // Get location name
+      const locationName = await reverseGeocode(currentLocation.latitude, currentLocation.longitude)
+
+      // Create file data with live capture info
+      const fileData: FileWithPreview = {
+        file,
+        preview,
+        autoDetectedLocation: locationName,
+        exifData: {
+          isVerified: true,
+          cameraModel: 'Live Camera Capture',
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+          captureDate: new Date()
+        },
+        isVideo: false,
+        capturedLive: true,
+        liveLocation: currentLocation
+      }
+
+      setSelectedFiles(prev => [...prev, fileData])
+      toast.success('Photo captured!')
+
+      // Update shared location if not set
+      if (!sharedLocation && locationName) {
+        setSharedLocation(locationName)
+      }
+
+      // Close camera modal
+      closeCamera()
+    }, 'image/jpeg', 0.95)
+  }
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -79,73 +242,10 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           continue
         }
 
-        // For videos, verify using multiple strict checks
-        let videoExifData: any = {}
-
-        // Check 1: File must be very recently created (within 7 days)
-        // Phone videos are typically uploaded shortly after recording
-        const now = new Date().getTime()
-        const fileModified = file.lastModified
-        const daysSinceModified = (now - fileModified) / (1000 * 60 * 60 * 24)
-
-        if (daysSinceModified > 7) {
-          toast.error(`${file.name}: Video must be recorded within last 7 days (this is ${Math.floor(daysSinceModified)} days old)`)
-          continue
-        }
-
-        // Check 2: File size validation (phone videos are typically > 500KB)
-        if (file.size < 500000) { // Less than 500KB
-          toast.error(`${file.name}: Video file too small - must be at least 500KB`)
-          continue
-        }
-
-        // Check 3: File naming pattern check
-        // Phone videos typically have patterns like:
-        // Android:
-        // - VID20251107150627.mp4 (no separator)
-        // - VID_20250107_123456.mp4 (with separator)
-        // iPhone:
-        // - IMG_1234.MOV (standard)
-        // - IMG_E1234.MOV (edited)
-        // - TRIM.1234.MOV (trimmed)
-        // - RPReplay_Final1234567890.MOV (screen recording)
-        const phoneVideoPatterns = [
-          // Android patterns
-          /^VID\d{8}\d{6}/i,            // VID20251107150627 (Android no separator)
-          /^VID[_-]\d{8}[_-]\d{6}/i,    // VID_20250107_123456
-          /^\d{8}[_-]?\d{6}/,           // 20250107_123456 or 20250107123456
-          /^video[_-]?\d+/i,            // video_1234 or video1234
-          /^MOV[_-]?\d{3,5}/i,          // MOV_1234 or MOV1234
-          /^VID[_-]?\d{3,5}/i,          // VID_1234 or VID1234
-
-          // iPhone patterns
-          /^IMG[_-]?\d{3,5}\./i,        // IMG_1234.MOV or IMG1234.MOV
-          /^IMG[_-]?E\d{3,5}\./i,       // IMG_E1234.MOV (edited on iPhone)
-          /^TRIM\.\d{3,5}\./i,          // TRIM.1234.MOV (trimmed)
-          /^RPReplay.*\d+/i,            // RPReplay_Final1234567890.MOV (screen recording)
-          /^\d{5}APPLE/i,               // 100APPLE/IMG_0001.MOV format
-          /^LivePhoto_/i,               // LivePhoto_1234.MOV
-          /^Slomo_/i,                   // Slomo_1234.MOV (slow motion)
-        ]
-
-        const hasPhonePattern = phoneVideoPatterns.some(pattern => pattern.test(file.name))
-
-        if (!hasPhonePattern) {
-          toast.error(`${file.name}: Video filename doesn't match phone camera pattern (must be directly from phone camera)`)
-          continue
-        }
-
-        // Check 4: File type must be standard phone video format
-        const allowedTypes = ['video/mp4', 'video/quicktime', 'video/x-m4v', 'video/3gpp']
-        if (!allowedTypes.includes(file.type)) {
-          toast.error(`${file.name}: Video format not supported (must be MP4, MOV, or 3GP from phone)`)
-          continue
-        }
-
-        // All checks passed - video is verified
-        videoExifData = {
+        // Accept all videos - create basic EXIF data
+        const videoExifData = {
           isVerified: true,
-          cameraModel: 'Mobile Device',
+          cameraModel: 'Video Upload',
           latitude: null,
           longitude: null,
           captureDate: new Date(file.lastModified),
@@ -163,7 +263,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           videoDuration: videoData.duration
         })
 
-        toast.success(`Video ${file.name} added (${Math.round(videoData.duration)}s) ✓ Verified`)
+        toast.success(`Video ${file.name} added (${Math.round(videoData.duration)}s) ✓`)
         continue
       }
 
@@ -187,6 +287,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           continue
         }
 
+        // Extract GPS data from EXIF metadata only
         if (exifData.latitude && exifData.longitude) {
           const locationName = await reverseGeocode(exifData.latitude, exifData.longitude)
           if (locationName) {
@@ -254,15 +355,17 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     // If location is provided (either manual or GPS), validate the format
     if (sharedLocation) {
       const locationParts = sharedLocation.split(',').map(part => part.trim()).filter(part => part.length > 0)
-      if (locationParts.length < 4) {
-        toast.error('Location must include: Place, District, State, and Pincode (separated by commas)')
+
+      // Require at least 3 parts (e.g., Place, District, State)
+      if (locationParts.length < 3) {
+        toast.error('Location must include at least: Place, District, and State (separated by commas)')
         return
       }
 
-      // Validate that the last part (pincode) contains numbers
-      const pincode = locationParts[locationParts.length - 1]
-      if (!/\d{6}/.test(pincode)) {
-        toast.error('Location must end with a valid 6-digit pincode')
+      // Validate that location contains a 6-digit pincode somewhere
+      const hasPincode = locationParts.some(part => /\b\d{6}\b/.test(part))
+      if (!hasPincode) {
+        toast.error('Location must contain a valid 6-digit pincode')
         return
       }
     }
@@ -279,11 +382,11 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
       for (const fileData of selectedFiles) {
         try {
-          const uploadResult = await uploadToR2(fileData.file)
+          const uploadResult = await uploadFile(fileData.file)
           uploadedFiles.push({
             location: finalLocation, // Use final location (manual or GPS)
-            r2Url: uploadResult.r2Url,
-            r2Key: uploadResult.r2Key,
+            r2Url: uploadResult.r2Url || uploadResult.url,
+            r2Key: uploadResult.r2Key || uploadResult.publicId,
             isVerified: fileData.exifData.isVerified || false,
             cameraModel: fileData.exifData.cameraModel || null,
             latitude: fileData.exifData.latitude || null,
@@ -421,25 +524,15 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           </p>
         </div>
 
-        {/* File Input */}
-        <div>
-          <label className="block text-sm font-bold text-slate-900 mb-3">
-            Select Images or Videos *
-          </label>
-          <div className="relative">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*,video/*"
-              multiple
-              onChange={handleFileSelect}
-              className="block w-full text-sm text-slate-900 file:mr-4 file:py-4 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-linear-to-r file:from-orange-500 file:to-amber-600 file:text-white hover:file:from-orange-600 hover:file:to-amber-700 file:transition-all file:shadow-lg file:cursor-pointer cursor-pointer border-2 border-dashed border-orange-300 rounded-xl p-4 hover:border-orange-500 transition-colors bg-orange-50/50"
-            />
-          </div>
-          <p className="mt-2 text-xs text-slate-500">
-            Select multiple images or videos (max 5 minutes) of the same heritage site
-          </p>
-        </div>
+        {/* Hidden File Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/heic,image/heif,image/bmp,image/tiff,video/mp4,video/quicktime,video/x-m4v,video/3gpp,video/avi,video/mpeg,video/webm"
+          multiple
+          onChange={handleFileSelect}
+          className="hidden"
+        />
 
         {/* Selected Files Preview */}
         {selectedFiles.length > 0 && (
@@ -533,7 +626,27 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           </div>
         )}
 
-        {/* Submit Button */}
+        {/* Add Images Button */}
+        <div>
+          <label className="block text-sm font-bold text-slate-900 mb-3">
+            Add Images or Videos *
+          </label>
+          <button
+            type="button"
+            onClick={() => setShowUploadOptions(true)}
+            className="w-full py-4 px-6 border-2 border-dashed border-orange-300 rounded-xl text-base font-bold text-orange-600 bg-orange-50/50 hover:bg-orange-100 hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all flex items-center justify-center gap-3"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Add Images or Videos
+          </button>
+          <p className="mt-2 text-xs text-slate-500">
+            Choose to upload from gallery or take a live photo with camera
+          </p>
+        </div>
+
+        {/* Submit Button - Moved Below */}
         <button
           type="submit"
           disabled={loading || selectedFiles.length === 0 || !sharedTitle || !sharedDescription || (!sharedLocation && !selectedFiles.some(f => f.autoDetectedLocation))}
@@ -545,15 +658,131 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Uploading {selectedFiles.length} image{selectedFiles.length > 1 ? 's' : ''}...
+              Uploading {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''}...
             </span>
           ) : (
             selectedFiles.length > 0
-              ? `Upload ${selectedFiles.length} Image${selectedFiles.length !== 1 ? 's' : ''} to ${sharedTitle || 'Heritage Site'}`
-              : 'Select Images to Upload'
+              ? `Upload ${selectedFiles.length} File${selectedFiles.length !== 1 ? 's' : ''} to ${sharedTitle || 'Heritage Site'}`
+              : 'Select Files to Upload'
           )}
         </button>
       </form>
+
+      {/* Upload Options Modal */}
+      {showUploadOptions && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 transform animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-slate-900">Choose Upload Method</h3>
+              <button
+                onClick={() => setShowUploadOptions(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {/* Upload from Gallery */}
+              <button
+                onClick={() => {
+                  fileInputRef.current?.click()
+                  setShowUploadOptions(false)
+                }}
+                className="w-full p-4 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-lg transition-all transform hover:scale-105 flex items-center gap-4"
+              >
+                <div className="bg-white/20 p-3 rounded-lg">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-bold text-lg">Upload from Gallery</div>
+                  <div className="text-sm text-blue-100">Select images/videos from your device</div>
+                </div>
+              </button>
+
+              {/* Take Live Photo */}
+              <button
+                onClick={openCamera}
+                className="w-full p-4 bg-linear-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-xl shadow-lg transition-all transform hover:scale-105 flex items-center gap-4"
+              >
+                <div className="bg-white/20 p-3 rounded-lg">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-bold text-lg">Take Live Photo</div>
+                  <div className="text-sm text-orange-100">Capture with camera & GPS location</div>
+                </div>
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500 text-center mt-4">
+              Live photos will automatically capture your current location
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Camera Modal */}
+      {showCameraModal && (
+        <div className="fixed inset-0 bg-black z-50 flex flex-col">
+          {/* Camera Header */}
+          <div className="bg-black/80 backdrop-blur-sm p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-green-500 w-3 h-3 rounded-full animate-pulse"></div>
+              <span className="text-white font-semibold">Camera Active</span>
+              {currentLocation && (
+                <span className="text-green-400 text-sm">📍 GPS Locked</span>
+              )}
+            </div>
+            <button
+              onClick={closeCamera}
+              className="text-white hover:text-red-400 transition-colors p-2"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Camera View */}
+          <div className="flex-1 relative bg-black flex items-center justify-center">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover"
+            />
+
+            {/* Capture Button */}
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+              <button
+                onClick={capturePhoto}
+                className="w-20 h-20 rounded-full bg-white border-4 border-orange-500 shadow-2xl hover:scale-110 transition-transform active:scale-95 flex items-center justify-center"
+              >
+                <div className="w-16 h-16 rounded-full bg-orange-500"></div>
+              </button>
+            </div>
+
+            {/* Location Info */}
+            {currentLocation && (
+              <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
+                📍 {currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}
+              </div>
+            )}
+          </div>
+
+          {/* Hidden Canvas for Photo Capture */}
+          <canvas ref={canvasRef} className="hidden" />
+        </div>
+      )}
     </div>
   )
 }
