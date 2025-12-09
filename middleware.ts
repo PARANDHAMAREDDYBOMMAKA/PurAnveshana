@@ -12,10 +12,6 @@ export async function middleware(request: NextRequest) {
   const clientIp = getClientIp(request.headers)
   const pathname = request.nextUrl.pathname
   const rayId = getRayId(request.headers)
-  const host = request.headers.get('host') || ''
-
-  // Whitelist Vercel deployment domain
-  const isVercelDeployment = host.includes('puranveshana.vercel.app')
 
   // Apply security headers
   const response = NextResponse.next()
@@ -27,14 +23,16 @@ export async function middleware(request: NextRequest) {
   //   return new NextResponse('Access denied', { status: 403 })
   // }
 
-  // Bot protection for sensitive routes
+  // Bot protection for sensitive routes - only in production and only if Cloudflare headers present
   if (
-    pathname.startsWith('/api/auth') ||
-    pathname.startsWith('/api/upload') ||
-    pathname.startsWith('/signup')
+    process.env.NODE_ENV === 'production' &&
+    (pathname.startsWith('/api/auth') ||
+      pathname.startsWith('/api/upload') ||
+      pathname.startsWith('/signup'))
   ) {
-    // Skip bot check in development or for Vercel deployment
-    if (process.env.NODE_ENV === 'production' && !isVercelDeployment) {
+    // Only check bot score if Cloudflare headers are present
+    const hasCfHeaders = request.headers.has('CF-Ray')
+    if (hasCfHeaders) {
       const isLegitimate = verifyCloudflareBot(request.headers)
       if (!isLegitimate) {
         await logSecurityEvent('bot_detected', clientIp, {
@@ -44,6 +42,7 @@ export async function middleware(request: NextRequest) {
         return new NextResponse('Bot detected', { status: 403 })
       }
     }
+    // If no Cloudflare headers, allow the request (direct Vercel access)
   }
 
   // Rate limiting

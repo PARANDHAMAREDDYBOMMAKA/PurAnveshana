@@ -87,22 +87,22 @@ function cleanupExpiredEntries() {
 export const RATE_LIMITS = {
   // Authentication endpoints
   AUTH: {
-    maxRequests: 5,
+    maxRequests: 30,
     windowMs: 15 * 60 * 1000, // 15 minutes
   },
   // API endpoints
   API: {
-    maxRequests: 100,
+    maxRequests: 1000,
     windowMs: 60 * 1000, // 1 minute
   },
   // Upload endpoints
   UPLOAD: {
-    maxRequests: 10,
+    maxRequests: 100,
     windowMs: 60 * 1000, // 1 minute
   },
   // General endpoints
   GENERAL: {
-    maxRequests: 60,
+    maxRequests: 500,
     windowMs: 60 * 1000, // 1 minute
   },
 };
