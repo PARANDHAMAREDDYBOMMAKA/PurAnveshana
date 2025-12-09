@@ -50,18 +50,20 @@ export function isBlockedCountry(
 
 /**
  * Verify request is legitimate and not a bot
+ * Only returns false if we have strong evidence of bot behavior
  */
 export function verifyCloudflareBot(headers: Headers): boolean {
   const botScore = headers.get('CF-Bot-Score');
 
   // Bot score is between 1-99, lower = more likely bot
-  // 30 or below is likely automated
+  // Only block if score is very low (20 or below = definitely automated)
   if (botScore) {
     const score = parseInt(botScore, 10);
-    return score > 30;
+    return score > 20; // More lenient threshold
   }
 
-  return true; // If no bot score, allow by default
+  // If no bot score, allow by default (direct Vercel access)
+  return true;
 }
 
 /**
