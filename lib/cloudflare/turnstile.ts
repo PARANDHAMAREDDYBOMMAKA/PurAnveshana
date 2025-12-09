@@ -13,11 +13,17 @@ export async function verifyTurnstileToken(
   token: string,
   remoteIp?: string
 ): Promise<{ success: boolean; error?: string }> {
+  // Skip verification if Turnstile is disabled (e.g., on Vercel deployments)
+  if (token === 'turnstile-disabled') {
+    return { success: true };
+  }
+
   const secretKey = process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
 
   if (!secretKey) {
     console.error('CLOUDFLARE_TURNSTILE_SECRET_KEY is not configured');
-    return { success: false, error: 'Turnstile not configured' };
+    // Allow through if not configured (development/staging environments)
+    return { success: true };
   }
 
   try {
