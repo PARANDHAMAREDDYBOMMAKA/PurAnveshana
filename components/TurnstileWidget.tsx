@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { shouldEnableTurnstile, getTurnstileSiteKey } from '@/lib/cloudflare/turnstile-config';
+import { getTurnstileSiteKey, isUsingTestKeys } from '@/lib/cloudflare/turnstile-config';
 
 interface TurnstileWidgetProps {
   onVerify: (token: string) => void;
@@ -42,27 +42,15 @@ export function TurnstileWidget({
   const widgetIdRef = useRef<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const hasRendered = useRef(false);
-  const [isTurnstileEnabled, setIsTurnstileEnabled] = useState(false);
+  const [usingTestKeys, setUsingTestKeys] = useState(false);
 
-  // Check if Turnstile should be enabled
+  // Check if using test keys for display purposes
   useEffect(() => {
-    setIsTurnstileEnabled(shouldEnableTurnstile());
+    setUsingTestKeys(isUsingTestKeys());
   }, []);
 
-  // Auto-verify if Turnstile is disabled
   useEffect(() => {
-    if (!isTurnstileEnabled) {
-      // Provide a dummy token when Turnstile is disabled (e.g., on Vercel deployments)
-      onVerify('turnstile-disabled');
-    }
-  }, [isTurnstileEnabled, onVerify]);
-
-  useEffect(() => {
-    // Don't load Turnstile if it's disabled
-    if (!isTurnstileEnabled) {
-      return;
-    }
-    // Load Turnstile script
+    // Load Turnstile script - now always enabled in all environments
     const scriptId = 'turnstile-script';
     if (!document.getElementById(scriptId)) {
       const script = document.createElement('script');
@@ -92,10 +80,6 @@ export function TurnstileWidget({
   }, []);
 
   useEffect(() => {
-    if (!isTurnstileEnabled) {
-      return;
-    }
-
     if (isLoaded && containerRef.current && window.turnstile && !hasRendered.current) {
       const siteKey = getTurnstileSiteKey();
 
@@ -110,7 +94,7 @@ export function TurnstileWidget({
       }
 
       try {
-        // Render the widget only once
+        // Render the widget - always enabled in all environments
         widgetIdRef.current = window.turnstile.render(containerRef.current, {
           sitekey: siteKey,
           callback: onVerify,
@@ -124,12 +108,7 @@ export function TurnstileWidget({
         console.error('Failed to render Turnstile:', e);
       }
     }
-  }, [isLoaded, onVerify, onError, onExpire, theme, size, isTurnstileEnabled]);
-
-  // Don't render anything if Turnstile is disabled
-  if (!isTurnstileEnabled) {
-    return null;
-  }
+  }, [isLoaded, onVerify, onError, onExpire, theme, size]);
 
   return (
     <div>
@@ -137,6 +116,14 @@ export function TurnstileWidget({
       {!isLoaded && (
         <div className="h-16 flex items-center justify-center text-sm text-gray-500">
           Loading verification...
+        </div>
+      )}
+      {usingTestKeys && process.env.NODE_ENV !== 'production' && (
+        <div className="mt-2 text-xs text-amber-600 flex items-center gap-1">
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          Test mode (auto-pass)
         </div>
       )}
     </div>

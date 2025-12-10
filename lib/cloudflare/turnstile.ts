@@ -1,6 +1,9 @@
 /**
- * Cloudflare Turnstile verification for CAPTCHA protection
+ * Cloudflare Turnstile verification with automatic fallback
+ * Tries production keys first, falls back to test keys if needed
  */
+
+import { getTurnstileSecretKey, isUsingTestKeys } from './turnstile-config';
 
 interface TurnstileResponse {
   success: boolean;
@@ -13,17 +16,18 @@ export async function verifyTurnstileToken(
   token: string,
   remoteIp?: string
 ): Promise<{ success: boolean; error?: string }> {
-  // Skip verification if Turnstile is disabled (e.g., on Vercel deployments)
-  if (token === 'turnstile-disabled') {
-    return { success: true };
+  if (!token) {
+    return {
+      success: false,
+      error: 'Security verification token is missing.',
+    };
   }
 
-  const secretKey = process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+  const secretKey = getTurnstileSecretKey();
+  const usingTestKeys = isUsingTestKeys();
 
-  if (!secretKey) {
-    console.error('CLOUDFLARE_TURNSTILE_SECRET_KEY is not configured');
-    // Allow through if not configured (development/staging environments)
-    return { success: true };
+  if (usingTestKeys) {
+    console.log('[Turnstile] Verification using test keys (auto-pass mode)');
   }
 
   try {
@@ -45,22 +49,46 @@ export async function verifyTurnstileToken(
       }
     );
 
+    if (!response.ok) {
+      throw new Error(`Cloudflare API returned ${response.status}`);
+    }
+
     const data: TurnstileResponse = await response.json();
 
     if (!data.success) {
-      console.error('Turnstile verification failed:', data['error-codes']);
+      const errorCodes = data['error-codes'] || [];
+      console.error('[Turnstile] Verification failed:', errorCodes);
+
+      // If using test keys, they should always pass
+      // If they fail, something else is wrong
+      if (usingTestKeys) {
+        console.warn('[Turnstile] Test keys failed unexpectedly');
+      }
+
       return {
         success: false,
-        error: 'Verification failed. Please try again.',
+        error: 'Security verification failed. Please try again.',
       };
+    }
+
+    if (!usingTestKeys) {
+      console.log('[Turnstile] Verification successful with production keys');
     }
 
     return { success: true };
   } catch (error) {
-    console.error('Error verifying Turnstile token:', error);
+    console.error('[Turnstile] Verification error:', error);
+
+    // If using test keys and there's an error, it might be a network issue
+    // In this case, we can be lenient for development
+    if (usingTestKeys && process.env.NODE_ENV !== 'production') {
+      console.warn('[Turnstile] Network error with test keys in dev mode, allowing through');
+      return { success: true };
+    }
+
     return {
       success: false,
-      error: 'Verification error. Please try again.',
+      error: 'Security verification error. Please try again.',
     };
   }
 }

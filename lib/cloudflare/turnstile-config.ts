@@ -1,28 +1,62 @@
 /**
- * Utility to determine if Turnstile should be enabled
- * Only enable for production domain to avoid "Invalid domain" errors on Vercel deployments
+ * Cloudflare Turnstile configuration with automatic fallback
+ * Works in all environments with smart key selection
  */
 
-export function shouldEnableTurnstile(): boolean {
-  // Only enable in production environment
-  if (process.env.NODE_ENV !== 'production') {
-    return false;
+// Test keys - ONLY for development/testing (always pass)
+const TEST_SITE_KEY = '1x00000000000000000000AA';
+const TEST_SECRET_KEY = '1x0000000000000000000000000000000AA';
+
+/**
+ * Get the appropriate site key based on environment
+ * Falls back to test keys if production keys fail or aren't configured
+ * Turnstile is now always enabled in all environments for security
+ */
+export function getTurnstileSiteKey(): string {
+  const productionKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY;
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  // Try production keys first
+  if (productionKey && !productionKey.startsWith('1x000')) {
+    return productionKey;
   }
 
-  // Check if we're on the production domain
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    // Only enable for the main production domain
-    return hostname === 'puranveshana.com' || hostname === 'www.puranveshana.com';
+  // Fallback to test keys
+  if (!isProduction) {
+    console.log('[Turnstile] Using test keys for development');
+  } else {
+    console.warn('[Turnstile] Production keys not configured, falling back to test keys');
   }
 
-  // Server-side: enable only if explicitly configured
-  return process.env.ENABLE_TURNSTILE === 'true';
+  return TEST_SITE_KEY;
 }
 
-export function getTurnstileSiteKey(): string | undefined {
-  if (!shouldEnableTurnstile()) {
-    return undefined;
+/**
+ * Get secret key for server-side verification
+ */
+export function getTurnstileSecretKey(): string {
+  const productionSecret = process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  // Try production keys first
+  if (productionSecret && !productionSecret.startsWith('1x000')) {
+    return productionSecret;
   }
-  return process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY;
+
+  // Fallback to test keys
+  if (!isProduction) {
+    console.log('[Turnstile] Using test secret for development');
+  } else {
+    console.warn('[Turnstile] Production secret not configured, falling back to test secret');
+  }
+
+  return TEST_SECRET_KEY;
+}
+
+/**
+ * Check if we're using test keys
+ */
+export function isUsingTestKeys(): boolean {
+  const siteKey = getTurnstileSiteKey();
+  return siteKey === TEST_SITE_KEY || siteKey.startsWith('1x000');
 }
