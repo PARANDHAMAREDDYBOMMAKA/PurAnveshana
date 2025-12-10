@@ -157,40 +157,43 @@ export default function ImageCard({
       {/* Full Image Modal */}
       {showFullImage && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-0"
           onClick={() => setShowFullImage(false)}
         >
-          <div className="relative max-w-7xl max-h-[90vh] w-full">
+          <div className="relative w-full h-full max-w-screen max-h-screen flex flex-col items-center justify-center">
             <button
               onClick={() => setShowFullImage(false)}
-              className="absolute -top-12 right-0 text-white hover:text-orange-400 transition-colors"
+              className="absolute top-4 right-4 text-white hover:text-orange-400 transition-colors z-10 bg-black/50 rounded-full p-2"
             >
-              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <div className="relative w-full h-full max-h-[90vh]">
+            <div className="relative w-full h-full flex items-center justify-center p-4 pb-24 sm:pb-32">
               {isVideo(image.cloudinaryUrl) ? (
                 <video
                   src={image.cloudinaryUrl}
                   controls
-                  className="w-full h-full max-h-[90vh] object-contain rounded-lg"
+                  className="max-w-full max-h-full object-contain rounded-lg"
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : (
-                <Image
-                  src={image.cloudinaryUrl}
-                  alt={image.title}
-                  width={1920}
-                  height={1080}
-                  className="object-contain w-full h-full rounded-lg"
-                  onClick={(e) => e.stopPropagation()}
-                />
+                <div className="relative w-full h-full max-w-full max-h-full">
+                  <Image
+                    src={image.cloudinaryUrl}
+                    alt={image.title}
+                    fill
+                    className="object-contain rounded-lg"
+                    sizes="100vw"
+                    onClick={(e) => e.stopPropagation()}
+                    priority
+                  />
+                </div>
               )}
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-6 rounded-b-lg">
-              <h3 className="text-2xl font-bold text-white mb-2">{image.title}</h3>
-              <p className="text-white/90 text-sm">{image.description}</p>
+            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black via-black/80 to-transparent p-4 sm:p-6">
+              <h3 className="text-base sm:text-xl md:text-2xl font-bold text-white mb-1 sm:mb-2 line-clamp-1">{image.title}</h3>
+              <p className="text-white/90 text-xs sm:text-sm line-clamp-2">{image.description}</p>
             </div>
           </div>
         </div>
