@@ -189,10 +189,10 @@ export default function HeritageSiteCard({
       {/* Simplified Card - Click to view details */}
       <div
         onClick={() => setShowDetailsModal(true)}
-        className="bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-slate-200 hover:border-orange-400 transition-all duration-300 cursor-pointer group"
+        className="bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-slate-200 hover:border-orange-400 transition-all duration-300 cursor-pointer group flex flex-col h-full"
       >
         {/* Main Image */}
-        <div className="relative h-56 sm:h-64 bg-linear-to-br from-slate-100 to-slate-50 overflow-hidden">
+        <div className="relative h-56 sm:h-64 bg-linear-to-br from-slate-100 to-slate-50 overflow-hidden shrink-0">
           {isVideo(currentImageUrl) ? (
             <video
               src={currentImageUrl}
@@ -244,16 +244,16 @@ export default function HeritageSiteCard({
         </div>
 
         {/* Quick Info Footer */}
-        <div className="p-4 bg-slate-50 border-t border-slate-100">
+        <div className="p-4 bg-slate-50 border-t border-slate-100 mt-auto">
           <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-slate-600">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-2 text-slate-600 flex-1 min-w-0">
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               <span className="font-medium truncate">{currentImage.location}</span>
             </div>
-            <button className="text-orange-600 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+            <button className="text-orange-600 font-semibold flex items-center gap-1 hover:gap-2 transition-all shrink-0 ml-2">
               View Details
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -270,7 +270,7 @@ export default function HeritageSiteCard({
           onClick={() => setShowDetailsModal(false)}
         >
           <div
-            className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full my-8 overflow-hidden"
+            className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full my-4 sm:my-8 mx-auto overflow-hidden max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -284,72 +284,86 @@ export default function HeritageSiteCard({
             </button>
 
             {/* Hero Image */}
-            <div className="relative h-72 sm:h-96 bg-linear-to-br from-slate-100 to-slate-50 overflow-hidden">
-              {isVideo(currentImageUrl) ? (
-                <video
-                  src={currentImageUrl}
-                  controls
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              ) : (
-                <Image
-                  src={currentImageUrl}
-                  alt={site.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 896px) 100vw, 896px"
-                />
-              )}
+            <div className="relative w-full bg-linear-to-br from-slate-100 to-slate-50 flex items-center justify-center" style={{ minHeight: '300px', maxHeight: '500px' }}>
+              <div className="relative w-full h-full flex items-center justify-center p-4">
+                {isVideo(currentImageUrl) ? (
+                  <video
+                    src={currentImageUrl}
+                    controls
+                    className="max-w-full max-h-full object-contain"
+                    style={{ width: '100%', height: 'auto', maxHeight: '500px' }}
+                  />
+                ) : (
+                  <div className="relative w-full" style={{ maxHeight: '500px', aspectRatio: 'auto' }}>
+                    <Image
+                      src={currentImageUrl}
+                      alt={site.title}
+                      width={896}
+                      height={500}
+                      className="w-full h-auto object-contain mx-auto"
+                      style={{ maxHeight: '500px' }}
+                      sizes="(max-width: 896px) 100vw, 896px"
+                      priority
+                    />
+                  </div>
+                )}
+              </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   setShowFullImage(true)
                 }}
-                className="absolute bottom-4 right-4 bg-white/95 hover:bg-white text-orange-600 px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all"
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/95 hover:bg-white text-orange-600 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                 </svg>
-                View Full
+                View Full Image
               </button>
             </div>
 
             {/* Image Gallery Thumbnails */}
             {site.images.length > 1 && (
-              <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-                <div className="flex gap-3 overflow-x-auto pb-2">
+              <div className="px-4 sm:px-6 py-3 sm:py-4 bg-slate-50 border-b border-slate-200">
+                <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100">
                   {site.images.map((img, index) => (
                     <button
                       key={img.id}
                       onClick={() => setSelectedImage(index)}
-                      className={`relative shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                      className={`relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all ${
                         selectedImage === index
-                          ? 'border-orange-500 ring-2 ring-orange-200'
-                          : 'border-slate-300 hover:border-orange-300'
+                          ? 'border-orange-500 ring-2 ring-orange-200 scale-105'
+                          : 'border-slate-300 hover:border-orange-300 hover:scale-105'
                       }`}
                     >
-                      {isVideo(getImageUrl(img)) ? (
-                        <video
-                          src={getImageUrl(img)}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                      ) : (
-                        <Image
-                          src={getImageUrl(img)}
-                          alt={`Image ${index + 1}`}
-                          fill
-                          className="object-cover"
-                          sizes="80px"
-                        />
-                      )}
+                      <div className="absolute inset-0 bg-slate-100 flex items-center justify-center">
+                        {isVideo(getImageUrl(img)) ? (
+                          <video
+                            src={getImageUrl(img)}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={getImageUrl(img)}
+                            alt={`Image ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="80px"
+                          />
+                        )}
+                      </div>
+                      {/* Image number badge */}
+                      <div className="absolute bottom-0 right-0 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded-tl font-semibold">
+                        {index + 1}
+                      </div>
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Content */}
-            <div className="p-6 sm:p-8 max-h-96 overflow-y-auto">
+            {/* Content - Scrollable */}
+            <div className="p-4 sm:p-6 md:p-8 overflow-y-auto flex-1">
               {/* Title & Actions */}
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div>
@@ -613,7 +627,7 @@ export default function HeritageSiteCard({
                   </div>
                 </div>
 
-                {/* Admin Action */}
+                {/* Admin Actions */}
                 {showUser && site.paymentStatus !== 'COMPLETED' && (
                   <button
                     onClick={() => {
@@ -621,12 +635,12 @@ export default function HeritageSiteCard({
                       setShowPaymentModal(true)
                     }}
                     disabled={isLoading}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3.5 rounded-xl text-base font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                    className="w-full bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 sm:py-3.5 rounded-xl text-sm sm:text-base font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Record Payment
+                    💰 Record Payment
                   </button>
                 )}
               </div>
