@@ -10,6 +10,8 @@ interface HeritageSiteCardProps {
     id: string
     title: string
     description: string
+    type?: string | null
+    referenceLinks?: string[]
     createdAt: string
     paymentStatus?: string
     paymentAmount?: number
@@ -449,6 +451,57 @@ export default function HeritageSiteCard({
                     </div>
                   </div>
                 </div>
+
+                {/* Site Type */}
+                {site.type && (
+                  <div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
+                    <div className="flex items-start gap-4">
+                      <div className="shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-bold text-purple-900 uppercase tracking-wide mb-2">Heritage Type</h3>
+                        <p className="text-slate-900 font-semibold text-lg">
+                          {site.type.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Reference Links */}
+                {site.referenceLinks && site.referenceLinks.length > 0 && site.referenceLinks.some(link => link.trim()) && (
+                  <div className="bg-linear-to-br from-cyan-50 to-sky-50 rounded-2xl p-5 border border-cyan-100">
+                    <div className="flex items-start gap-4">
+                      <div className="shrink-0 w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center">
+                        <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-bold text-cyan-900 uppercase tracking-wide mb-3">Reference Links</h3>
+                        <div className="space-y-2">
+                          {site.referenceLinks.filter(link => link.trim()).map((link, index) => (
+                            <a
+                              key={index}
+                              href={link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-sm text-cyan-700 hover:text-cyan-900 font-medium hover:underline break-all group"
+                            >
+                              <svg className="w-4 h-4 shrink-0 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              {link}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Metadata */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
