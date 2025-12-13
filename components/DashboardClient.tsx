@@ -13,12 +13,12 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({ images: initialSites, isAdmin, onUploadSuccess }: DashboardClientProps) {
-  // For non-admin users with no uploads, show default sites
   const displaySites = !isAdmin && (!initialSites || initialSites.length === 0)
     ? defaultHeritageSites
     : initialSites
 
   const [sites, setSites] = useState(displaySites)
+  const [paymentFilter, setPaymentFilter] = useState<string>('')
 
   // Update sites state when initialSites prop changes
   useEffect(() => {
@@ -34,10 +34,12 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     }
   }, [onUploadSuccess])
 
-  // Check if showing default sites
   const isShowingDefaults = !isAdmin && (!initialSites || initialSites.length === 0)
 
-  // Count total images across all sites (use user's actual sites for stats, not defaults)
+  const filteredSites = paymentFilter
+    ? sites.filter((site: any) => site.paymentStatus === paymentFilter)
+    : sites
+
   const statsSource = isShowingDefaults ? [] : initialSites
   const totalImages = statsSource?.reduce((acc, site) => acc + (site.images?.length || 0), 0) || 0
   const verifiedImages = statsSource?.reduce((acc, site) =>
@@ -108,25 +110,57 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
         </div>
       )}
 
-      {/* Heritage Sites Grid */}
       <div className="mb-4 sm:mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 sm:mb-4">
-          {isAdmin
-            ? 'All Heritage Sites'
-            : isShowingDefaults
-              ? 'Example Heritage Sites - Get Inspired!'
-              : 'Your Heritage Sites'}
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-2 sm:mb-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+            {isAdmin
+              ? 'All Heritage Sites'
+              : isShowingDefaults
+                ? 'Example Heritage Sites - Get Inspired!'
+                : 'Your Heritage Sites'}
+          </h2>
+          {isAdmin && (
+            <div className="flex items-center gap-2">
+              <label htmlFor="paymentFilter" className="text-sm font-semibold text-slate-700 whitespace-nowrap">
+                Filter by Payment:
+              </label>
+              <select
+                id="paymentFilter"
+                className="px-3 py-2 border-2 border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-medium text-slate-900 bg-white"
+                value={paymentFilter}
+                onChange={(e) => setPaymentFilter(e.target.value)}
+              >
+                <option value="">All Sites</option>
+                <option value="NOT_STARTED">Not Started</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="COMPLETED">Completed (Paid)</option>
+              </select>
+              {paymentFilter && (
+                <button
+                  onClick={() => setPaymentFilter('')}
+                  className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold transition-all"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          )}
+        </div>
         {isShowingDefaults && (
           <p className="text-sm text-slate-600 mb-4">
             These are example heritage sites to inspire you. Upload your first site to start documenting your discoveries!
           </p>
         )}
+        {isAdmin && paymentFilter && (
+          <p className="text-sm text-slate-600">
+            Showing {filteredSites.length} site{filteredSites.length !== 1 ? 's' : ''} with payment status: {paymentFilter === 'NOT_STARTED' ? 'Not Started' : paymentFilter === 'IN_PROGRESS' ? 'In Progress' : 'Completed (Paid)'}
+          </p>
+        )}
       </div>
 
-      {sites && sites.length > 0 ? (
+      {filteredSites && filteredSites.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          {sites.map((site: any) => (
+          {filteredSites.map((site: any) => (
             <HeritageSiteCard
               key={site.id}
               site={site}

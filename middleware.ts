@@ -45,60 +45,62 @@ export async function middleware(request: NextRequest) {
     // If no Cloudflare headers, allow the request (direct Vercel access)
   }
 
-  // Rate limiting
-  let rateLimitConfig = RATE_LIMITS.GENERAL
-  if (pathname.startsWith('/api/auth')) {
-    rateLimitConfig = RATE_LIMITS.AUTH
-  } else if (pathname.startsWith('/api/upload')) {
-    rateLimitConfig = RATE_LIMITS.UPLOAD
-  } else if (pathname.startsWith('/api')) {
-    rateLimitConfig = RATE_LIMITS.API
-  }
+  // Rate limiting - ONLY in production (disabled in development for testing)
+  if (process.env.NODE_ENV === 'production') {
+    let rateLimitConfig = RATE_LIMITS.GENERAL
+    if (pathname.startsWith('/api/auth')) {
+      rateLimitConfig = RATE_LIMITS.AUTH
+    } else if (pathname.startsWith('/api/upload')) {
+      rateLimitConfig = RATE_LIMITS.UPLOAD
+    } else if (pathname.startsWith('/api')) {
+      rateLimitConfig = RATE_LIMITS.API
+    }
 
-  const rateLimitResult = rateLimit(
-    `${clientIp}:${pathname}`,
-    rateLimitConfig
-  )
+    const rateLimitResult = rateLimit(
+      `${clientIp}:${pathname}`,
+      rateLimitConfig
+    )
 
-  if (!rateLimitResult.allowed) {
-    await logSecurityEvent('rate_limit_exceeded', clientIp, {
-      path: pathname,
-      limit: rateLimitResult.limit,
-      rayId,
-    })
+    if (!rateLimitResult.allowed) {
+      await logSecurityEvent('rate_limit_exceeded', clientIp, {
+        path: pathname,
+        limit: rateLimitResult.limit,
+        rayId,
+      })
 
-    const rateLimitResponse = new NextResponse('Too many requests', {
-      status: 429,
-    })
-    rateLimitResponse.headers.set(
+      const rateLimitResponse = new NextResponse('Too many requests', {
+        status: 429,
+      })
+      rateLimitResponse.headers.set(
+        'X-RateLimit-Limit',
+        rateLimitResult.limit.toString()
+      )
+      rateLimitResponse.headers.set('X-RateLimit-Remaining', '0')
+      rateLimitResponse.headers.set(
+        'X-RateLimit-Reset',
+        rateLimitResult.resetAt.toString()
+      )
+      rateLimitResponse.headers.set(
+        'Retry-After',
+        Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000).toString()
+      )
+      return rateLimitResponse
+    }
+
+    // Add rate limit headers
+    response.headers.set(
       'X-RateLimit-Limit',
       rateLimitResult.limit.toString()
     )
-    rateLimitResponse.headers.set('X-RateLimit-Remaining', '0')
-    rateLimitResponse.headers.set(
+    response.headers.set(
+      'X-RateLimit-Remaining',
+      rateLimitResult.remaining.toString()
+    )
+    response.headers.set(
       'X-RateLimit-Reset',
       rateLimitResult.resetAt.toString()
     )
-    rateLimitResponse.headers.set(
-      'Retry-After',
-      Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000).toString()
-    )
-    return rateLimitResponse
   }
-
-  // Add rate limit headers
-  response.headers.set(
-    'X-RateLimit-Limit',
-    rateLimitResult.limit.toString()
-  )
-  response.headers.set(
-    'X-RateLimit-Remaining',
-    rateLimitResult.remaining.toString()
-  )
-  response.headers.set(
-    'X-RateLimit-Reset',
-    rateLimitResult.resetAt.toString()
-  )
 
   // Check for session token
   const sessionToken = request.cookies.get('session')?.value

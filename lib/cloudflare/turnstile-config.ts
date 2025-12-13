@@ -16,18 +16,19 @@ export function getTurnstileSiteKey(): string {
   const productionKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY;
   const isProduction = process.env.NODE_ENV === 'production';
 
-  // Try production keys first
+  // ALWAYS use test keys in development - production keys don't work on localhost
+  if (!isProduction) {
+    console.log('[Turnstile] Using test keys for local development (production keys dont work on localhost)');
+    return TEST_SITE_KEY;
+  }
+
+  // In production, try production keys first
   if (productionKey && !productionKey.startsWith('1x000')) {
     return productionKey;
   }
 
-  // Fallback to test keys
-  if (!isProduction) {
-    console.log('[Turnstile] Using test keys for development');
-  } else {
-    console.warn('[Turnstile] Production keys not configured, falling back to test keys');
-  }
-
+  // Fallback to test keys in production if not configured
+  console.warn('[Turnstile] Production keys not configured, falling back to test keys');
   return TEST_SITE_KEY;
 }
 
@@ -38,18 +39,19 @@ export function getTurnstileSecretKey(): string {
   const productionSecret = process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
   const isProduction = process.env.NODE_ENV === 'production';
 
-  // Try production keys first
+  // ALWAYS use test keys in development - production keys don't work on localhost
+  if (!isProduction) {
+    console.log('[Turnstile] Using test secret for local development (production keys dont work on localhost)');
+    return TEST_SECRET_KEY;
+  }
+
+  // In production, try production keys first
   if (productionSecret && !productionSecret.startsWith('1x000')) {
     return productionSecret;
   }
 
-  // Fallback to test keys
-  if (!isProduction) {
-    console.log('[Turnstile] Using test secret for development');
-  } else {
-    console.warn('[Turnstile] Production secret not configured, falling back to test secret');
-  }
-
+  // Fallback to test keys in production if not configured
+  console.warn('[Turnstile] Production secret not configured, falling back to test secret');
   return TEST_SECRET_KEY;
 }
 

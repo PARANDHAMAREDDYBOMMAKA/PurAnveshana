@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import GoogleTranslate from './GoogleTranslate'
 
 interface NavbarProps {
   userEmail?: string
@@ -87,10 +86,6 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               </span>
             )}
 
-            {/* Google Translate */}
-            <div className="hidden sm:block">
-              <GoogleTranslate />
-            </div>
 
             {/* User Email - Desktop Only */}
             <div className="hidden lg:flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
@@ -113,10 +108,6 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
           </div>
         </div>
 
-        {/* Mobile Google Translate - Below Nav */}
-        <div className="sm:hidden pb-2 flex justify-center">
-          <GoogleTranslate />
-        </div>
       </div>
     </nav>
   )

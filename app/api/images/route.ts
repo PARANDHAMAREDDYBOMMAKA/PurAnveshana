@@ -144,6 +144,8 @@ export async function POST(request: Request) {
     const {
       title,
       description,
+      type,
+      referenceLinks,
       images,
     } = body
 
@@ -178,11 +180,12 @@ export async function POST(request: Request) {
           userId: profile.id,
           title,
           description,
+          type: type || null,
+          referenceLinks: referenceLinks || [],
           paymentStatus: 'IN_PROGRESS',
           images: {
             create: images.map((img: any) => ({
               location: img.location,
-              // Use R2 if provided, otherwise use Cloudinary (for backward compatibility)
               r2Url: img.r2Url || null,
               r2Key: img.r2Key || null,
               cloudinaryUrl: img.cloudinaryUrl || null,
@@ -229,7 +232,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json()
-    const { siteId, title, description } = body
+    const { siteId, title, description, type, referenceLinks } = body
 
     if (!siteId || !title || !description) {
       return NextResponse.json(
@@ -259,10 +262,18 @@ export async function PUT(request: Request) {
       )
     }
 
+    const updateData: any = { title, description }
+    if (type !== undefined) {
+      updateData.type = type || null
+    }
+    if (referenceLinks !== undefined) {
+      updateData.referenceLinks = referenceLinks || []
+    }
+
     const updatedSite = await withRetry(() =>
       prisma.heritageSite.update({
         where: { id: siteId },
-        data: { title, description },
+        data: updateData,
         include: {
           images: true,
         },
