@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from 'react'
 import HeritageSiteCard from './HeritageSiteCard'
 import ImageUploadForm from './ImageUploadForm'
 import PaymentHistory from './PaymentHistory'
+import YatraPromptModal from './YatraPromptModal'
 import { defaultHeritageSites } from '@/lib/defaultHeritageSites'
 
 interface DashboardClientProps {
@@ -48,6 +49,9 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
 
   return (
     <>
+      {/* Yatra Prompt Modal - Only for non-admin users */}
+      {!isAdmin && <YatraPromptModal />}
+
       {/* Statistics Cards - Enhanced Responsive Grid */}
       <div className="grid grid-cols-1 min-[500px]:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
         <div className="bg-linear-to-br from-orange-500 to-amber-600 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">

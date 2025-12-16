@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins,BadgeIndianRupee } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import GoogleTranslate from '@/components/GoogleTranslate';
 import AppDemo from '@/components/AppDemo';
 
 // Client-only Video Player
@@ -198,15 +197,15 @@ function LeafletMap({ sites, activePoint }: { sites: any[], activePoint: number 
       }
     }
 
-    // Define India's geographical bounds
+    // Define India's geographical bounds - adjusted for better centering
     const indiaBounds = L.latLngBounds(
       L.latLng(6.5, 68.0),  // Southwest coordinates (southernmost point, westernmost point)
       L.latLng(35.5, 97.5)  // Northeast coordinates (northernmost point, easternmost point)
     );
 
     const map = L.map('india-map', {
-      center: [22.5, 82.5], // Adjusted center of India
-      zoom: 4.5,
+      center: [20.5937, 78.9629], // Center of India
+      zoom: 4.2,
       zoomControl: false,
       dragging: false,
       scrollWheelZoom: false,
@@ -214,8 +213,8 @@ function LeafletMap({ sites, activePoint }: { sites: any[], activePoint: number 
       touchZoom: false,
       maxBounds: indiaBounds, // Restrict view to India bounds
       maxBoundsViscosity: 1.0, // Make bounds solid
-      minZoom: 4.5,
-      maxZoom: 4.5,
+      minZoom: 4.2,
+      maxZoom: 4.2,
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -223,9 +222,9 @@ function LeafletMap({ sites, activePoint }: { sites: any[], activePoint: number 
       bounds: indiaBounds, // Only load tiles within India bounds
     }).addTo(map);
 
-    // Fit map to India bounds with padding to prevent cutting
+    // Fit map to India bounds with padding
     map.fitBounds(indiaBounds, {
-      padding: [20, 20], // Add padding to prevent edges from being cut off
+      padding: [40, 40], // Padding to ensure full visibility
     });
 
     mapInstanceRef[1](map);
@@ -412,11 +411,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-amber-50 via-orange-50 to-white">
-      {/* Google Translate - Single Instance for entire page */}
-      <div className="fixed top-4 right-4 z-60">
-        <GoogleTranslate />
-      </div>
-
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -451,7 +445,7 @@ export default function Home() {
 
             <div className="md:hidden flex items-center space-x-2">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                {isMenuOpen ? <X /> : <Menu />}
+                {isMenuOpen ? <X className="text-black" /> : <Menu className="text-black" />}
               </button>
             </div>
           </div>

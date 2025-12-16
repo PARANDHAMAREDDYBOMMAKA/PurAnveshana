@@ -28,17 +28,19 @@ model Profile {
 }
 
 model HeritageSite {
-  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId        String        @map("user_id") @db.Uuid
-  title         String
-  description   String
-  type          String?
-  referenceLinks String[]     @default([]) @map("reference_links")
-  paymentStatus PaymentStatus @default(NOT_STARTED) @map("payment_status")
-  createdAt     DateTime      @default(now()) @map("created_at")
+  id                 String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String        @map("user_id") @db.Uuid
+  title              String
+  description        String
+  type               String?
+  referenceLinks     String[]      @default([]) @map("reference_links")
+  paymentStatus      PaymentStatus @default(NOT_STARTED) @map("payment_status")
+  yatraStoryPrompted Boolean       @default(false) @map("yatra_story_prompted")
+  createdAt          DateTime      @default(now()) @map("created_at")
 
-  profile       Profile       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  images        SiteImage[]
+  profile            Profile       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images             SiteImage[]
+  yatraStory         YatraStory?
 
   @@index([userId])
   @@index([type])
@@ -84,6 +86,26 @@ model Payment {
   @@index([userId])
   @@index([createdAt(sort: Desc)])
   @@map("payments")
+}
+
+model YatraStory {
+  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String       @map("user_id") @db.Uuid
+  heritageSiteId    String       @unique @map("heritage_site_id") @db.Uuid
+  title             String
+  journeyNarrative  String       @map("journey_narrative") @db.Text
+  culturalInsights  String       @map("cultural_insights") @db.Text
+  additionalImages  String[]     @default([]) @map("additional_images")
+  isPublished       Boolean      @default(true) @map("is_published")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+
+  heritageSite      HeritageSite @relation(fields: [heritageSiteId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isPublished])
+  @@index([createdAt(sort: Desc)])
+  @@map("yatra_stories")
 }
 
 enum Role {

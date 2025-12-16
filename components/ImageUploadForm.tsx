@@ -524,18 +524,18 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
               }}
             >
               <option value="">Select type</option>
-              <option value="TEMPLE">🕌 Temple</option>
-              <option value="FORT_PALACE">🏰 Fort / Palace</option>
-              <option value="CAVES_ROCK_CUT">⛰️ Caves / Rock-Cut</option>
-              <option value="RUINS">🏛️ Ruins</option>
-              <option value="INSCRIPTIONS">📜 Inscriptions</option>
-              <option value="ROCK_ART">🎨 Rock Art</option>
-              <option value="MEGALITHIC_SITE">🗿 Megalithic Site</option>
-              <option value="BURIAL_SITE">⚰️ Burial Site</option>
-              <option value="WATER_STRUCTURE">💧 Water Structure</option>
-              <option value="ANCIENT_SETTLEMENT">🏘️ Ancient Settlement</option>
-              <option value="ARTIFACT_FOUND">🏺 Artifact Found</option>
-              <option value="OTHER">📋 Other</option>
+              <option value="TEMPLE">Temple</option>
+              <option value="FORT_PALACE">Fort / Palace</option>
+              <option value="CAVES_ROCK_CUT">Caves / Rock-Cut</option>
+              <option value="RUINS">Ruins</option>
+              <option value="INSCRIPTIONS">Inscriptions</option>
+              <option value="ROCK_ART">Rock Art</option>
+              <option value="MEGALITHIC_SITE">Megalithic Site</option>
+              <option value="BURIAL_SITE">Burial Site</option>
+              <option value="WATER_STRUCTURE">Water Structure</option>
+              <option value="ANCIENT_SETTLEMENT">Ancient Settlement</option>
+              <option value="ARTIFACT_FOUND">Artifact Found</option>
+              <option value="OTHER">Other</option>
             </select>
             {siteType === 'OTHER' && (
               <input

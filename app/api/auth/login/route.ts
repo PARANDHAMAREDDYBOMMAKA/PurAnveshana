@@ -11,19 +11,24 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { email, password, turnstileToken } = body
 
-    // Verify Turnstile token
+    // Verify Turnstile token - only enforce in production
     const clientIp = getClientIp(request.headers)
     if (turnstileToken) {
       const verification = await verifyTurnstileToken(turnstileToken, clientIp)
       if (!verification.success) {
-        await logSecurityEvent('turnstile_failed', clientIp, {
-          endpoint: '/api/auth/login',
-          error: verification.error,
-        })
-        return NextResponse.json(
-          { error: verification.error || 'Verification failed' },
-          { status: 403 }
-        )
+        // In production, block the request
+        if (process.env.NODE_ENV === 'production') {
+          await logSecurityEvent('turnstile_failed', clientIp, {
+            endpoint: '/api/auth/login',
+            error: verification.error,
+          })
+          return NextResponse.json(
+            { error: verification.error || 'Verification failed' },
+            { status: 403 }
+          )
+        }
+        // In development, just log and continue
+        console.warn('[Dev] Turnstile verification failed, but allowing login in development mode')
       }
     }
 
