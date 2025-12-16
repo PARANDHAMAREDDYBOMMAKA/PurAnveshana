@@ -351,10 +351,10 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       return
     }
 
-    // Validate description word count (minimum 50 words)
+    // Validate description word count (minimum 20 words)
     const wordCount = sharedDescription.trim().split(/\s+/).filter(word => word.length > 0).length
-    if (wordCount < 50) {
-      toast.error(`Description must be at least 50 words. Current: ${wordCount} words`)
+    if (wordCount < 20) {
+      toast.error(`Description must be at least 20 words. Current: ${wordCount} words`)
       return
     }
 
@@ -660,8 +660,8 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
               </svg>
               Description <span className="text-red-500">*</span>
             </label>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length >= 50 ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
-              {sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length} / 50
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length >= 20 ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+              {sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length} / 20
             </span>
           </div>
           <textarea

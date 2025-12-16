@@ -18,7 +18,16 @@ function shouldUseProductionKeys(): boolean {
     return hostname === 'puranveshana.com' || hostname === 'www.puranveshana.com';
   }
 
-  // On server, check VERCEL_URL or other env vars
+  // On server, check NEXT_PUBLIC_SITE_URL first (most reliable for production)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (siteUrl) {
+    const isProd = siteUrl.includes('puranveshana.com');
+    if (isProd) {
+      return true;
+    }
+  }
+
+  // Fallback: check VERCEL_URL or other env vars
   const vercelUrl = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
   if (vercelUrl) {
     return vercelUrl === 'puranveshana.com' || vercelUrl === 'www.puranveshana.com';
