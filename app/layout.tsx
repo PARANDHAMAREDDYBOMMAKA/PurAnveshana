@@ -97,7 +97,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'google3eea601a87f2daa0',
+    google: 'O5f_j1LPjwJxX_Xz-4Ye-koZNLD9386Rufzrpf4Hc08',
   },
   alternates: {
     canonical: 'https://puranveshana.com',
