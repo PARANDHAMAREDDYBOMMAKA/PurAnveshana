@@ -150,7 +150,7 @@ function applySecurityHeaders(response: NextResponse) {
     "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com https://nominatim.openstreetmap.org https://res.cloudinary.com https://api.cloudinary.com https://www.googletagmanager.com",
     "worker-src 'self' blob:",
     "child-src 'self' blob:",
-    "frame-src 'self' https://challenges.cloudflare.com",
+    "frame-src 'self' https://challenges.cloudflare.com https://maps.google.com https://www.google.com/maps",
     "frame-ancestors 'self'",
     "base-uri 'self'",
     "form-action 'self'",

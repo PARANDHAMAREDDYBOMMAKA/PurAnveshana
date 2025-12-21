@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import toast from 'react-hot-toast'
+import ProfileDropdown from './ProfileDropdown'
 
 interface NavbarProps {
   userEmail?: string
@@ -10,24 +10,6 @@ interface NavbarProps {
 
 export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
   const router = useRouter()
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      })
-
-      if (!response.ok) {
-        throw new Error('Logout failed')
-      }
-
-      toast.success('Logged out successfully')
-      router.push('/')
-      router.refresh()
-    } catch (error) {
-      toast.error('Error logging out')
-    }
-  }
 
   return (
     <nav className="bg-white shadow-md border-b border-slate-200">
@@ -95,28 +77,9 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               </span>
             )}
 
-
-            {/* User Email - Desktop Only */}
-            <div className="hidden lg:flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-              <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <span className="text-xs text-slate-700 font-medium truncate max-w-[120px] xl:max-w-none">{userEmail}</span>
-            </div>
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-linear-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 shadow-sm transition-all"
-            >
-              <span className="hidden sm:inline">Logout</span>
-              <svg className="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
+            <ProfileDropdown userEmail={userEmail} />
           </div>
         </div>
-
       </div>
     </nav>
   )

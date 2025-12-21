@@ -4,6 +4,21 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import {
+  ArrowLeft,
+  Heart,
+  MessageCircle,
+  Share2,
+  Bookmark,
+  MapPin,
+  Calendar,
+  Edit2,
+  Trash2,
+  AlertTriangle,
+  Footprints,
+  BookOpen,
+  Camera
+} from 'lucide-react'
 
 interface YatraStory {
   id: string
@@ -45,6 +60,9 @@ export default function YatraStoryDetail({
   const router = useRouter()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [liked, setLiked] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [showShareMenu, setShowShareMenu] = useState(false)
 
   const isAuthor = story.userId === currentUserId
 
@@ -71,203 +89,294 @@ export default function YatraStoryDetail({
     }
   }
 
+  const handleShare = (platform: string) => {
+    const url = window.location.href
+    const text = `Check out this heritage discovery: ${story.title}`
+
+    const shareUrls = {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+    }
+
+    if (platform === 'copy') {
+      navigator.clipboard.writeText(url)
+      toast.success('Link copied!')
+      setShowShareMenu(false)
+    } else {
+      window.open(shareUrls[platform as keyof typeof shareUrls], '_blank')
+      setShowShareMenu(false)
+    }
+  }
+
   const mainImage =
     story.heritageSite.images[0]?.r2Url ||
     story.heritageSite.images[0]?.cloudinaryUrl
 
+  const allImages = story.heritageSite.images.filter(img => img.r2Url || img.cloudinaryUrl)
+
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-2xl pb-12">
       {/* Back Button */}
       <Link
         href="/dashboard/yatra"
-        className="mb-6 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900"
+        className="inline-flex items-center gap-2 mb-4 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
       >
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-        Back to Stories
+        <ArrowLeft className="h-5 w-5" />
+        <span className="font-medium">Back</span>
       </Link>
 
-      {/* Main Content */}
-      <div className="overflow-hidden rounded-lg bg-white shadow-xl">
+      {/* Main Post */}
+      <article className="bg-white border-b border-gray-200">
+        {/* Post Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="h-10 w-10 rounded-full bg-linear-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white font-bold">
+                {story.author.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></div>
+            </div>
+            <div>
+              <p className="font-semibold text-gray-900 text-sm">
+                {story.author.name}
+              </p>
+              <div className="flex items-center gap-1 text-xs text-gray-900">
+                <Calendar className="h-3 w-3" />
+                <span>{new Date(story.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}</span>
+                {story.heritageSite.type && (
+                  <>
+                    <span>•</span>
+                    <span>{story.heritageSite.type}</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Actions Menu */}
+          <div className="flex items-center gap-2">
+            {isAuthor && (
+              <>
+                <Link
+                  href={`/dashboard/yatra/${story.id}/edit`}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <Edit2 className="h-4 w-4 text-gray-900" />
+                </Link>
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <Trash2 className="h-4 w-4 text-red-600" />
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Hero Image */}
         {mainImage ? (
-          <div className="relative h-96">
+          <div className="w-full aspect-square bg-gray-100">
             <img
               src={mainImage}
               alt={story.heritageSite.title}
-              className="h-full w-full object-cover"
+              className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent"></div>
-            <div className="absolute bottom-6 left-6 right-6 text-white">
-              <p className="mb-2 text-sm font-semibold opacity-90">
-                {story.heritageSite.type}
-              </p>
-              <h1 className="text-3xl font-bold sm:text-4xl">{story.title}</h1>
-            </div>
           </div>
         ) : (
-          <div className="flex h-96 items-center justify-center bg-linear-to-br from-orange-100 to-amber-100">
-            <div className="text-center">
-              <span className="mb-4 block text-8xl">🗺️</span>
-              <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                {story.title}
-              </h1>
-            </div>
+          <div className="w-full aspect-square bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+            <MapPin className="h-24 w-24 text-gray-900" />
           </div>
         )}
 
-        {/* Story Content */}
-        <div className="p-6 sm:p-8">
-          {/* Author Info */}
-          <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-lg font-bold text-orange-600">
-                {story.author.name.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">
-                  {story.author.name}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {new Date(story.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-              </div>
-            </div>
-
-            {isAuthor && (
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
-              >
-                Delete Story
-              </button>
-            )}
+        {/* Action Bar */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => {
+                setLiked(!liked)
+                toast.success(liked ? 'Removed from favorites' : 'Added to favorites')
+              }}
+              className={`transition-colors ${liked ? 'text-red-500' : 'text-gray-900 hover:text-red-500'}`}
+            >
+              <Heart className={`h-6 w-6 ${liked ? 'fill-current' : ''}`} />
+            </button>
+            <button
+              onClick={() => toast.success('Comments coming soon')}
+              className="text-gray-900 hover:text-blue-500 transition-colors"
+            >
+              <MessageCircle className="h-6 w-6" />
+            </button>
+            <button
+              onClick={() => setShowShareMenu(!showShareMenu)}
+              className="text-gray-900 hover:text-green-500 transition-colors relative"
+            >
+              <Share2 className="h-6 w-6" />
+              {showShareMenu && (
+                <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 w-40 z-10">
+                  <button
+                    onClick={() => handleShare('whatsapp')}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
+                  >
+                    WhatsApp
+                  </button>
+                  <button
+                    onClick={() => handleShare('facebook')}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
+                  >
+                    Facebook
+                  </button>
+                  <button
+                    onClick={() => handleShare('twitter')}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
+                  >
+                    Twitter
+                  </button>
+                  <button
+                    onClick={() => handleShare('copy')}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              )}
+            </button>
           </div>
+          <button
+            onClick={() => {
+              setSaved(!saved)
+              toast.success(saved ? 'Removed from saved' : 'Saved to collection')
+            }}
+            className={`transition-colors ${saved ? 'text-orange-500' : 'text-gray-900 hover:text-orange-500'}`}
+          >
+            <Bookmark className={`h-6 w-6 ${saved ? 'fill-current' : ''}`} />
+          </button>
+        </div>
 
-          {/* Heritage Site Info */}
-          <div className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-6">
-            <h3 className="mb-2 text-lg font-bold text-gray-900">
-              About the Heritage Site
-            </h3>
-            <h4 className="mb-1 text-xl font-semibold text-orange-600">
+        {/* Content */}
+        <div className="px-4 py-4 space-y-4">
+          {/* Heritage Site */}
+          <div className="flex items-center gap-1.5 text-sm">
+            <MapPin className="h-4 w-4 text-orange-600" />
+            <span className="font-bold text-orange-600">
               {story.heritageSite.title}
-            </h4>
-            <p className="mb-2 text-sm text-gray-500">
-              {story.heritageSite.type}
-            </p>
+            </span>
             {story.heritageSite.images[0]?.location && (
-              <p className="text-sm text-gray-700">
-                📍 {story.heritageSite.images[0].location}
-              </p>
+              <>
+                <span className="text-gray-900">•</span>
+                <span className="text-gray-900">
+                  {story.heritageSite.images[0].location}
+                </span>
+              </>
             )}
           </div>
 
-          {/* Journey Narrative */}
-          <div className="mb-8">
-            <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-gray-900">
-              <span>🚶</span> The Journey
-            </h2>
-            <div className="prose max-w-none text-gray-700">
-              {story.journeyNarrative.split('\n').map((paragraph, index) => (
-                <p key={index} className="mb-4">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+          {/* Title */}
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 leading-tight">
+              {story.title}
+            </h1>
           </div>
+
+          {/* Journey Section */}
+          <section className="space-y-3 pt-2">
+            <div className="flex items-center gap-2">
+              <Footprints className="h-5 w-5 text-orange-600" />
+              <h2 className="text-lg font-bold text-gray-900">The Journey</h2>
+            </div>
+            <div className="text-gray-900 leading-relaxed whitespace-pre-line">
+              {story.journeyNarrative}
+            </div>
+          </section>
 
           {/* Cultural Insights */}
-          <div className="mb-8">
-            <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-gray-900">
-              <span>📚</span> Historical & Cultural Insights
-            </h2>
-            <div className="prose max-w-none text-gray-700">
-              {story.culturalInsights.split('\n').map((paragraph, index) => (
-                <p key={index} className="mb-4">
-                  {paragraph}
-                </p>
-              ))}
+          <section className="space-y-3 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-blue-600" />
+              <h2 className="text-lg font-bold text-gray-900">Cultural Insights</h2>
             </div>
-          </div>
+            <div className="text-gray-900 leading-relaxed whitespace-pre-line">
+              {story.culturalInsights}
+            </div>
+          </section>
 
           {/* Image Gallery */}
-          {story.heritageSite.images.length > 1 && (
-            <div className="mb-8">
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">
-                Gallery
-              </h2>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                {story.heritageSite.images.slice(1).map((image, index) => {
+          {allImages.length > 1 && (
+            <section className="space-y-3 pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-2">
+                <Camera className="h-5 w-5 text-purple-600" />
+                <h2 className="text-lg font-bold text-gray-900">Gallery</h2>
+              </div>
+              <div className="grid grid-cols-3 gap-1">
+                {allImages.slice(1).map((image) => {
                   const imageUrl = image.r2Url || image.cloudinaryUrl
                   if (!imageUrl) return null
                   return (
-                    <img
-                      key={image.id}
-                      src={imageUrl}
-                      alt={`${story.heritageSite.title} - Image ${index + 2}`}
-                      className="h-48 w-full rounded-lg object-cover"
-                    />
+                    <div key={image.id} className="aspect-square bg-gray-100">
+                      <img
+                        src={imageUrl}
+                        alt={story.heritageSite.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   )
                 })}
               </div>
-            </div>
+            </section>
           )}
 
-          {/* Call to Action */}
-          <div className="rounded-lg border-l-4 border-orange-500 bg-orange-50 p-6">
-            <h3 className="mb-2 font-bold text-orange-900">
-              Inspired by this story?
-            </h3>
-            <p className="mb-4 text-sm text-orange-800">
-              Share your own discovery journey and help preserve India's rich cultural heritage!
-            </p>
-            <Link
-              href="/dashboard/yatra/create"
-              className="inline-block rounded-lg bg-linear-to-r from-orange-500 to-amber-600 px-6 py-3 font-semibold text-white transition-all hover:from-orange-600 hover:to-amber-700"
-            >
-              Share Your Journey
-            </Link>
+          {/* CTA */}
+          <div className="pt-4 border-t border-gray-100">
+            <div className="bg-linear-to-r from-orange-50 to-amber-50 rounded-xl p-6 text-center border border-orange-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                Inspired by this story?
+              </h3>
+              <p className="text-sm text-gray-900 mb-4">
+                Share your own discovery and help preserve our heritage
+              </p>
+              <Link
+                href="/dashboard/yatra/create"
+                className="inline-block px-6 py-2.5 bg-linear-to-r from-orange-500 to-amber-500 text-white font-semibold rounded-full hover:shadow-lg transition-all"
+              >
+                Share Your Journey
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </article>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="mb-4 text-xl font-bold text-gray-900">
-              Delete Story?
-            </h3>
-            <p className="mb-6 text-gray-600">
-              Are you sure you want to delete this Yatra story? This action cannot be undone.
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl">
+            <div className="text-center mb-6">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+                <AlertTriangle className="h-7 w-7 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Delete Story?
+              </h3>
+              <p className="text-sm text-gray-900">
+                This action cannot be undone
+              </p>
+            </div>
             <div className="flex gap-3">
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="flex-1 rounded-lg bg-red-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 disabled:opacity-50 transition-colors"
               >
                 {deleting ? 'Deleting...' : 'Delete'}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleting}
-                className="flex-1 rounded-lg border border-gray-300 px-4 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 disabled:opacity-50 transition-colors"
               >
                 Cancel
               </button>

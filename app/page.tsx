@@ -120,15 +120,6 @@ function IndiaMapAnimation() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (mounted && typeof window !== 'undefined') {
-      // Dynamically import Leaflet CSS
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(link);
-    }
-  }, [mounted]);
 
   if (!mounted) {
     return (
@@ -148,7 +139,7 @@ function IndiaMapAnimation() {
       <div className="absolute inset-0 bg-linear-to-r from-orange-400 to-amber-500 rounded-2xl sm:rounded-3xl transform rotate-3 opacity-20"></div>
       <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8">
         <div className="relative w-full aspect-3/4 max-h-[500px] overflow-hidden rounded-xl">
-          <LeafletMap sites={historicalSites} activePoint={activePoint} />
+          <SimpleIndiaMap sites={historicalSites} activePoint={activePoint} />
 
           {/* Location info box */}
           <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-4 rounded-b-xl z-1000">
@@ -166,195 +157,32 @@ function IndiaMapAnimation() {
   );
 }
 
-// Leaflet Map Component
-function LeafletMap({ sites, activePoint }: { sites: any[], activePoint: number }) {
-  const mapInstanceRef = useState<any>(null);
-  const markersRef = useState<any[]>([]);
+function SimpleIndiaMap({ sites, activePoint }: { sites: any[], activePoint: number }) {
+  const activeSite = sites[activePoint];
 
-  // Initialize map only once
-  useEffect(() => {
-    if (typeof window === 'undefined' || mapInstanceRef[0]) return;
+  const latLngToPercent = (lat: number, lng: number) => ({
+    left: `${((lng - 68) / 29) * 100}%`,
+    top: `${((37 - lat) / 29) * 100}%`
+  });
 
-    const L = require('leaflet');
+  return (
+    <div className="relative w-full h-full rounded-xl overflow-hidden">
+      <iframe
+        src="https://maps.google.com/maps?ll=20.5937,78.9629&z=5&t=m&output=embed"
+        className="w-full h-full pointer-events-none"
+        style={{ border: 0 }}
+      />
 
-    // Fix for default marker icon
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-    });
-
-    // Get the container element
-    const container = document.getElementById('india-map');
-    if (!container) return;
-
-    // Remove any existing map instance from the container
-    if ((container as any)._leaflet_id) {
-      const existingMap = (L as any).DomUtil.get('india-map');
-      if (existingMap) {
-        existingMap._leaflet_id = null;
-      }
-    }
-
-    // Define India's geographical bounds - adjusted for better centering
-    const indiaBounds = L.latLngBounds(
-      L.latLng(6.5, 68.0),  // Southwest coordinates (southernmost point, westernmost point)
-      L.latLng(35.5, 97.5)  // Northeast coordinates (northernmost point, easternmost point)
-    );
-
-    const map = L.map('india-map', {
-      center: [20.5937, 78.9629], // Center of India
-      zoom: 4.2,
-      zoomControl: false,
-      dragging: false,
-      scrollWheelZoom: false,
-      doubleClickZoom: false,
-      touchZoom: false,
-      maxBounds: indiaBounds, // Restrict view to India bounds
-      maxBoundsViscosity: 1.0, // Make bounds solid
-      minZoom: 4.2,
-      maxZoom: 4.2,
-    });
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      bounds: indiaBounds, // Only load tiles within India bounds
-    }).addTo(map);
-
-    // Fit map to India bounds with padding
-    map.fitBounds(indiaBounds, {
-      padding: [40, 40], // Padding to ensure full visibility
-    });
-
-    mapInstanceRef[1](map);
-
-    // Cleanup
-    return () => {
-      if (mapInstanceRef[0]) {
-        mapInstanceRef[0].remove();
-        mapInstanceRef[1](null);
-      }
-    };
-  }, []);
-
-  // Update markers when activePoint changes
-  useEffect(() => {
-    if (!mapInstanceRef[0] || typeof window === 'undefined') return;
-
-    const L = require('leaflet');
-
-    // Helper function to create pin icon
-    const createPinIcon = (site: any) => {
-      return L.divIcon({
-        className: 'custom-pin-marker',
-        html: `
-          <div style="position: relative; animation: fadeInBounce 0.6s ease-out;">
-            <!-- Pin container -->
-            <div style="position: relative; width: 60px; height: 80px;">
-              <!-- Pin background with image -->
-              <div style="
-                position: absolute;
-                top: 0;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 60px;
-                height: 60px;
-                background-color: white;
-                border-radius: 50% 50% 50% 0;
-                border: 4px solid #EF4444;
-                transform: translateX(-50%) rotate(-45deg);
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-                overflow: hidden;
-              ">
-                <!-- Image inside pin -->
-                <div style="
-                  width: 100%;
-                  height: 100%;
-                  transform: rotate(45deg);
-                  background-image: url('${site.image}');
-                  background-size: cover;
-                  background-position: center;
-                  border-radius: 50%;
-                  scale: 1.4;
-                "></div>
-              </div>
-
-              <!-- Pin point -->
-              <div style="
-                position: absolute;
-                bottom: 10px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 8px;
-                height: 8px;
-                background-color: #EF4444;
-                border-radius: 50%;
-                border: 2px solid white;
-              "></div>
-            </div>
-
-            <!-- Pulse effect -->
-            <div style="
-              position: absolute;
-              top: 0;
-              left: 50%;
-              transform: translateX(-50%) rotate(-45deg);
-              width: 60px;
-              height: 60px;
-              border-radius: 50% 50% 50% 0;
-              border: 3px solid #EF4444;
-              opacity: 0.6;
-              animation: pulse 2s infinite;
-            "></div>
+      <div className="absolute -translate-x-1/2 -translate-y-full" style={latLngToPercent(activeSite.lat, activeSite.lng)}>
+        <div className="relative w-14 h-16 drop-shadow-xl">
+          <div className="absolute inset-0 w-12 h-12 bg-white rounded-full border-3 border-red-500 overflow-hidden rotate-45">
+            <img src={activeSite.image} className="-rotate-45 scale-150 w-full h-full object-cover" alt="" />
           </div>
-
-          <style>
-            @keyframes pulse {
-              0%, 100% {
-                transform: translateX(-50%) rotate(-45deg) scale(1);
-                opacity: 0.6;
-              }
-              50% {
-                transform: translateX(-50%) rotate(-45deg) scale(1.2);
-                opacity: 0.2;
-              }
-            }
-
-            @keyframes fadeInBounce {
-              0% {
-                opacity: 0;
-                transform: translateY(-20px) scale(0.8);
-              }
-              60% {
-                opacity: 1;
-                transform: translateY(5px) scale(1.05);
-              }
-              100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-              }
-            }
-          </style>
-        `,
-        iconSize: [60, 80],
-        iconAnchor: [30, 80],
-      });
-    };
-
-    // Remove existing markers
-    markersRef[0].forEach((marker: any) => marker.remove());
-
-    // Add only the active marker
-    const activeSite = sites[activePoint];
-    const marker = L.marker([activeSite.lat, activeSite.lng], {
-      icon: createPinIcon(activeSite),
-    }).addTo(mapInstanceRef[0]);
-
-    markersRef[1]([marker]);
-  }, [activePoint, sites]);
-
-  return <div id="india-map" className="w-full h-full rounded-xl" />;
+          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-500 rounded-full" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function Home() {

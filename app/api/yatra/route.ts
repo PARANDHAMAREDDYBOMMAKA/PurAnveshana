@@ -14,12 +14,16 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const heritageSiteId = searchParams.get('heritageSiteId')
 
-    const where: any = {
-      isPublished: true,
-    }
+    const where: any = {}
 
-    // Non-admin users can only see their own stories
-    if (session.role !== 'admin') {
+    // Admins see all published stories, users see only their own stories
+    if (session.role === 'admin') {
+      // Admins see only approved/featured stories from all users
+      where.publishStatus = {
+        in: ['APPROVED_PUBLIC', 'FEATURED_YATRA']
+      }
+    } else {
+      // Regular users see all their own stories (any status)
       where.userId = session.userId
     }
 
@@ -96,19 +100,42 @@ export async function POST(request: Request) {
     const {
       heritageSiteId,
       title,
+      discoveryContext,
       journeyNarrative,
+      historicalIndicators,
+      historicalIndicatorsDetails,
+      evidenceTypes,
+      safeVisuals = [],
+      personalReflection,
+      submissionConfirmed,
+      // Legacy field for backwards compatibility
       culturalInsights,
-      additionalImages = [],
     } = body
 
-    if (!heritageSiteId || !title || !journeyNarrative || !culturalInsights) {
+    // Validate required fields
+    if (!heritageSiteId || !title) {
       return NextResponse.json(
-        {
-          error:
-            'Heritage site, title, journey narrative, and cultural insights are required',
-        },
+        { error: 'Heritage site and title are required' },
         { status: 400 }
       )
+    }
+
+    // For new wizard submissions
+    if (discoveryContext !== undefined) {
+      if (!discoveryContext || !journeyNarrative || !historicalIndicators?.length || !evidenceTypes?.length || !submissionConfirmed) {
+        return NextResponse.json(
+          { error: 'Please complete all required fields and confirm your submission' },
+          { status: 400 }
+        )
+      }
+    } else {
+      // For legacy form submissions
+      if (!journeyNarrative || !culturalInsights) {
+        return NextResponse.json(
+          { error: 'Journey narrative and cultural insights are required' },
+          { status: 400 }
+        )
+      }
     }
 
     // Verify the heritage site exists and belongs to the user
@@ -162,9 +189,17 @@ export async function POST(request: Request) {
           heritageSiteId,
           title,
           journeyNarrative,
-          culturalInsights,
-          additionalImages,
-          isPublished: true, // Auto-publish the story
+          // New wizard fields
+          discoveryContext: discoveryContext || '',
+          historicalIndicators: historicalIndicators || [],
+          historicalIndicatorsDetails: historicalIndicatorsDetails || null,
+          evidenceTypes: evidenceTypes || [],
+          safeVisuals: safeVisuals || [],
+          personalReflection: personalReflection || null,
+          submissionConfirmed: submissionConfirmed || false,
+          publishStatus: 'PENDING_REVIEW',
+          // Legacy field for backwards compatibility
+          culturalInsights: culturalInsights || null,
         },
         include: {
           heritageSite: {

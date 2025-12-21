@@ -89,21 +89,48 @@ model Payment {
 }
 
 model YatraStory {
-  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId            String       @map("user_id") @db.Uuid
-  heritageSiteId    String       @unique @map("heritage_site_id") @db.Uuid
-  title             String
-  journeyNarrative  String       @map("journey_narrative") @db.Text
-  culturalInsights  String       @map("cultural_insights") @db.Text
-  additionalImages  String[]     @default([]) @map("additional_images")
-  isPublished       Boolean      @default(true) @map("is_published")
-  createdAt         DateTime     @default(now()) @map("created_at")
-  updatedAt         DateTime     @updatedAt @map("updated_at")
+  id                          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                      String       @map("user_id") @db.Uuid
+  heritageSiteId              String       @unique @map("heritage_site_id") @db.Uuid
 
-  heritageSite      HeritageSite @relation(fields: [heritageSiteId], references: [id], onDelete: Cascade)
+  // Question 1: Title (Required)
+  title                       String       @db.VarChar(80)
+
+  // Question 2: Discovery Context (Required, 150-300 words)
+  discoveryContext            String       @map("discovery_context") @db.Text
+
+  // Question 3: Journey & Effort (Required)
+  journeyNarrative            String       @map("journey_narrative") @db.Text
+
+  // Question 4: Historical Indicators (Required)
+  historicalIndicators        String[]     @default([]) @map("historical_indicators")
+  historicalIndicatorsDetails String?      @map("historical_indicators_details") @db.Text
+
+  // Question 5: Evidence Summary (Required)
+  evidenceTypes               String[]     @default([]) @map("evidence_types")
+
+  // Question 6: Safe Visuals (Optional, max 3 images)
+  safeVisuals                 String[]     @default([]) @map("safe_visuals")
+
+  // Question 7: Personal Reflection (Optional)
+  personalReflection          String?      @map("personal_reflection") @db.Text
+
+  // Question 8: Submission Declaration (Required)
+  submissionConfirmed         Boolean      @default(false) @map("submission_confirmed")
+
+  // Question 9: Publish Status (System Controlled)
+  publishStatus               PublishStatus @default(PENDING_REVIEW) @map("publish_status")
+
+  // Legacy field for cultural insights (keeping for backwards compatibility)
+  culturalInsights            String?      @map("cultural_insights") @db.Text
+
+  createdAt                   DateTime     @default(now()) @map("created_at")
+  updatedAt                   DateTime     @updatedAt @map("updated_at")
+
+  heritageSite                HeritageSite @relation(fields: [heritageSiteId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([isPublished])
+  @@index([publishStatus])
   @@index([createdAt(sort: Desc)])
   @@map("yatra_stories")
 }
@@ -124,6 +151,12 @@ enum PaymentStatus {
   NOT_STARTED
   IN_PROGRESS
   COMPLETED
+}
+
+enum PublishStatus {
+  PENDING_REVIEW
+  APPROVED_PUBLIC
+  FEATURED_YATRA
 }
 
 enum SiteType {
