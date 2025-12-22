@@ -49,7 +49,7 @@ export async function GET(
       )
     }
 
-    if (!story.isPublished) {
+    if (story.publishStatus === 'PENDING_REVIEW') {
       return NextResponse.json(
         { error: 'This story is not published' },
         { status: 403 }
@@ -103,7 +103,7 @@ export async function PUT(
 
     const { id } = await params
     const body = await request.json()
-    const { title, journeyNarrative, culturalInsights, additionalImages } = body
+    const { title, journeyNarrative, culturalInsights, safeVisuals } = body
 
     // Check if story exists
     const existingStory = await withRetry(() =>
@@ -135,7 +135,7 @@ export async function PUT(
           title,
           journeyNarrative,
           culturalInsights,
-          additionalImages,
+          safeVisuals,
         },
         include: {
           heritageSite: {
