@@ -16,16 +16,8 @@ export async function GET(request: Request) {
 
     const where: any = {}
 
-    // Admins see all published stories, users see only their own stories
-    if (session.role === 'admin') {
-      // Admins see only approved/featured stories from all users
-      where.publishStatus = {
-        in: ['APPROVED_PUBLIC', 'FEATURED_YATRA']
-      }
-    } else {
-      // Regular users see all their own stories (any status)
-      where.userId = session.userId
-    }
+    // All logged-in users can see ALL Yatra stories from everyone
+    // No filtering by publish status - all stories are public
 
     if (heritageSiteId) {
       where.heritageSiteId = heritageSiteId

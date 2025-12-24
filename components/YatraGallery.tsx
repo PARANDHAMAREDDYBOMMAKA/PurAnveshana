@@ -305,6 +305,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
               const imageUrl =
                 story.heritageSite.images[0]?.r2Url ||
                 story.heritageSite.images[0]?.cloudinaryUrl
+              const isOwnStory = story.author.id === userId
 
               return (
                 <article
@@ -381,14 +382,21 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                   {/* Post Image */}
                   {imageUrl ? (
                     <div
-                      className="w-full aspect-square bg-gray-100 cursor-pointer"
+                      className="w-full aspect-square bg-gray-100 cursor-pointer relative"
                       onClick={() => router.push(`/dashboard/yatra/${story.id}`)}
                     >
                       <img
                         src={imageUrl}
                         alt={story.heritageSite.title}
-                        className="w-full h-full object-cover"
+                        className={`w-full h-full object-cover ${!isOwnStory ? 'blur-md' : ''}`}
                       />
+                      {!isOwnStory && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                          <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-xs text-gray-900 font-medium">
+                            🔒 Image blurred for privacy
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="w-full aspect-square bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">

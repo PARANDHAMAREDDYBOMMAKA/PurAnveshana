@@ -1,11 +1,30 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
+import Link from 'next/link'
 import HeritageSiteCard from './HeritageSiteCard'
 import ImageUploadForm from './ImageUploadForm'
 import PaymentHistory from './PaymentHistory'
 import YatraPromptModal from './YatraPromptModal'
 import { defaultHeritageSites } from '@/lib/defaultHeritageSites'
+import {
+  Upload,
+  MapPin,
+  Award,
+  Camera,
+  TrendingUp,
+  Users,
+  Clock,
+  CheckCircle,
+  XCircle,
+  DollarSign,
+  FileText,
+  Search,
+  Filter,
+  BarChart3,
+  AlertCircle,
+  Sparkles
+} from 'lucide-react'
 
 interface DashboardClientProps {
   images: any[]
@@ -20,8 +39,9 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
 
   const [sites, setSites] = useState(displaySites)
   const [paymentFilter, setPaymentFilter] = useState<string>('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showUploadModal, setShowUploadModal] = useState(false)
 
-  // Update sites state when initialSites prop changes
   useEffect(() => {
     const newDisplaySites = !isAdmin && (!initialSites || initialSites.length === 0)
       ? defaultHeritageSites
@@ -29,17 +49,46 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     setSites(newDisplaySites)
   }, [initialSites, isAdmin])
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (showUploadModal) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showUploadModal])
+
+  // Close modal on ESC key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showUploadModal) {
+        setShowUploadModal(false)
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [showUploadModal])
+
   const handleUploadComplete = useCallback(() => {
     if (onUploadSuccess) {
       onUploadSuccess()
     }
+    setShowUploadModal(false) // Close modal after successful upload
   }, [onUploadSuccess])
 
   const isShowingDefaults = !isAdmin && (!initialSites || initialSites.length === 0)
 
-  const filteredSites = paymentFilter
-    ? sites.filter((site: any) => site.paymentStatus === paymentFilter)
-    : sites
+  const filteredSites = sites?.filter((site: any) => {
+    const matchesPayment = !paymentFilter || site.paymentStatus === paymentFilter
+    const matchesSearch = !searchQuery ||
+      site.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      site.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      site.type?.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesPayment && matchesSearch
+  }) || []
 
   const statsSource = isShowingDefaults ? [] : initialSites
   const totalImages = statsSource?.reduce((acc, site) => acc + (site.images?.length || 0), 0) || 0
@@ -47,161 +96,395 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     acc + (site.images?.filter((img: any) => img.isVerified).length || 0), 0
   ) || 0
 
+  // Admin-specific stats
+  const pendingPayments = sites?.filter((site: any) => site.paymentStatus === 'NOT_STARTED').length || 0
+  const inProgressPayments = sites?.filter((site: any) => site.paymentStatus === 'IN_PROGRESS').length || 0
+  const completedPayments = sites?.filter((site: any) => site.paymentStatus === 'COMPLETED').length || 0
+  const uniqueUsers = [...new Set(sites?.map((site: any) => site.userId))].length || 0
+
   return (
     <>
-      {/* Yatra Prompt Modal - Only for non-admin users */}
       {!isAdmin && <YatraPromptModal />}
 
-      {/* Statistics Cards - Enhanced Responsive Grid */}
-      <div className="grid grid-cols-1 min-[500px]:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
-        <div className="bg-linear-to-br from-orange-500 to-amber-600 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-          <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] sm:text-xs md:text-sm font-semibold opacity-90 mb-1 truncate">Total Heritage Sites</p>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold">{sites?.length || 0}</p>
-            </div>
-            <div className="bg-white/20 p-2 sm:p-2.5 md:p-3 rounded-lg shrink-0">
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </div>
-          </div>
-          <p className="text-[10px] sm:text-xs opacity-75 truncate">{totalImages} images documented</p>
-        </div>
-
-        <div className="bg-linear-to-br from-green-500 to-emerald-600 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-          <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] sm:text-xs md:text-sm font-semibold opacity-90 mb-1 truncate">Verified Images</p>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold">{verifiedImages}</p>
-            </div>
-            <div className="bg-white/20 p-2 sm:p-2.5 md:p-3 rounded-lg shrink-0">
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-          </div>
-          <p className="text-[10px] sm:text-xs opacity-75 truncate">{totalImages > 0 ? Math.round((verifiedImages / totalImages) * 100) : 0}% verification rate</p>
-        </div>
-
-        <div className="bg-linear-to-br from-blue-500 to-cyan-600 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 min-[500px]:col-span-2 lg:col-span-1">
-          <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] sm:text-xs md:text-sm font-semibold opacity-90 mb-1 truncate">Total Images</p>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold">{totalImages}</p>
-            </div>
-            <div className="bg-white/20 p-2 sm:p-2.5 md:p-3 rounded-lg shrink-0">
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          <p className="text-[10px] sm:text-xs opacity-75 truncate">Across all heritage sites</p>
-        </div>
-      </div>
-
+      {/* User Dashboard */}
       {!isAdmin && (
-        <div className="mb-6 sm:mb-8">
-          <PaymentHistory />
-        </div>
-      )}
+        <div className="space-y-6">
+          {/* Welcome Banner */}
+          <div className="bg-linear-to-r from-orange-500 via-amber-500 to-orange-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                  Welcome to Your Heritage Dashboard
+                </h1>
+                <p className="text-orange-100 text-sm sm:text-base">
+                  Discover, document, and preserve India's cultural treasures
+                </p>
+              </div>
+              <Sparkles className="h-16 w-16 opacity-30 hidden sm:block" />
+            </div>
+          </div>
 
-      {/* Upload Form - Responsive (Hidden for Admin) */}
-      {!isAdmin && (
-        <div className="mb-8 sm:mb-12">
-          <ImageUploadForm onUploadComplete={handleUploadComplete} />
-        </div>
-      )}
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <button
+              onClick={() => setShowUploadModal(true)}
+              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-orange-100 hover:border-orange-300 group text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="bg-linear-to-br from-orange-500 to-amber-600 p-3 rounded-lg group-hover:scale-110 transition-transform">
+                  <Upload className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">Upload Site</h3>
+                  <p className="text-xs text-gray-600">Add new discovery</p>
+                </div>
+              </div>
+            </button>
 
-      <div className="mb-4 sm:mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-2 sm:mb-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-            {isAdmin
-              ? 'All Heritage Sites'
-              : isShowingDefaults
-                ? 'Example Heritage Sites - Get Inspired!'
-                : 'Your Heritage Sites'}
-          </h2>
-          {isAdmin && (
-            <div className="flex items-center gap-2">
-              <label htmlFor="paymentFilter" className="text-sm font-semibold text-slate-700 whitespace-nowrap">
-                Filter by Payment:
-              </label>
-              <select
-                id="paymentFilter"
-                className="px-3 py-2 border-2 border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-medium text-slate-900 bg-white"
-                value={paymentFilter}
-                onChange={(e) => setPaymentFilter(e.target.value)}
-              >
-                <option value="">All Sites</option>
-                <option value="NOT_STARTED">Not Started</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="COMPLETED">Completed (Paid)</option>
-              </select>
-              {paymentFilter && (
-                <button
-                  onClick={() => setPaymentFilter('')}
-                  className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold transition-all"
-                >
-                  Clear
-                </button>
-              )}
+            <Link
+              href="/dashboard/yatra"
+              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-orange-100 hover:border-orange-300 group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="bg-linear-to-br from-purple-500 to-pink-600 p-3 rounded-lg group-hover:scale-110 transition-transform">
+                  <MapPin className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">Yatra Stories</h3>
+                  <p className="text-xs text-gray-600">Share your journey</p>
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/dashboard/support"
+              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-orange-100 hover:border-orange-300 group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="bg-linear-to-br from-blue-500 to-cyan-600 p-3 rounded-lg group-hover:scale-110 transition-transform">
+                  <FileText className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">Support</h3>
+                  <p className="text-xs text-gray-600">Get help</p>
+                </div>
+              </div>
+            </Link>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-orange-100">
+              <div className="flex items-center justify-between mb-3">
+                <div className="bg-orange-100 p-3 rounded-lg">
+                  <MapPin className="h-6 w-6 text-orange-600" />
+                </div>
+                <TrendingUp className="h-5 w-5 text-green-500" />
+              </div>
+              <p className="text-3xl font-bold text-gray-900">{sites?.length || 0}</p>
+              <p className="text-sm text-gray-600 mt-1">Heritage Sites</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-green-100">
+              <div className="flex items-center justify-between mb-3">
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <span className="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                  {totalImages > 0 ? Math.round((verifiedImages / totalImages) * 100) : 0}%
+                </span>
+              </div>
+              <p className="text-3xl font-bold text-gray-900">{verifiedImages}</p>
+              <p className="text-sm text-gray-600 mt-1">Verified Images</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-blue-100">
+              <div className="flex items-center justify-between mb-3">
+                <div className="bg-blue-100 p-3 rounded-lg">
+                  <Camera className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-gray-900">{totalImages}</p>
+              <p className="text-sm text-gray-600 mt-1">Total Images</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-purple-100">
+              <div className="flex items-center justify-between mb-3">
+                <div className="bg-purple-100 p-3 rounded-lg">
+                  <Award className="h-6 w-6 text-purple-600" />
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-gray-900">{completedPayments}</p>
+              <p className="text-sm text-gray-600 mt-1">Paid Sites</p>
+            </div>
+          </div>
+
+          {/* Payment History */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-orange-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <DollarSign className="h-6 w-6 text-orange-600" />
+              Payment History
+            </h2>
+            <PaymentHistory />
+          </div>
+
+          {/* Sites Section */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-orange-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              {isShowingDefaults ? 'Example Heritage Sites - Get Inspired!' : 'Your Heritage Sites'}
+            </h2>
+            {isShowingDefaults && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-amber-800">
+                  <AlertCircle className="h-4 w-4 inline mr-2" />
+                  These are example heritage sites to inspire you. Upload your first site to start documenting!
+                </p>
+              </div>
+            )}
+
+            {filteredSites && filteredSites.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 auto-rows-fr">
+                {filteredSites.map((site: any) => (
+                  <HeritageSiteCard
+                    key={site.id}
+                    site={site}
+                    showUser={false}
+                    isOwner={!isShowingDefaults}
+                    onUpdate={onUploadSuccess}
+                    userId={site.userId}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <MapPin className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-gray-900">No heritage sites yet</h3>
+                <p className="text-sm text-gray-600 mt-2">Start your journey by uploading your first discovery!</p>
+              </div>
+            )}
+          </div>
+
+          {/* Upload Modal */}
+          {showUploadModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+              {/* Backdrop */}
+              <div
+                className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+                onClick={() => setShowUploadModal(false)}
+              />
+
+              {/* Modal Container */}
+              <div className="relative w-full max-w-4xl my-8 z-10">
+                <div className="bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[calc(100vh-4rem)]">
+                  {/* Modal Header - Fixed */}
+                  <div className="sticky top-0 bg-linear-to-r from-orange-500 to-amber-600 px-6 py-4 flex items-center justify-between z-20 shadow-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-white/20 p-2 rounded-lg">
+                        <Upload className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold text-white">Upload Heritage Site</h2>
+                        <p className="text-sm text-orange-100">Share your discovery with the world</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowUploadModal(false)}
+                      className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors shrink-0"
+                      aria-label="Close modal"
+                    >
+                      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Modal Content - Scrollable */}
+                  <div className="overflow-y-auto max-h-[calc(100vh-12rem)] p-6">
+                    <ImageUploadForm onUploadComplete={handleUploadComplete} />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
-        {isShowingDefaults && (
-          <p className="text-sm text-slate-600 mb-4">
-            These are example heritage sites to inspire you. Upload your first site to start documenting your discoveries!
-          </p>
-        )}
-        {isAdmin && paymentFilter && (
-          <p className="text-sm text-slate-600">
-            Showing {filteredSites.length} site{filteredSites.length !== 1 ? 's' : ''} with payment status: {paymentFilter === 'NOT_STARTED' ? 'Not Started' : paymentFilter === 'IN_PROGRESS' ? 'In Progress' : 'Completed (Paid)'}
-          </p>
-        )}
-      </div>
+      )}
 
-      {filteredSites && filteredSites.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          {filteredSites.map((site: any) => (
-            <HeritageSiteCard
-              key={site.id}
-              site={site}
-              showUser={isAdmin}
-              isOwner={!isAdmin && !isShowingDefaults}
-              onUpdate={onUploadSuccess}
-              userId={site.userId}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-10 sm:py-12 bg-white rounded-lg shadow-md border border-orange-100">
-          <svg
-            className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-orange-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-          <h3 className="mt-2 text-sm sm:text-base font-bold text-slate-900">No heritage sites yet</h3>
-          <p className="mt-1 text-xs sm:text-sm text-slate-600 font-medium px-4">
-            {isAdmin
-              ? 'No sites have been documented yet.'
-             : 'Get started by documenting your first heritage site.'}
-          </p>
+      {/* Admin Dashboard */}
+      {isAdmin && (
+        <div className="space-y-6">
+          {/* Admin Header */}
+          <div className="bg-linear-to-r from-slate-800 via-slate-700 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center gap-3">
+                  <BarChart3 className="h-8 w-8" />
+                  Admin Dashboard
+                </h1>
+                <p className="text-slate-300 text-sm sm:text-base">
+                  Manage heritage sites, payments, and user submissions
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Admin Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-blue-500">
+              <div className="flex items-center justify-between mb-3">
+                <div className="bg-blue-100 p-3 rounded-lg">
+                  <MapPin className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-gray-900">{sites?.length || 0}</p>
+              <p className="text-sm text-gray-600 mt-1">Total Sites</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-purple-500">
+              <div className="flex items-center justify-between mb-3">
+                <div className="bg-purple-100 p-3 rounded-lg">
+                  <Users className="h-6 w-6 text-purple-600" />
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-gray-900">{uniqueUsers}</p>
+              <p className="text-sm text-gray-600 mt-1">Active Users</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-orange-500">
+              <div className="flex items-center justify-between mb-3">
+                <div className="bg-orange-100 p-3 rounded-lg">
+                  <Clock className="h-6 w-6 text-orange-600" />
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-gray-900">{pendingPayments}</p>
+              <p className="text-sm text-gray-600 mt-1">Pending Payments</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-green-500">
+              <div className="flex items-center justify-between mb-3">
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-gray-900">{completedPayments}</p>
+              <p className="text-sm text-gray-600 mt-1">Completed</p>
+            </div>
+          </div>
+
+          {/* Payment Status Overview */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <DollarSign className="h-6 w-6 text-slate-700" />
+              Payment Status Overview
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-orange-50 rounded-lg p-4 border-2 border-orange-200">
+                <div className="flex items-center justify-between mb-2">
+                  <XCircle className="h-5 w-5 text-orange-600" />
+                  <span className="text-2xl font-bold text-orange-900">{pendingPayments}</span>
+                </div>
+                <p className="text-sm font-semibold text-orange-700">Not Started</p>
+              </div>
+
+              <div className="bg-yellow-50 rounded-lg p-4 border-2 border-yellow-200">
+                <div className="flex items-center justify-between mb-2">
+                  <Clock className="h-5 w-5 text-yellow-600" />
+                  <span className="text-2xl font-bold text-yellow-900">{inProgressPayments}</span>
+                </div>
+                <p className="text-sm font-semibold text-yellow-700">In Progress</p>
+              </div>
+
+              <div className="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                <div className="flex items-center justify-between mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <span className="text-2xl font-bold text-green-900">{completedPayments}</span>
+                </div>
+                <p className="text-sm font-semibold text-green-700">Completed</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Filters and Search */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search sites by title, type, or description..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm text-gray-900 placeholder:text-gray-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Filter className="h-5 w-5 text-gray-600" />
+                <select
+                  className="px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-medium bg-white text-gray-900"
+                  value={paymentFilter}
+                  onChange={(e) => setPaymentFilter(e.target.value)}
+                >
+                  <option value="">All Payment Status</option>
+                  <option value="NOT_STARTED">Not Started</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="COMPLETED">Completed</option>
+                </select>
+                {(paymentFilter || searchQuery) && (
+                  <button
+                    onClick={() => {
+                      setPaymentFilter('')
+                      setSearchQuery('')
+                    }}
+                    className="px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold transition-all"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {(paymentFilter || searchQuery) && (
+              <div className="mt-4 text-sm text-gray-600">
+                Showing <span className="font-bold text-gray-900">{filteredSites.length}</span> of{' '}
+                <span className="font-bold text-gray-900">{sites?.length || 0}</span> sites
+              </div>
+            )}
+          </div>
+
+          {/* Heritage Sites Grid */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <MapPin className="h-6 w-6 text-slate-700" />
+              All Heritage Sites
+            </h2>
+
+            {filteredSites && filteredSites.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 auto-rows-fr">
+                {filteredSites.map((site: any) => (
+                  <HeritageSiteCard
+                    key={site.id}
+                    site={site}
+                    showUser={true}
+                    isOwner={false}
+                    onUpdate={onUploadSuccess}
+                    userId={site.userId}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-gray-900">No sites found</h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  {searchQuery || paymentFilter
+                    ? 'Try adjusting your filters or search query'
+                    : 'No heritage sites have been uploaded yet'}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>

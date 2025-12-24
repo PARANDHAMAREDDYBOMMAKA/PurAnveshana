@@ -49,20 +49,8 @@ export async function GET(
       )
     }
 
-    if (story.publishStatus === 'PENDING_REVIEW') {
-      return NextResponse.json(
-        { error: 'This story is not published' },
-        { status: 403 }
-      )
-    }
-
-    // Non-admin users can only view their own stories
-    if (session.role !== 'admin' && story.userId !== session.userId) {
-      return NextResponse.json(
-        { error: 'You do not have permission to view this story' },
-        { status: 403 }
-      )
-    }
+    // All logged-in users can view all Yatra stories
+    // No restrictions based on publish status or ownership
 
     // Fetch author details
     const author = await withRetry(() =>

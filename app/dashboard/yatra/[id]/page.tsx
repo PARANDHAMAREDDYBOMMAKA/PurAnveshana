@@ -47,10 +47,9 @@ export default async function YatraStoryPage({
     redirect('/dashboard/yatra')
   }
 
-  // Check permissions: users can only view their own stories, admins can view all
-  if (session.role !== 'admin' && story.userId !== session.userId) {
-    redirect('/dashboard/yatra')
-  }
+  // All logged-in users can view all Yatra stories
+  // No access restrictions based on publish status
+  const isOwnStory = story.userId === session.userId
 
   // Fetch author details
   const author = await withRetry(() =>
@@ -75,5 +74,9 @@ export default async function YatraStoryPage({
     }
   }
 
-  return <YatraStoryDetail story={storyWithAuthor} currentUserId={session.userId} />
+  return (
+    <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white">
+      <YatraStoryDetail story={storyWithAuthor} currentUserId={session.userId} isOwnStory={isOwnStory} />
+    </div>
+  )
 }
