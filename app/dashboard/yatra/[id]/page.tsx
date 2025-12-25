@@ -17,7 +17,6 @@ export default async function YatraStoryPage({
 
   const { id } = await params
 
-  // Fetch the Yatra story
   const story = await withRetry(() =>
     prisma.yatraStory.findUnique({
       where: { id },
@@ -47,11 +46,8 @@ export default async function YatraStoryPage({
     redirect('/dashboard/yatra')
   }
 
-  // All logged-in users can view all Yatra stories
-  // No access restrictions based on publish status
   const isOwnStory = story.userId === session.userId
 
-  // Fetch author details
   const author = await withRetry(() =>
     prisma.profile.findUnique({
       where: { id: story.userId },
@@ -64,13 +60,13 @@ export default async function YatraStoryPage({
 
   const storyWithAuthor = {
     ...story,
-    author: author || { id: story.userId, name: 'Unknown' }, // Provide default if author not found
-    culturalInsights: story.culturalInsights || '', // Provide default for nullable field
-    createdAt: story.createdAt.toISOString(), // Convert Date to string
-    updatedAt: story.updatedAt.toISOString(), // Convert Date to string
+    author: author || { id: story.userId, name: 'Unknown' },
+    culturalInsights: story.culturalInsights || '',
+    createdAt: story.createdAt.toISOString(),
+    updatedAt: story.updatedAt.toISOString(),
     heritageSite: {
       ...story.heritageSite,
-      description: '', // Add empty description for backwards compatibility
+      description: '',
     }
   }
 

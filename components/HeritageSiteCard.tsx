@@ -215,7 +215,7 @@ export default function HeritageSiteCard({
       {/* Enhanced Card Design */}
       <div className="group bg-white rounded-2xl shadow-md hover:shadow-2xl overflow-hidden border-2 border-slate-100 hover:border-orange-300 transition-all duration-300 flex flex-col h-full">
         {/* Image Section with Overlay */}
-        <div className="relative h-52 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+        <div className="relative h-52 overflow-hidden bg-linear-to-br from-slate-100 to-slate-200">
           {isVideo(currentImageUrl) ? (
             <video
               src={currentImageUrl}
@@ -232,7 +232,7 @@ export default function HeritageSiteCard({
           )}
 
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
 
           {/* Top Left - Type Badge */}
           {site.type && (
@@ -318,7 +318,7 @@ export default function HeritageSiteCard({
           <div className="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100">
             <button
               onClick={() => setShowDetailsModal(true)}
-              className="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
+              className="flex-1 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
             >
               <Eye className="h-4 w-4" />
               View Details
@@ -361,7 +361,7 @@ export default function HeritageSiteCard({
             {/* Modal Content - Scrollable */}
             <div className="overflow-y-auto">
               {/* Hero Image */}
-              <div className="relative w-full bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center" style={{ minHeight: '300px', maxHeight: '500px' }}>
+              <div className="relative w-full bg-linear-to-br from-slate-100 to-slate-50 flex items-center justify-center" style={{ minHeight: '300px', maxHeight: '500px' }}>
                 <div className="relative w-full h-full flex items-center justify-center p-4">
                   {isVideo(currentImageUrl) ? (
                     <video
@@ -626,7 +626,7 @@ export default function HeritageSiteCard({
                 <button
                   onClick={handlePayment}
                   disabled={isLoading}
-                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50"
+                  className="flex-1 bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50"
                 >
                   {isLoading ? 'Processing...' : 'Record Payment'}
                 </button>

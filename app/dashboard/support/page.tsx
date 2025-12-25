@@ -41,7 +41,6 @@ export default function SupportPage() {
       setUserEmail(profileData.profile.email)
       setUserRole(profileData.profile.role)
 
-      // Fetch tickets from appropriate endpoint based on role
       const ticketsEndpoint = profileData.profile.role === 'admin'
         ? '/api/admin/support/tickets'
         : '/api/support/tickets'
@@ -129,7 +128,7 @@ export default function SupportPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
           <p className="mt-4 text-slate-900 font-medium">Loading support tickets...</p>
@@ -141,7 +140,7 @@ export default function SupportPage() {
   const isAdmin = userRole === 'admin'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-white">
+    <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white">
       <Navbar userEmail={userEmail} isAdmin={isAdmin} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -245,7 +244,7 @@ export default function SupportPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? 'Creating...' : 'Create Ticket'}
                 </button>
@@ -272,7 +271,7 @@ export default function SupportPage() {
               <p className="text-slate-600 mb-6">Create your first support ticket to get help</p>
               <button
                 onClick={() => setShowNewTicketForm(true)}
-                className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+                className="px-6 py-3 bg-linear-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:scale-105"
               >
                 Create Ticket
               </button>

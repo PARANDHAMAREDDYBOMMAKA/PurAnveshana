@@ -5,7 +5,6 @@ import { withRetry } from '@/lib/db-utils'
 import { deleteFromR2 } from '@/lib/r2'
 import { v2 as cloudinary } from 'cloudinary'
 
-// Configure Cloudinary (for backward compatibility with existing images)
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -75,7 +74,6 @@ export async function GET(request: Request) {
         )
       }
 
-      // Fetch payment amounts for each heritage site
       const sitesWithPayments = await Promise.all(
         sites.map(async (site) => {
           const payments = await withRetry(() =>
@@ -163,7 +161,6 @@ export async function POST(request: Request) {
           { status: 400 }
         )
       }
-      // Check that either R2 or Cloudinary fields are provided
       const hasR2 = img.r2Url && img.r2Key
       const hasCloudinary = img.cloudinaryUrl && img.cloudinaryPublicId
       if (!hasR2 && !hasCloudinary) {
@@ -339,15 +336,12 @@ export async function DELETE(request: Request) {
       )
     }
 
-    // Delete all images/videos from R2 or Cloudinary
     const deletePromises = site.images.map(async (image) => {
       try {
-        // If image uses R2, delete from R2
         if (image.r2Key) {
           await deleteFromR2(image.r2Key)
           console.log(`Deleted file from R2:`, image.r2Key)
         }
-        // If image uses Cloudinary, delete from Cloudinary
         else if (image.cloudinaryPublicId) {
           const resourceType = image.cloudinaryUrl?.includes('/video/') ? 'video' : 'image'
           await cloudinary.uploader.destroy(image.cloudinaryPublicId, {
@@ -357,14 +351,11 @@ export async function DELETE(request: Request) {
         }
       } catch (error) {
         console.error('Error deleting file:', error)
-        // Continue with deletion even if storage deletion fails
       }
     })
 
-    // Wait for all storage deletions to complete
     await Promise.allSettled(deletePromises)
 
-    // Delete from database
     await withRetry(() =>
       prisma.heritageSite.delete({
         where: { id: siteId },

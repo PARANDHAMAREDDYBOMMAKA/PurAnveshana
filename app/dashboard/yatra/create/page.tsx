@@ -15,13 +15,12 @@ export default async function CreateYatraPage({
     redirect('/login')
   }
 
-  // Get user's paid heritage sites (for site selection dropdown)
   const paidSites = await withRetry(() =>
     prisma.heritageSite.findMany({
       where: {
         userId: session.userId,
         paymentStatus: 'COMPLETED',
-        yatraStory: null, // Only sites without existing stories
+        yatraStory: null,
       },
       select: {
         id: true,
@@ -42,7 +41,6 @@ export default async function CreateYatraPage({
     })
   )
 
-  // If siteId is provided in query params, get that specific site
   const selectedSiteId = searchParams.siteId
   let selectedSite = null
 

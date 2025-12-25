@@ -9,7 +9,6 @@ export default function ProfilePage() {
   const [name, setName] = useState('')
 
   useEffect(() => {
-    // Fetch user data here and set the state
   }, [])
 
   const handleUpdateProfile = async (e: React.FormEvent) => {

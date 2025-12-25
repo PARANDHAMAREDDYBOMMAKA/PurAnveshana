@@ -20,7 +20,6 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
 
-    // Verify Turnstile token
     if (!turnstileToken) {
       toast.error('Please complete the security verification')
       setLoading(false)

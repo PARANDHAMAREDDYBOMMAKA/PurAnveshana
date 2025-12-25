@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
 
-// GET /api/yatra/check-unprompted - Check if user has paid sites without Yatra stories
 export async function GET() {
   try {
     const session = await getSession()
@@ -11,7 +10,6 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Find paid heritage sites without Yatra stories and not yet prompted
     const unpromptedSites = await withRetry(() =>
       prisma.heritageSite.findMany({
         where: {
@@ -52,7 +50,6 @@ export async function GET() {
   }
 }
 
-// POST /api/yatra/check-unprompted - Mark a site as prompted
 export async function POST(request: Request) {
   try {
     const session = await getSession()
@@ -70,7 +67,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Verify the site belongs to the user
     const site = await withRetry(() =>
       prisma.heritageSite.findUnique({
         where: { id: heritageSiteId },
@@ -91,7 +87,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Mark as prompted
     await withRetry(() =>
       prisma.heritageSite.update({
         where: { id: heritageSiteId },

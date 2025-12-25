@@ -51,7 +51,6 @@ export default function TicketDetailPage() {
       setUserEmail(profileData.profile.email)
       setUserRole(profileData.profile.role)
 
-      // Fetch ticket from appropriate endpoint based on role
       const ticketEndpoint = profileData.profile.role === 'admin'
         ? `/api/admin/support/tickets/${ticketId}`
         : `/api/support/tickets/${ticketId}`
@@ -321,13 +320,10 @@ export default function TicketDetailPage() {
               </div>
             ) : (
               messages.map((message) => {
-                // Determine who sent the message
                 let senderName: string
                 if (message.isAdminReply) {
-                  // Admin messages always show "Support Team"
                   senderName = 'Support Team'
                 } else {
-                  // User messages: show name for admins, "You" for regular users
                   senderName = isAdmin
                     ? (message.profile?.name || message.profile?.email || 'Unknown User')
                     : 'You'

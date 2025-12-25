@@ -10,12 +10,10 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { name, email, password, mobileNumber, turnstileToken } = body
 
-    // Verify Turnstile token - only enforce in production
     const clientIp = getClientIp(request.headers)
     if (turnstileToken) {
       const verification = await verifyTurnstileToken(turnstileToken, clientIp)
       if (!verification.success) {
-        // In production, block the request
         if (process.env.NODE_ENV === 'production') {
           await logSecurityEvent('turnstile_failed', clientIp, {
             endpoint: '/api/auth/signup',
@@ -26,7 +24,6 @@ export async function POST(request: Request) {
             { status: 403 }
           )
         }
-        // In development, just log and continue
         console.warn('[Dev] Turnstile verification failed, but allowing signup in development mode')
       }
     }
@@ -38,7 +35,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate email domain and prevent test emails
     const emailLower = email.toLowerCase()
     const allowedDomains = [
       'gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com',
@@ -56,7 +52,6 @@ export async function POST(request: Request) {
 
     const [emailPrefix, emailDomain] = emailParts
 
-    // Check if domain is allowed
     if (!allowedDomains.includes(emailDomain)) {
       return NextResponse.json(
         { error: 'Please use a valid email provider (Gmail, Outlook, Yahoo, etc.)' },
@@ -64,7 +59,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Block test/fake email patterns
     const testPatterns = ['test', 'fake', 'demo', 'example', 'temp', 'throwaway', 'disposable', 'spam']
     if (testPatterns.some(pattern => emailPrefix.includes(pattern))) {
       return NextResponse.json(
@@ -80,7 +74,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate mobile number format: +91 followed by exactly 10 digits
     if (mobileNumber) {
       const mobileRegex = /^\+91\d{10}$/
       if (!mobileRegex.test(mobileNumber)) {

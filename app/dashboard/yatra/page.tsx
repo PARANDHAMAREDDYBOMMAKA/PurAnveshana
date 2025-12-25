@@ -14,7 +14,6 @@ export default async function YatraPage() {
 
   const isAdmin = session.role === 'admin'
 
-  // Fetch user profile for navbar
   const profile = await prisma.profile.findUnique({
     where: { id: session.userId },
     select: { email: true }

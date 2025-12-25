@@ -43,7 +43,6 @@ export default function SignupPage() {
       return
     }
 
-    // Validate email - prevent test/fake emails
     const email = formData.email.toLowerCase()
     const allowedDomains = [
       'gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com',
@@ -54,14 +53,12 @@ export default function SignupPage() {
     const emailDomain = email.split('@')[1]
     const emailPrefix = email.split('@')[0]
 
-    // Check if domain is allowed
     if (!allowedDomains.includes(emailDomain)) {
       toast.error('Please use a valid email provider (Gmail, Outlook, Yahoo, etc.)')
       setLoading(false)
       return
     }
 
-    // Block test/fake email patterns
     const testPatterns = ['test', 'fake', 'demo', 'example', 'temp', 'throwaway', 'disposable']
     if (testPatterns.some(pattern => emailPrefix.includes(pattern))) {
       toast.error('Test or temporary emails are not allowed')
@@ -69,7 +66,6 @@ export default function SignupPage() {
       return
     }
 
-    // Validate mobile number - must be exactly 10 digits
     const mobileDigits = formData.mobileNumber.replace(/\D/g, '')
     if (mobileDigits.length !== 10) {
       toast.error('Mobile number must be exactly 10 digits')
@@ -193,7 +189,6 @@ export default function SignupPage() {
                   placeholder="9876543210"
                   value={formData.mobileNumber}
                   onChange={(e) => {
-                    // Only allow digits and limit to 10 characters
                     const value = e.target.value.replace(/\D/g, '').slice(0, 10)
                     setFormData({ ...formData, mobileNumber: value })
                   }}

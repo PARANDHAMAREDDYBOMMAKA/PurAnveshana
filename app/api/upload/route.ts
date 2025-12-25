@@ -17,21 +17,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Convert file to buffer
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Determine file type and extension
     const fileType = file.type
     const extension = file.name.split('.').pop() || 'jpg'
 
-    // Determine prefix based on file type
     const prefix = fileType.startsWith('video/') ? 'videos' : 'images'
 
-    // Generate unique key
     const key = generateR2Key(prefix, extension)
 
-    // Upload to R2
     const result = await uploadToR2(buffer, key, fileType)
 
     return NextResponse.json({

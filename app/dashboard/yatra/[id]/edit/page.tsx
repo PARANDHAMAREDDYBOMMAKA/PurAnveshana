@@ -17,7 +17,6 @@ export default async function EditYatraPage({
 
   const { id } = await params
 
-  // Fetch the story to edit
   const story = await withRetry(() =>
     prisma.yatraStory.findUnique({
       where: { id },
@@ -28,12 +27,10 @@ export default async function EditYatraPage({
     redirect('/dashboard/yatra')
   }
 
-  // Check permissions: users can only edit their own stories
   if (story.userId !== session.userId) {
     redirect('/dashboard/yatra')
   }
 
-  // Get the heritage site (needed for wizard)
   const heritageSite = await withRetry(() =>
     prisma.heritageSite.findUnique({
       where: { id: story.heritageSiteId },
@@ -57,7 +54,6 @@ export default async function EditYatraPage({
     redirect('/dashboard/yatra')
   }
 
-  // Prepare initial data for the wizard
   const initialData = {
     id: story.id,
     heritageSiteId: story.heritageSiteId,

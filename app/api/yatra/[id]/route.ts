@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
 
-// GET /api/yatra/[id] - Get a specific Yatra story
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -49,10 +48,6 @@ export async function GET(
       )
     }
 
-    // All logged-in users can view all Yatra stories
-    // No restrictions based on publish status or ownership
-
-    // Fetch author details
     const author = await withRetry(() =>
       prisma.profile.findUnique({
         where: { id: story.userId },
@@ -78,7 +73,6 @@ export async function GET(
   }
 }
 
-// PUT /api/yatra/[id] - Update a Yatra story
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -93,7 +87,6 @@ export async function PUT(
     const body = await request.json()
     const { title, journeyNarrative, culturalInsights, safeVisuals } = body
 
-    // Check if story exists
     const existingStory = await withRetry(() =>
       prisma.yatraStory.findUnique({
         where: { id },
@@ -107,7 +100,6 @@ export async function PUT(
       )
     }
 
-    // Only the author can update their story
     if (existingStory.userId !== session.userId) {
       return NextResponse.json(
         { error: 'You can only update your own stories' },
@@ -115,7 +107,6 @@ export async function PUT(
       )
     }
 
-    // Update the story
     const updatedStory = await withRetry(() =>
       prisma.yatraStory.update({
         where: { id },
@@ -150,7 +141,6 @@ export async function PUT(
   }
 }
 
-// DELETE /api/yatra/[id] - Delete a Yatra story
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -163,7 +153,6 @@ export async function DELETE(
 
     const { id } = await params
 
-    // Check if story exists
     const existingStory = await withRetry(() =>
       prisma.yatraStory.findUnique({
         where: { id },
@@ -177,7 +166,6 @@ export async function DELETE(
       )
     }
 
-    // Only the author or admin can delete
     if (
       existingStory.userId !== session.userId &&
       session.role !== 'admin'
@@ -188,7 +176,6 @@ export async function DELETE(
       )
     }
 
-    // Delete the story
     await withRetry(() =>
       prisma.yatraStory.delete({
         where: { id },

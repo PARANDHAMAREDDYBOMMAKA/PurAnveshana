@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
 
-// GET /api/yatra - List Yatra stories (user sees only their own, admin sees all)
 export async function GET(request: Request) {
   try {
     const session = await getSession()
@@ -16,8 +15,6 @@ export async function GET(request: Request) {
 
     const where: any = {}
 
-    // All logged-in users can see ALL Yatra stories from everyone
-    // No filtering by publish status - all stories are public
 
     if (heritageSiteId) {
       where.heritageSiteId = heritageSiteId
@@ -50,7 +47,6 @@ export async function GET(request: Request) {
       })
     )
 
-    // Fetch user details for each story
     const storiesWithUsers = await Promise.all(
       stories.map(async (story) => {
         const user = await withRetry(() =>
@@ -80,7 +76,6 @@ export async function GET(request: Request) {
   }
 }
 
-// POST /api/yatra - Create a new Yatra story
 export async function POST(request: Request) {
   try {
     const session = await getSession()
@@ -100,11 +95,9 @@ export async function POST(request: Request) {
       safeVisuals = [],
       personalReflection,
       submissionConfirmed,
-      // Legacy field for backwards compatibility
       culturalInsights,
     } = body
 
-    // Validate required fields
     if (!heritageSiteId || !title) {
       return NextResponse.json(
         { error: 'Heritage site and title are required' },
@@ -112,7 +105,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // For new wizard submissions
     if (discoveryContext !== undefined) {
       if (!discoveryContext || !journeyNarrative || !historicalIndicators?.length || !evidenceTypes?.length || !submissionConfirmed) {
         return NextResponse.json(
@@ -121,7 +113,6 @@ export async function POST(request: Request) {
         )
       }
     } else {
-      // For legacy form submissions
       if (!journeyNarrative || !culturalInsights) {
         return NextResponse.json(
           { error: 'Journey narrative and cultural insights are required' },
@@ -130,7 +121,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Verify the heritage site exists and belongs to the user
     const heritageSite = await withRetry(() =>
       prisma.heritageSite.findUnique({
         where: { id: heritageSiteId },
@@ -154,7 +144,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if the heritage site has been paid for
     if (heritageSite.paymentStatus !== 'COMPLETED') {
       return NextResponse.json(
         {
@@ -165,7 +154,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if a story already exists for this site
     if (heritageSite.yatraStory) {
       return NextResponse.json(
         { error: 'A Yatra story already exists for this heritage site' },
@@ -173,7 +161,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create the Yatra story
     const yatraStory = await withRetry(() =>
       prisma.yatraStory.create({
         data: {
@@ -181,7 +168,6 @@ export async function POST(request: Request) {
           heritageSiteId,
           title,
           journeyNarrative,
-          // New wizard fields
           discoveryContext: discoveryContext || '',
           historicalIndicators: historicalIndicators || [],
           historicalIndicatorsDetails: historicalIndicatorsDetails || null,
@@ -190,7 +176,6 @@ export async function POST(request: Request) {
           personalReflection: personalReflection || null,
           submissionConfirmed: submissionConfirmed || false,
           publishStatus: 'PENDING_REVIEW',
-          // Legacy field for backwards compatibility
           culturalInsights: culturalInsights || null,
         },
         include: {
@@ -205,7 +190,6 @@ export async function POST(request: Request) {
       })
     )
 
-    // Mark the heritage site as prompted
     await withRetry(() =>
       prisma.heritageSite.update({
         where: { id: heritageSiteId },
