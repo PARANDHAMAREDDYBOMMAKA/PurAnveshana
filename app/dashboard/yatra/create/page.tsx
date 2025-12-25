@@ -58,7 +58,7 @@ export default async function CreateYatraPage({
               No Eligible Sites
             </h1>
             <p className="mb-4 text-gray-600">
-              You don't have any paid heritage sites without Yatra stories yet.
+              You don't have any paid heritage sites without Yatra Journey yet.
             </p>
             <p className="text-sm text-gray-500">
               Once you receive payment for your submissions, you'll be able to share your discovery journey here.

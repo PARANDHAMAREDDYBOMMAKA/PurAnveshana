@@ -212,10 +212,10 @@ export default function HeritageSiteCard({
 
   return (
     <>
-      {/* Enhanced Card Design */}
-      <div className="group bg-white rounded-2xl shadow-md hover:shadow-2xl overflow-hidden border-2 border-slate-100 hover:border-orange-300 transition-all duration-300 flex flex-col h-full">
+      {/* Modern Card Design */}
+      <div className="group relative bg-linear-to-br from-white via-orange-50/20 to-white rounded-3xl shadow-lg hover:shadow-2xl overflow-hidden border border-slate-200/50 transition-all duration-500 flex flex-col h-full hover:-translate-y-2">
         {/* Image Section with Overlay */}
-        <div className="relative h-52 overflow-hidden bg-linear-to-br from-slate-100 to-slate-200">
+        <div className="relative h-52 overflow-hidden bg-linear-to-br from-slate-100 via-slate-50 to-blue-50">
           {isVideo(currentImageUrl) ? (
             <video
               src={currentImageUrl}
@@ -231,28 +231,29 @@ export default function HeritageSiteCard({
             />
           )}
 
-          {/* Gradient Overlay */}
+          {/* Gradient Overlay with shimmer effect */}
           <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-br from-orange-500/10 via-transparent to-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* Top Left - Type Badge */}
+          {/* Top Left - Type Badge with glassmorphism */}
           {site.type && (
-            <div className="absolute top-3 left-3">
-              <span className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-md border-2 ${typeColor}`}>
+            <div className="absolute top-3 left-3 z-10">
+              <span className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-xl bg-white/90 border shadow-lg ${typeColor.replace('bg-', 'border-')}`}>
                 {typeLabel}
               </span>
             </div>
           )}
 
-          {/* Top Right - Payment Status */}
+          {/* Top Right - Payment Status with glassmorphism */}
           {site.paymentStatus && (
-            <div className="absolute top-3 right-3">
-              <span className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-md flex items-center gap-1.5 ${
-                site.paymentStatus === 'COMPLETED' ? 'bg-green-500 text-white' :
-                site.paymentStatus === 'IN_PROGRESS' ? 'bg-yellow-500 text-white' :
-                'bg-slate-400 text-white'
+            <div className="absolute top-3 right-3 z-10">
+              <span className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-xl flex items-center gap-1.5 shadow-lg border ${
+                site.paymentStatus === 'COMPLETED' ? 'bg-emerald-500/90 border-emerald-400 text-white' :
+                site.paymentStatus === 'IN_PROGRESS' ? 'bg-amber-500/90 border-amber-400 text-white' :
+                'bg-slate-500/90 border-slate-400 text-white'
               }`}>
                 {site.paymentStatus === 'COMPLETED' && <CheckCircle className="h-3.5 w-3.5" />}
-                {site.paymentStatus === 'IN_PROGRESS' && <Clock className="h-3.5 w-3.5" />}
+                {site.paymentStatus === 'IN_PROGRESS' && <Clock className="h-3.5 w-3.5 animate-pulse" />}
                 {site.paymentStatus === 'COMPLETED' ? 'Paid' :
                  site.paymentStatus === 'IN_PROGRESS' ? 'Processing' :
                  'Pending'}
@@ -260,68 +261,81 @@ export default function HeritageSiteCard({
             </div>
           )}
 
-          {/* Bottom Left - Image Count */}
+          {/* Bottom Left - Image Count with glassmorphism */}
           {site.images.length > 1 && (
-            <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5">
+            <div className="absolute bottom-3 left-3 z-10 bg-slate-900/70 backdrop-blur-xl border border-white/20 text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg">
               <Camera className="h-3.5 w-3.5" />
               {site.images.length}
             </div>
           )}
 
-          {/* Bottom Right - Verified Badge */}
+          {/* Bottom Right - Verified Badge with glow effect */}
           {verifiedCount > 0 && (
-            <div className="absolute bottom-3 right-3 bg-green-500/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5">
-              <BadgeCheck className="h-3.5 w-3.5" />
-              {verifiedCount} Verified
+            <div className="absolute bottom-3 right-3 z-10">
+              <div className="absolute inset-0 bg-emerald-400 rounded-full blur-md opacity-50" />
+              <div className="relative bg-emerald-500/90 backdrop-blur-xl border border-emerald-400 text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg">
+                <BadgeCheck className="h-3.5 w-3.5" />
+                {verifiedCount} Verified
+              </div>
             </div>
           )}
         </div>
 
         {/* Content Section */}
-        <div className="p-5 flex-1 flex flex-col">
+        <div className="p-6 flex-1 flex flex-col">
           {/* Title */}
-          <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+          <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors leading-tight">
             {site.title}
           </h3>
 
           {/* Description */}
-          <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-1">
+          <p className="text-sm text-slate-600 mb-4 line-clamp-3 flex-1 leading-relaxed">
             {site.description}
           </p>
 
           {/* Metadata Grid */}
-          <div className="space-y-2 mb-4">
+          <div className="space-y-2.5 mb-4">
             {/* Location */}
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <MapPin className="h-4 w-4 text-orange-500 shrink-0" />
+            <div className="flex items-center gap-2.5 text-sm text-slate-700">
+              <div className="p-1.5 bg-orange-100 rounded-lg">
+                <MapPin className="h-3.5 w-3.5 text-orange-600 shrink-0" />
+              </div>
               <span className="truncate font-medium">{currentImage.location}</span>
             </div>
 
             {/* Created Date */}
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <Calendar className="h-4 w-4 text-blue-500 shrink-0" />
-              <span>{new Date(site.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            <div className="flex items-center gap-2.5 text-sm text-slate-700">
+              <div className="p-1.5 bg-blue-100 rounded-lg">
+                <Calendar className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+              </div>
+              <span className="font-medium">{new Date(site.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
             </div>
 
             {/* Admin: Show User Email */}
             {showUser && site.profile?.email && (
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <svg className="h-4 w-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span className="truncate">{site.profile.email}</span>
+              <div className="flex items-center gap-2.5 text-sm text-slate-700">
+                <div className="p-1.5 bg-purple-100 rounded-lg">
+                  <svg className="h-3.5 w-3.5 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <span className="truncate font-medium">{site.profile.email}</span>
               </div>
             )}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100">
+          {/* Actions with modern gradient button */}
+          <div className="flex items-center gap-2 mt-auto pt-4 border-t border-slate-200">
             <button
               onClick={() => setShowDetailsModal(true)}
-              className="flex-1 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
+              className="relative flex-1 overflow-hidden group/btn rounded-xl shadow-md hover:shadow-lg transition-shadow"
             >
-              <Eye className="h-4 w-4" />
-              View Details
+              <div className="absolute inset-0 bg-linear-to-r from-orange-500 to-amber-600 opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-linear-to-r from-orange-600 to-amber-700 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+              <div className="relative text-white font-semibold py-3 px-4 flex items-center justify-center gap-2">
+                <Eye className="h-4 w-4" />
+                <span className="text-sm">View Details</span>
+              </div>
             </button>
 
             {showUser && site.paymentStatus !== 'COMPLETED' && (
@@ -330,7 +344,7 @@ export default function HeritageSiteCard({
                   e.stopPropagation()
                   setShowPaymentModal(true)
                 }}
-                className="bg-green-100 hover:bg-green-200 text-green-700 font-semibold p-2.5 rounded-xl transition-all"
+                className="bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 text-emerald-700 font-semibold p-2.5 rounded-xl transition-all shadow-sm hover:shadow-md"
                 title="Record Payment"
               >
                 <DollarSign className="h-5 w-5" />
