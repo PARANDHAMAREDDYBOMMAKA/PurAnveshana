@@ -30,7 +30,6 @@ export async function middleware(request: NextRequest) {
       pathname.startsWith('/api/upload') ||
       pathname.startsWith('/signup'))
   ) {
-    // Only check bot score if Cloudflare headers are present
     const hasCfHeaders = request.headers.has('CF-Ray')
     if (hasCfHeaders) {
       const isLegitimate = verifyCloudflareBot(request.headers)
@@ -42,10 +41,8 @@ export async function middleware(request: NextRequest) {
         return new NextResponse('Bot detected', { status: 403 })
       }
     }
-    // If no Cloudflare headers, allow the request (direct Vercel access)
   }
 
-  // Rate limiting - ONLY in production (disabled in development for testing)
   if (process.env.NODE_ENV === 'production') {
     let rateLimitConfig = RATE_LIMITS.GENERAL
     if (pathname.startsWith('/api/auth')) {
@@ -87,7 +84,6 @@ export async function middleware(request: NextRequest) {
       return rateLimitResponse
     }
 
-    // Add rate limit headers
     response.headers.set(
       'X-RateLimit-Limit',
       rateLimitResult.limit.toString()
@@ -102,10 +98,8 @@ export async function middleware(request: NextRequest) {
     )
   }
 
-  // Check for session token
   const sessionToken = request.cookies.get('session')?.value
 
-  // Protected routes
   if (
     !sessionToken &&
     (pathname.startsWith('/dashboard') || pathname.startsWith('/upload'))
@@ -115,7 +109,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect to dashboard if already logged in
   if (
     sessionToken &&
     (pathname === '/login' || pathname === '/signup' || pathname === '/')
@@ -125,10 +118,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Update session (refresh token if needed)
   const sessionResponse = await updateSession(request)
   if (sessionResponse) {
-    // Copy security headers to session response
     response.headers.forEach((value, key) => {
       sessionResponse.headers.set(key, value)
     })
@@ -139,7 +130,6 @@ export async function middleware(request: NextRequest) {
 }
 
 function applySecurityHeaders(response: NextResponse) {
-  // Content Security Policy
   const cspDirectives = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://cdn.jsdelivr.net https://www.googletagmanager.com",
@@ -160,31 +150,24 @@ function applySecurityHeaders(response: NextResponse) {
     cspDirectives.join('; ')
   )
 
-  // Strict Transport Security
   response.headers.set(
     'Strict-Transport-Security',
     'max-age=63072000; includeSubDomains; preload'
   )
 
-  // X-Frame-Options
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
 
-  // X-Content-Type-Options
   response.headers.set('X-Content-Type-Options', 'nosniff')
 
-  // Referrer Policy
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
 
-  // Permissions Policy
   response.headers.set(
     'Permissions-Policy',
     'camera=(self), microphone=(), geolocation=(self)'
   )
 
-  // X-DNS-Prefetch-Control
   response.headers.set('X-DNS-Prefetch-Control', 'on')
 
-  // X-XSS-Protection (legacy, but still useful)
   response.headers.set('X-XSS-Protection', '1; mode=block')
 }
 

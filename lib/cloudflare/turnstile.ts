@@ -1,8 +1,3 @@
-/**
- * Cloudflare Turnstile verification with automatic fallback
- * Tries production keys first, falls back to test keys if needed
- */
-
 import { getTurnstileSecretKey, isUsingTestKeys } from './turnstile-config';
 
 interface TurnstileResponse {
@@ -59,8 +54,6 @@ export async function verifyTurnstileToken(
       const errorCodes = data['error-codes'] || [];
       console.error('[Turnstile] Verification failed:', errorCodes);
 
-      // If using test keys, they should always pass
-      // If they fail, something else is wrong
       if (usingTestKeys) {
         console.warn('[Turnstile] Test keys failed unexpectedly');
       }
@@ -79,8 +72,6 @@ export async function verifyTurnstileToken(
   } catch (error) {
     console.error('[Turnstile] Verification error:', error);
 
-    // If using test keys and there's an error, it might be a network issue
-    // In this case, we can be lenient for development
     if (usingTestKeys && process.env.NODE_ENV !== 'production') {
       console.warn('[Turnstile] Network error with test keys in dev mode, allowing through');
       return { success: true };

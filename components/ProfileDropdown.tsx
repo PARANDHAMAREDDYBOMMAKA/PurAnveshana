@@ -4,7 +4,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import { UserIcon, CogIcon, ArrowLeftOnRectangleIcon as LogoutIcon } from '@heroicons/react/24/outline'
+import { UserIcon, CogIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 
 interface ProfileDropdownProps {
   userEmail?: string
@@ -59,7 +59,10 @@ export default function ProfileDropdown({ userEmail }: ProfileDropdownProps) {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
           <button
-            onClick={() => {}} // Disabled for now
+            onClick={() => {
+              setIsOpen(false)
+              router.push('/profile')
+            }}
             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
             <CogIcon className="w-5 h-5 mr-2" />
@@ -69,7 +72,7 @@ export default function ProfileDropdown({ userEmail }: ProfileDropdownProps) {
             onClick={handleLogout}
             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
-            <LogoutIcon className="w-5 h-5 mr-2" />
+            <ArrowRightOnRectangleIcon className="w-5 h-5 mr-2" />
             Logout
           </button>
         </div>

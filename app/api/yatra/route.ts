@@ -60,7 +60,23 @@ export async function GET(request: Request) {
         )
 
         return {
-          ...story,
+          id: story.id,
+          userId: story.userId,
+          heritageSiteId: story.heritageSiteId,
+          title: story.title,
+          discoveryContext: story.discoveryContext,
+          journeyNarrative: story.journeyNarrative,
+          historicalIndicators: story.historicalIndicators,
+          historicalIndicatorsDetails: story.historicalIndicatorsDetails,
+          evidenceTypes: story.evidenceTypes,
+          safeVisuals: story.safeVisuals,
+          personalReflection: story.personalReflection,
+          submissionConfirmed: story.submissionConfirmed,
+          publishStatus: story.publishStatus,
+          culturalInsights: story.culturalInsights,
+          createdAt: story.createdAt,
+          updatedAt: story.updatedAt,
+          heritageSite: story.heritageSite,
           author: user,
         }
       })

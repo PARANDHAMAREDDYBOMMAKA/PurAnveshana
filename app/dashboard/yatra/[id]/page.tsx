@@ -20,12 +20,29 @@ export default async function YatraStoryPage({
   const story = await withRetry(() =>
     prisma.yatraStory.findUnique({
       where: { id },
-      include: {
+      select: {
+        id: true,
+        userId: true,
+        heritageSiteId: true,
+        title: true,
+        discoveryContext: true,
+        journeyNarrative: true,
+        historicalIndicators: true,
+        historicalIndicatorsDetails: true,
+        evidenceTypes: true,
+        safeVisuals: true,
+        personalReflection: true,
+        submissionConfirmed: true,
+        publishStatus: true,
+        culturalInsights: true,
+        createdAt: true,
+        updatedAt: true,
         heritageSite: {
           select: {
             id: true,
             title: true,
             type: true,
+            description: true,
             images: {
               select: {
                 id: true,
@@ -46,8 +63,6 @@ export default async function YatraStoryPage({
     redirect('/dashboard/yatra')
   }
 
-  const isOwnStory = story.userId === session.userId
-
   const author = await withRetry(() =>
     prisma.profile.findUnique({
       where: { id: story.userId },
@@ -59,20 +74,29 @@ export default async function YatraStoryPage({
   )
 
   const storyWithAuthor = {
-    ...story,
-    author: author || { id: story.userId, name: 'Unknown' },
+    id: story.id,
+    userId: story.userId,
+    heritageSiteId: story.heritageSiteId,
+    title: story.title,
+    discoveryContext: story.discoveryContext,
+    journeyNarrative: story.journeyNarrative,
+    historicalIndicators: story.historicalIndicators,
+    historicalIndicatorsDetails: story.historicalIndicatorsDetails,
+    evidenceTypes: story.evidenceTypes,
+    safeVisuals: story.safeVisuals,
+    personalReflection: story.personalReflection,
+    submissionConfirmed: story.submissionConfirmed,
+    publishStatus: story.publishStatus,
     culturalInsights: story.culturalInsights || '',
     createdAt: story.createdAt.toISOString(),
     updatedAt: story.updatedAt.toISOString(),
-    heritageSite: {
-      ...story.heritageSite,
-      description: '',
-    }
+    author: author || { id: story.userId, name: 'Unknown' },
+    heritageSite: story.heritageSite,
   }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white">
-      <YatraStoryDetail story={storyWithAuthor} currentUserId={session.userId} isOwnStory={isOwnStory} />
+      <YatraStoryDetail story={storyWithAuthor} currentUserId={session.userId} />
     </div>
   )
 }

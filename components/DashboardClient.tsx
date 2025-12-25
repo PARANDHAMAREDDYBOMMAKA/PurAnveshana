@@ -110,135 +110,158 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
       {!isAdmin && (
         <div className="space-y-6">
           {/* Welcome Banner */}
-          <div className="bg-linear-to-r from-orange-500 via-amber-500 to-orange-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-                  Welcome to Your Heritage Dashboard
+          <div className="relative overflow-hidden bg-linear-to-br from-orange-600 via-amber-600 to-orange-500 rounded-3xl p-8 sm:p-10 text-white shadow-2xl">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
+            <div className="relative flex items-center justify-between">
+              <div className="flex-1">
+                <h1 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tight">
+                  Preserve Our Heritage
                 </h1>
-                <p className="text-orange-100 text-sm sm:text-base">
-                  Discover, document, and preserve India's cultural treasures
+                <p className="text-orange-50 text-base sm:text-lg font-medium max-w-2xl">
+                  Document and share India's cultural treasures with the world
                 </p>
               </div>
-              <Sparkles className="h-16 w-16 opacity-30 hidden sm:block" />
+              <Sparkles className="h-20 w-20 opacity-20 hidden lg:block animate-pulse" />
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <button
               onClick={() => setShowUploadModal(true)}
-              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-orange-100 hover:border-orange-300 group text-left"
+              className="relative overflow-hidden bg-white rounded-2xl p-7 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-orange-400 group text-left hover:-translate-y-1"
             >
-              <div className="flex items-center gap-4">
-                <div className="bg-linear-to-br from-orange-500 to-amber-600 p-3 rounded-lg group-hover:scale-110 transition-transform">
-                  <Upload className="h-6 w-6 text-white" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-orange-100 to-amber-100 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative flex items-center gap-4">
+                <div className="bg-linear-to-br from-orange-500 to-amber-600 p-4 rounded-xl group-hover:scale-110 transition-transform shadow-lg">
+                  <Upload className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900">Upload Site</h3>
-                  <p className="text-xs text-gray-600">Add new discovery</p>
+                  <h3 className="font-bold text-gray-900 text-lg mb-1">Upload Site</h3>
+                  <p className="text-sm text-gray-600">Document new discovery</p>
                 </div>
               </div>
             </button>
 
             <Link
               href="/dashboard/yatra"
-              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-orange-100 hover:border-orange-300 group"
+              className="relative overflow-hidden bg-white rounded-2xl p-7 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-purple-400 group hover:-translate-y-1"
             >
-              <div className="flex items-center gap-4">
-                <div className="bg-linear-to-br from-purple-500 to-pink-600 p-3 rounded-lg group-hover:scale-110 transition-transform">
-                  <MapPin className="h-6 w-6 text-white" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-purple-100 to-pink-100 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative flex items-center gap-4">
+                <div className="bg-linear-to-br from-purple-500 to-pink-600 p-4 rounded-xl group-hover:scale-110 transition-transform shadow-lg">
+                  <MapPin className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900">Yatra Stories</h3>
-                  <p className="text-xs text-gray-600">Share your journey</p>
+                  <h3 className="font-bold text-gray-900 text-lg mb-1">Yatra Stories</h3>
+                  <p className="text-sm text-gray-600">Share your journey</p>
                 </div>
               </div>
             </Link>
 
             <Link
               href="/dashboard/support"
-              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-orange-100 hover:border-orange-300 group"
+              className="relative overflow-hidden bg-white rounded-2xl p-7 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-blue-400 group hover:-translate-y-1"
             >
-              <div className="flex items-center gap-4">
-                <div className="bg-linear-to-br from-blue-500 to-cyan-600 p-3 rounded-lg group-hover:scale-110 transition-transform">
-                  <FileText className="h-6 w-6 text-white" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-100 to-cyan-100 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative flex items-center gap-4">
+                <div className="bg-linear-to-br from-blue-500 to-cyan-600 p-4 rounded-xl group-hover:scale-110 transition-transform shadow-lg">
+                  <FileText className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900">Support</h3>
-                  <p className="text-xs text-gray-600">Get help</p>
+                  <h3 className="font-bold text-gray-900 text-lg mb-1">Support</h3>
+                  <p className="text-sm text-gray-600">Get assistance</p>
                 </div>
               </div>
             </Link>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-orange-100">
-              <div className="flex items-center justify-between mb-3">
-                <div className="bg-orange-100 p-3 rounded-lg">
-                  <MapPin className="h-6 w-6 text-orange-600" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="relative overflow-hidden bg-linear-to-br from-orange-500 to-amber-600 rounded-2xl p-6 shadow-xl text-white">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+                    <MapPin className="h-7 w-7 text-white" />
+                  </div>
+                  <TrendingUp className="h-6 w-6 text-white/80" />
                 </div>
-                <TrendingUp className="h-5 w-5 text-green-500" />
+                <p className="text-4xl font-bold mb-1">{sites?.length || 0}</p>
+                <p className="text-sm text-orange-100 font-medium">Heritage Sites</p>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{sites?.length || 0}</p>
-              <p className="text-sm text-gray-600 mt-1">Heritage Sites</p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-green-100">
-              <div className="flex items-center justify-between mb-3">
-                <div className="bg-green-100 p-3 rounded-lg">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+            <div className="relative overflow-hidden bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl p-6 shadow-xl text-white">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+                    <CheckCircle className="h-7 w-7 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-white bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                    {totalImages > 0 ? Math.round((verifiedImages / totalImages) * 100) : 0}%
+                  </span>
                 </div>
-                <span className="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                  {totalImages > 0 ? Math.round((verifiedImages / totalImages) * 100) : 0}%
-                </span>
+                <p className="text-4xl font-bold mb-1">{verifiedImages}</p>
+                <p className="text-sm text-green-100 font-medium">Verified Images</p>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{verifiedImages}</p>
-              <p className="text-sm text-gray-600 mt-1">Verified Images</p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-blue-100">
-              <div className="flex items-center justify-between mb-3">
-                <div className="bg-blue-100 p-3 rounded-lg">
-                  <Camera className="h-6 w-6 text-blue-600" />
+            <div className="relative overflow-hidden bg-linear-to-br from-blue-500 to-cyan-600 rounded-2xl p-6 shadow-xl text-white">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+                    <Camera className="h-7 w-7 text-white" />
+                  </div>
                 </div>
+                <p className="text-4xl font-bold mb-1">{totalImages}</p>
+                <p className="text-sm text-blue-100 font-medium">Total Images</p>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{totalImages}</p>
-              <p className="text-sm text-gray-600 mt-1">Total Images</p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-purple-100">
-              <div className="flex items-center justify-between mb-3">
-                <div className="bg-purple-100 p-3 rounded-lg">
-                  <Award className="h-6 w-6 text-purple-600" />
+            <div className="relative overflow-hidden bg-linear-to-br from-purple-500 to-pink-600 rounded-2xl p-6 shadow-xl text-white">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+                    <Award className="h-7 w-7 text-white" />
+                  </div>
                 </div>
+                <p className="text-4xl font-bold mb-1">{completedPayments}</p>
+                <p className="text-sm text-purple-100 font-medium">Paid Sites</p>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{completedPayments}</p>
-              <p className="text-sm text-gray-600 mt-1">Paid Sites</p>
             </div>
           </div>
 
           {/* Payment History */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-orange-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <DollarSign className="h-6 w-6 text-orange-600" />
+          <div className="bg-white rounded-2xl shadow-xl p-7 border border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <DollarSign className="h-6 w-6 text-orange-600" />
+              </div>
               Payment History
             </h2>
             <PaymentHistory />
           </div>
 
           {/* Sites Section */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-orange-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              {isShowingDefaults ? 'Example Heritage Sites - Get Inspired!' : 'Your Heritage Sites'}
+          <div className="bg-white rounded-2xl shadow-xl p-7 border border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <MapPin className="h-6 w-6 text-orange-600" />
+              </div>
+              {isShowingDefaults ? 'Example Heritage Sites' : 'Your Heritage Sites'}
             </h2>
             {isShowingDefaults && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-                <p className="text-sm text-amber-800">
-                  <AlertCircle className="h-4 w-4 inline mr-2" />
-                  These are example heritage sites to inspire you. Upload your first site to start documenting!
-                </p>
+              <div className="bg-linear-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-xl p-5 mb-6">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
+                  <p className="text-sm text-amber-900 font-medium leading-relaxed">
+                    These are example heritage sites to inspire you. Upload your first site to start documenting India's rich cultural heritage!
+                  </p>
+                </div>
               </div>
             )}
 

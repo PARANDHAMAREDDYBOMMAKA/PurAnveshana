@@ -16,18 +16,31 @@ import {
   Share2,
   Bookmark,
   MoreHorizontal,
-  ArrowRight,
   X,
   Edit2,
-  Trash2
+  Trash2,
+  Eye,
+  BookOpen,
+  FileText
 } from 'lucide-react'
 
 interface YatraStory {
   id: string
+  userId: string
+  heritageSiteId: string
   title: string
+  discoveryContext: string
   journeyNarrative: string
+  historicalIndicators: string[]
+  historicalIndicatorsDetails: string | null
+  evidenceTypes: string[]
+  safeVisuals: string[]
+  personalReflection: string | null
+  submissionConfirmed: boolean
+  publishStatus: string
   culturalInsights: string
   createdAt: string
+  updatedAt: string
   author: {
     id: string
     name: string
@@ -113,11 +126,6 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     } finally {
       setLoading(false)
     }
-  }
-
-  const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text
-    return text.substring(0, maxLength) + '...'
   }
 
   const handleDelete = async (storyId: string) => {
@@ -302,11 +310,6 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
         filteredStories.length > 0 ? (
           <div className="space-y-6">
             {filteredStories.map((story) => {
-              const imageUrl =
-                story.heritageSite.images[0]?.r2Url ||
-                story.heritageSite.images[0]?.cloudinaryUrl
-              const isOwnStory = story.author.id === userId
-
               return (
                 <article
                   key={story.id}
@@ -379,79 +382,181 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                     )}
                   </div>
 
-                  {/* Post Image */}
-                  {imageUrl ? (
-                    <div
-                      className="w-full aspect-square bg-gray-100 cursor-pointer relative"
-                      onClick={() => router.push(`/dashboard/yatra/${story.id}`)}
-                    >
-                      <img
-                        src={imageUrl}
-                        alt={story.heritageSite.title}
-                        className={`w-full h-full object-cover ${!isOwnStory ? 'blur-md' : ''}`}
-                      />
-                      {!isOwnStory && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                          <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-xs text-gray-900 font-medium">
-                            🔒 Image blurred for privacy
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="w-full aspect-square bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                      <MapPin className="h-16 w-16 text-gray-900" />
-                    </div>
-                  )}
-
-                  {/* Action Bar */}
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <div className="flex items-center gap-4">
-                      <button className="text-gray-900 hover:text-red-500 transition-colors">
-                        <Heart className="h-6 w-6" />
-                      </button>
-                      <button className="text-gray-900 hover:text-blue-500 transition-colors">
-                        <MessageCircle className="h-6 w-6" />
-                      </button>
-                      <button className="text-gray-900 hover:text-green-500 transition-colors">
-                        <Share2 className="h-6 w-6" />
-                      </button>
-                    </div>
-                    <button className="text-gray-900 hover:text-orange-500 transition-colors">
-                      <Bookmark className="h-6 w-6" />
-                    </button>
-                  </div>
-
                   {/* Post Content */}
-                  <div className="px-4 space-y-2">
+                  <div className="px-4 py-4 space-y-4">
                     {/* Heritage Site Badge */}
-                    <div className="flex items-center gap-1.5 text-xs">
-                      <MapPin className="h-3.5 w-3.5 text-orange-600" />
-                      <span className="font-semibold text-orange-600">
+                    <div className="flex items-center gap-2 p-3 bg-linear-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-200">
+                      <MapPin className="h-5 w-5 text-orange-600" />
+                      <span className="font-bold text-orange-900">
                         {story.heritageSite.title}
                       </span>
                     </div>
 
-                    {/* Title and Caption */}
-                    <div>
-                      <h2
-                        className="font-bold text-gray-900 cursor-pointer hover:text-orange-600 transition-colors line-clamp-2"
-                        onClick={() => router.push(`/dashboard/yatra/${story.id}`)}
-                      >
-                        {story.title}
-                      </h2>
-                      <p className="text-sm text-gray-900 mt-1 line-clamp-3">
-                        {truncateText(story.journeyNarrative, 200)}
+                    {/* Title */}
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      {story.title}
+                    </h2>
+
+                    {/* Discovery Context */}
+                    {story.discoveryContext && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-emerald-100 rounded-lg">
+                            <Eye className="h-4 w-4 text-emerald-600" />
+                          </div>
+                          <h3 className="text-base font-bold text-gray-900">Discovery Context</h3>
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line bg-gray-50 p-3 rounded-lg border border-gray-200">
+                          {story.discoveryContext}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Journey Narrative */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-orange-100 rounded-lg">
+                          <MapPin className="h-4 w-4 text-orange-600" />
+                        </div>
+                        <h3 className="text-base font-bold text-gray-900">Journey Narrative</h3>
+                      </div>
+                      <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        {story.journeyNarrative}
                       </p>
                     </div>
 
-                    {/* Read More */}
-                    <button
-                      onClick={() => router.push(`/dashboard/yatra/${story.id}`)}
-                      className="flex items-center gap-1 text-sm font-medium text-orange-600 hover:text-orange-700"
-                    >
-                      Read full story
-                      <ArrowRight className="h-4 w-4" />
+                    {/* Historical Indicators */}
+                    {story.historicalIndicators && story.historicalIndicators.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-purple-100 rounded-lg">
+                            <BookOpen className="h-4 w-4 text-purple-600" />
+                          </div>
+                          <h3 className="text-base font-bold text-gray-900">Historical Indicators</h3>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {story.historicalIndicators.map((indicator, index) => (
+                            <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200">
+                              {indicator}
+                            </span>
+                          ))}
+                        </div>
+                        {story.historicalIndicatorsDetails && (
+                          <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line bg-gray-50 p-3 rounded-lg border border-gray-200">
+                            {story.historicalIndicatorsDetails}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Evidence Types */}
+                    {story.evidenceTypes && story.evidenceTypes.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-blue-100 rounded-lg">
+                            <FileText className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <h3 className="text-base font-bold text-gray-900">Evidence Types</h3>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {story.evidenceTypes.map((evidence, index) => (
+                            <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium border border-blue-200">
+                              {evidence}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Safe Visuals */}
+                    {story.safeVisuals && story.safeVisuals.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-teal-100 rounded-lg">
+                            <Eye className="h-4 w-4 text-teal-600" />
+                          </div>
+                          <h3 className="text-base font-bold text-gray-900">Safe Visuals</h3>
+                          <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                            {story.safeVisuals.length}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {story.safeVisuals.map((imageUrl, index) => (
+                            <div key={index} className="aspect-square bg-gray-100 relative rounded-lg overflow-hidden border border-gray-200">
+                              <img
+                                src={imageUrl}
+                                alt={`Safe visual ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f3f4f6" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" font-size="14" text-anchor="middle" dy=".3em" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E'
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Personal Reflection */}
+                    {story.personalReflection && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-pink-100 rounded-lg">
+                            <Heart className="h-4 w-4 text-pink-600" />
+                          </div>
+                          <h3 className="text-base font-bold text-gray-900">Personal Reflection</h3>
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line bg-gray-50 p-3 rounded-lg border border-gray-200">
+                          {story.personalReflection}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Cultural Insights */}
+                    {story.culturalInsights && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-indigo-100 rounded-lg">
+                            <BookOpen className="h-4 w-4 text-indigo-600" />
+                          </div>
+                          <h3 className="text-base font-bold text-gray-900">Cultural Insights</h3>
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line bg-gray-50 p-3 rounded-lg border border-gray-200">
+                          {story.culturalInsights}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Publication Status */}
+                    <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
+                        story.publishStatus === 'APPROVED_PUBLIC' ? 'bg-green-100 text-green-800 border border-green-200' :
+                        story.publishStatus === 'FEATURED_YATRA' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                        'bg-orange-100 text-orange-800 border border-orange-200'
+                      }`}>
+                        {story.publishStatus.replace(/_/g, ' ')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Bar */}
+                  <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+                    <div className="flex items-center gap-4">
+                      <button className="text-gray-600 hover:text-red-500 transition-colors flex items-center gap-1">
+                        <Heart className="h-5 w-5" />
+                        <span className="text-sm font-medium">Like</span>
+                      </button>
+                      <button className="text-gray-600 hover:text-blue-500 transition-colors flex items-center gap-1">
+                        <MessageCircle className="h-5 w-5" />
+                        <span className="text-sm font-medium">Comment</span>
+                      </button>
+                      <button className="text-gray-600 hover:text-green-500 transition-colors flex items-center gap-1">
+                        <Share2 className="h-5 w-5" />
+                        <span className="text-sm font-medium">Share</span>
+                      </button>
+                    </div>
+                    <button className="text-gray-600 hover:text-orange-500 transition-colors">
+                      <Bookmark className="h-5 w-5" />
                     </button>
                   </div>
                 </article>

@@ -3,7 +3,6 @@ import imageCompression from 'browser-image-compression'
 export interface UploadResult {
   url: string
   publicId: string
-  // R2 fields
   r2Url?: string
   r2Key?: string
 }
@@ -20,15 +19,13 @@ export async function compressImage(file: File): Promise<File> {
     return compressedFile
   } catch (error) {
     console.error('Error compressing image:', error)
-    return file // Return original if compression fails
+    return file
   }
 }
 
-// New function: Upload to R2
 export async function uploadToR2(file: File): Promise<UploadResult> {
   const isVideo = file.type.startsWith('video/')
 
-  // Compress image before uploading (skip compression for videos)
   const fileToUpload = isVideo ? file : await compressImage(file)
 
   const formData = new FormData()
@@ -48,17 +45,15 @@ export async function uploadToR2(file: File): Promise<UploadResult> {
 
   return {
     url: data.r2Url,
-    publicId: data.r2Key, // For backward compatibility with existing code
+    publicId: data.r2Key,
     r2Url: data.r2Url,
     r2Key: data.r2Key,
   }
 }
 
-// Legacy function: Upload to Cloudinary (kept for backward compatibility)
 export async function uploadToCloudinary(file: File): Promise<UploadResult> {
   const isVideo = file.type.startsWith('video/')
 
-  // Compress image before uploading (skip compression for videos)
   const fileToUpload = isVideo ? file : await compressImage(file)
 
   const formData = new FormData()
@@ -71,7 +66,6 @@ export async function uploadToCloudinary(file: File): Promise<UploadResult> {
     throw new Error('Cloudinary cloud name is not configured')
   }
 
-  // Use different endpoint for videos vs images
   const uploadType = isVideo ? 'video' : 'image'
   const response = await fetch(
     `https://api.cloudinary.com/v1_1/${cloudName}/${uploadType}/upload`,
@@ -93,11 +87,9 @@ export async function uploadToCloudinary(file: File): Promise<UploadResult> {
   }
 }
 
-// Smart upload function: Uses Cloudinary for localhost/main and R2 for production
 export async function uploadFile(file: File): Promise<UploadResult> {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
 
-  // Use R2 only for production domain (puranveshana.com)
   const useR2 = hostname === 'puranveshana.com' || hostname === 'www.puranveshana.com'
 
   if (useR2) {

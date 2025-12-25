@@ -17,16 +17,25 @@ import {
   AlertTriangle,
   Footprints,
   BookOpen,
-  Camera,
   Eye,
-  Lock
+  CheckCircle,
+  FileText
 } from 'lucide-react'
 
 interface YatraStory {
   id: string
   userId: string
+  heritageSiteId: string
   title: string
+  discoveryContext: string
   journeyNarrative: string
+  historicalIndicators: string[]
+  historicalIndicatorsDetails: string | null
+  evidenceTypes: string[]
+  safeVisuals: string[]
+  personalReflection: string | null
+  submissionConfirmed: boolean
+  publishStatus: string
   culturalInsights: string
   createdAt: string
   updatedAt: string
@@ -53,13 +62,11 @@ interface YatraStory {
 interface YatraStoryDetailProps {
   story: YatraStory
   currentUserId: string
-  isOwnStory: boolean
 }
 
 export default function YatraStoryDetail({
   story,
   currentUserId,
-  isOwnStory,
 }: YatraStoryDetailProps) {
   const router = useRouter()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -113,12 +120,6 @@ export default function YatraStoryDetail({
     }
   }
 
-  const mainImage =
-    story.heritageSite.images[0]?.r2Url ||
-    story.heritageSite.images[0]?.cloudinaryUrl
-
-  const allImages = story.heritageSite.images.filter(img => img.r2Url || img.cloudinaryUrl)
-
   return (
     <div className="min-h-screen py-6 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
@@ -134,11 +135,11 @@ export default function YatraStoryDetail({
         {/* Main Card */}
         <article className="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-orange-100">
           {/* Header */}
-          <div className="px-6 py-5 bg-gradient-to-r from-orange-50 to-amber-50 border-b-2 border-orange-100">
+          <div className="px-6 py-5 bg-linear-to-r from-orange-50 to-amber-50 border-b-2 border-orange-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  <div className="h-14 w-14 rounded-full bg-linear-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
                     {story.author.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-green-500 border-2 border-white"></div>
@@ -185,30 +186,6 @@ export default function YatraStoryDetail({
               )}
             </div>
           </div>
-
-          {/* Hero Image */}
-          {mainImage ? (
-            <div className="w-full aspect-[16/10] bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
-              <img
-                src={mainImage}
-                alt={story.heritageSite.title}
-                className={`w-full h-full object-cover ${!isOwnStory ? 'blur-lg' : ''}`}
-              />
-              {!isOwnStory && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-                  <div className="bg-white/95 backdrop-blur-md px-6 py-4 rounded-2xl text-center max-w-md mx-4 shadow-2xl border-2 border-orange-200">
-                    <Lock className="h-10 w-10 text-orange-600 mx-auto mb-3" />
-                    <p className="text-lg font-bold text-gray-900 mb-1">Image Protected</p>
-                    <p className="text-sm text-gray-600">Images are blurred to protect exact site locations</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="w-full aspect-[16/10] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-              <MapPin className="h-24 w-24 text-gray-400" />
-            </div>
-          )}
 
           {/* Action Bar */}
           <div className="flex items-center justify-between px-6 py-4 border-b-2 border-gray-100">
@@ -284,11 +261,11 @@ export default function YatraStoryDetail({
           </div>
 
           {/* Content */}
-          <div className="px-6 py-8 space-y-8">
+          <div className="px-6 py-8 space-y-6">
             {/* Heritage Site Info */}
-            <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border-2 border-orange-200">
+            <div className="flex items-start gap-3 p-4 bg-linear-to-r from-orange-50 to-amber-50 rounded-2xl border-2 border-orange-200">
               <MapPin className="h-6 w-6 text-orange-600 shrink-0 mt-0.5" />
-              <div>
+              <div className="flex-1">
                 <p className="font-bold text-orange-900 text-lg mb-1">
                   {story.heritageSite.title}
                 </p>
@@ -307,86 +284,155 @@ export default function YatraStoryDetail({
               </h1>
             </div>
 
-            {/* Journey Section */}
-            <section className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-orange-100 rounded-xl">
-                  <Footprints className="h-6 w-6 text-orange-600" />
+            {/* Discovery Context */}
+            {story.discoveryContext && (
+              <section className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-emerald-100 rounded-lg">
+                    <Eye className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-900">Discovery Context</h2>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">The Journey</h2>
+                <div className="text-gray-700 text-base leading-relaxed whitespace-pre-line bg-gray-50 p-4 rounded-xl border border-gray-200">
+                  {story.discoveryContext}
+                </div>
+              </section>
+            )}
+
+            {/* Journey Narrative */}
+            <section className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Footprints className="h-5 w-5 text-orange-600" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">Journey Narrative</h2>
               </div>
-              <div className="text-gray-700 text-lg leading-relaxed whitespace-pre-line pl-14">
+              <div className="text-gray-700 text-base leading-relaxed whitespace-pre-line bg-gray-50 p-4 rounded-xl border border-gray-200">
                 {story.journeyNarrative}
               </div>
             </section>
 
+            {/* Historical Indicators */}
+            {story.historicalIndicators && story.historicalIndicators.length > 0 && (
+              <section className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <BookOpen className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-900">Historical Indicators</h2>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {story.historicalIndicators.map((indicator, index) => (
+                    <span key={index} className="px-3 py-1.5 bg-purple-100 text-purple-800 rounded-full text-sm font-medium border border-purple-200">
+                      {indicator}
+                    </span>
+                  ))}
+                </div>
+                {story.historicalIndicatorsDetails && (
+                  <div className="text-gray-700 text-base leading-relaxed whitespace-pre-line bg-gray-50 p-4 rounded-xl border border-gray-200 mt-2">
+                    {story.historicalIndicatorsDetails}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Evidence Types */}
+            {story.evidenceTypes && story.evidenceTypes.length > 0 && (
+              <section className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <FileText className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-900">Evidence Types</h2>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {story.evidenceTypes.map((evidence, index) => (
+                    <span key={index} className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium border border-blue-200">
+                      {evidence}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Safe Visuals */}
+            {story.safeVisuals && story.safeVisuals.length > 0 && (
+              <section className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-teal-100 rounded-lg">
+                    <Eye className="h-5 w-5 text-teal-600" />
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-900">Safe Visuals</h2>
+                  <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                    {story.safeVisuals.length} image{story.safeVisuals.length > 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {story.safeVisuals.map((imageUrl, index) => (
+                    <div key={index} className="aspect-square bg-gray-100 relative rounded-xl overflow-hidden border-2 border-gray-200 hover:border-teal-300 transition-colors">
+                      <img
+                        src={imageUrl}
+                        alt={`Safe visual ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f3f4f6" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" font-size="14" text-anchor="middle" dy=".3em" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E'
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Personal Reflection */}
+            {story.personalReflection && (
+              <section className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-pink-100 rounded-lg">
+                    <Heart className="h-5 w-5 text-pink-600" />
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-900">Personal Reflection</h2>
+                </div>
+                <div className="text-gray-700 text-base leading-relaxed whitespace-pre-line bg-gray-50 p-4 rounded-xl border border-gray-200">
+                  {story.personalReflection}
+                </div>
+              </section>
+            )}
+
             {/* Cultural Insights */}
             {story.culturalInsights && (
-              <section className="space-y-4 pt-6 border-t-2 border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-blue-100 rounded-xl">
-                    <BookOpen className="h-6 w-6 text-blue-600" />
+              <section className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-indigo-100 rounded-lg">
+                    <BookOpen className="h-5 w-5 text-indigo-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Cultural Insights</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Cultural Insights</h2>
                 </div>
-                <div className="text-gray-700 text-lg leading-relaxed whitespace-pre-line pl-14">
+                <div className="text-gray-700 text-base leading-relaxed whitespace-pre-line bg-gray-50 p-4 rounded-xl border border-gray-200">
                   {story.culturalInsights}
                 </div>
               </section>
             )}
 
-            {/* Image Gallery */}
-            {allImages.length > 1 && (
-              <section className="space-y-4 pt-6 border-t-2 border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-purple-100 rounded-xl">
-                    <Camera className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Gallery</h2>
-                  <span className="text-sm font-semibold text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                    {allImages.length} photos
-                  </span>
+            {/* Publish Status */}
+            <section className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-slate-100 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-slate-600" />
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pl-14">
-                  {allImages.slice(1).map((image) => {
-                    const imageUrl = image.r2Url || image.cloudinaryUrl
-                    if (!imageUrl) return null
-                    return (
-                      <div key={image.id} className="aspect-square bg-gray-100 relative rounded-xl overflow-hidden border-2 border-gray-200 hover:border-orange-300 transition-colors">
-                        <img
-                          src={imageUrl}
-                          alt={story.heritageSite.title}
-                          className={`w-full h-full object-cover ${!isOwnStory ? 'blur-lg' : ''}`}
-                        />
-                        {!isOwnStory && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                            <Lock className="h-8 w-8 text-white" />
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              </section>
-            )}
-
-            {/* CTA */}
-            <div className="pt-6 border-t-2 border-gray-100">
-              <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-8 text-center shadow-xl">
-                <h3 className="text-2xl font-bold text-white mb-3">
-                  ✨ Inspired by this story?
-                </h3>
-                <p className="text-white/90 mb-6 text-lg">
-                  Share your own discovery and help preserve our heritage
-                </p>
-                <Link
-                  href="/dashboard/yatra/create"
-                  className="inline-block px-8 py-3.5 bg-white text-orange-600 font-bold rounded-full hover:shadow-2xl transition-all hover:scale-105"
-                >
-                  Share Your Journey
-                </Link>
+                <h2 className="text-xl font-bold text-gray-900">Publication Status</h2>
               </div>
-            </div>
+              <div className="flex items-center gap-2">
+                <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                  story.publishStatus === 'APPROVED_PUBLIC' ? 'bg-green-100 text-green-800 border border-green-200' :
+                  story.publishStatus === 'FEATURED_YATRA' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                  'bg-orange-100 text-orange-800 border border-orange-200'
+                }`}>
+                  {story.publishStatus.replace(/_/g, ' ')}
+                </span>
+              </div>
+            </section>
+
           </div>
         </article>
       </div>

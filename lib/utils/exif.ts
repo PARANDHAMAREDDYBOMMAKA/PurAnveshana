@@ -11,7 +11,7 @@ export interface ExifData {
 
 export async function extractExifData(file: File): Promise<ExifData> {
   try {
-    // Parse EXIF data with comprehensive options
+
     const exif = await exifr.parse(file, {
       gps: true,
       tiff: true,
@@ -20,7 +20,6 @@ export async function extractExifData(file: File): Promise<ExifData> {
       iptc: true,
       jfif: true,
       ihdr: true,
-      // Don't restrict to specific fields - get everything
       pick: undefined,
       skip: undefined,
       translateKeys: true,
@@ -41,11 +40,8 @@ export async function extractExifData(file: File): Promise<ExifData> {
       }
     }
 
-    // Verification based on camera details:
-    // Image is verified if it has Make, Model, or Software
     const hasCameraInfo = !!(exif.Make || exif.Model || exif.Software)
 
-    // Construct camera model string with fallbacks
     let cameraModel = null
     if (exif.Make && exif.Model) {
       cameraModel = `${exif.Make} ${exif.Model}`
@@ -57,11 +53,9 @@ export async function extractExifData(file: File): Promise<ExifData> {
       cameraModel = exif.Software
     }
 
-    // Extract GPS coordinates with multiple fallbacks
     let latitude = exif.latitude || exif.GPSLatitude || null
     let longitude = exif.longitude || exif.GPSLongitude || null
 
-    // Return verification based on presence of camera details
     return {
       isVerified: hasCameraInfo,
       cameraModel: cameraModel,
@@ -82,7 +76,6 @@ export async function extractExifData(file: File): Promise<ExifData> {
 
 export async function reverseGeocode(lat: number, lon: number): Promise<string | null> {
   try {
-    // Using OpenStreetMap Nominatim API (free, no API key required)
     const response = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
       {

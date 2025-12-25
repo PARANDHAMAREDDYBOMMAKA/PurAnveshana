@@ -93,35 +93,25 @@ model YatraStory {
   userId                      String       @map("user_id") @db.Uuid
   heritageSiteId              String       @unique @map("heritage_site_id") @db.Uuid
 
-  // Question 1: Title (Required)
   title                       String       @db.VarChar(80)
 
-  // Question 2: Discovery Context (Required, 150-300 words)
   discoveryContext            String       @map("discovery_context") @db.Text
 
-  // Question 3: Journey & Effort (Required)
   journeyNarrative            String       @map("journey_narrative") @db.Text
 
-  // Question 4: Historical Indicators (Required)
   historicalIndicators        String[]     @default([]) @map("historical_indicators")
   historicalIndicatorsDetails String?      @map("historical_indicators_details") @db.Text
 
-  // Question 5: Evidence Summary (Required)
   evidenceTypes               String[]     @default([]) @map("evidence_types")
 
-  // Question 6: Safe Visuals (Optional, max 3 images)
   safeVisuals                 String[]     @default([]) @map("safe_visuals")
 
-  // Question 7: Personal Reflection (Optional)
   personalReflection          String?      @map("personal_reflection") @db.Text
 
-  // Question 8: Submission Declaration (Required)
   submissionConfirmed         Boolean      @default(false) @map("submission_confirmed")
 
-  // Question 9: Publish Status (System Controlled)
   publishStatus               PublishStatus @default(PENDING_REVIEW) @map("publish_status")
 
-  // Legacy field for cultural insights (keeping for backwards compatibility)
   culturalInsights            String?      @map("cultural_insights") @db.Text
 
   createdAt                   DateTime     @default(now()) @map("created_at")
