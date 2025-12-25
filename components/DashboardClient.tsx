@@ -177,7 +177,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <div className="relative overflow-hidden bg-linear-to-br from-orange-500 to-amber-600 rounded-2xl p-6 shadow-xl text-white">
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
               <div className="relative">
@@ -192,7 +192,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
               </div>
             </div>
 
-            <div className="relative overflow-hidden bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl p-6 shadow-xl text-white">
+            {/* <div className="relative overflow-hidden bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl p-6 shadow-xl text-white">
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
               <div className="relative">
                 <div className="flex items-center justify-between mb-4">
@@ -206,7 +206,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
                 <p className="text-4xl font-bold mb-1">{verifiedImages}</p>
                 <p className="text-sm text-green-100 font-medium">Verified Images</p>
               </div>
-            </div>
+            </div> */}
 
             <div className="relative overflow-hidden bg-linear-to-br from-blue-500 to-cyan-600 rounded-2xl p-6 shadow-xl text-white">
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>

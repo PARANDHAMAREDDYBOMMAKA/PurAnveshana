@@ -384,11 +384,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       case 0:
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Which heritage site is this about?
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 Select the site you'd like to share your discovery journey about
               </p>
             </div>
@@ -398,26 +398,26 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 <button
                   key={site.id}
                   onClick={() => setFormData({ ...formData, heritageSiteId: site.id })}
-                  className={`w-full p-6 rounded-2xl border-2 transition-all ${
+                  className={`w-full p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all ${
                     formData.heritageSiteId === site.id
                       ? 'border-orange-500 bg-orange-50'
                       : 'border-gray-200 hover:border-orange-300'
                   }`}
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     {(site.images[0]?.r2Url || site.images[0]?.cloudinaryUrl) && (
                       <img
                         src={site.images[0]?.r2Url || site.images[0]?.cloudinaryUrl || ''}
                         alt={site.title}
-                        className="w-20 h-20 rounded-lg object-cover"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shrink-0"
                       />
                     )}
-                    <div className="flex-1 text-left">
-                      <h3 className="font-bold text-gray-900 text-lg">{site.title}</h3>
-                      <p className="text-sm text-gray-900">{site.type}</p>
+                    <div className="flex-1 text-left min-w-0">
+                      <h3 className="font-bold text-gray-900 text-base sm:text-lg truncate">{site.title}</h3>
+                      <p className="text-xs sm:text-sm text-gray-900 truncate">{site.type}</p>
                     </div>
                     {formData.heritageSiteId === site.id && (
-                      <Check className="h-6 w-6 text-orange-500" />
+                      <Check className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500 shrink-0" />
                     )}
                   </div>
                 </button>
@@ -429,11 +429,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       case 1:
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 What is the title of your Yatra?
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 Keep it within 80 characters, descriptive but not sensational
               </p>
             </div>
@@ -445,9 +445,9 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="E.g., Ancient temple ruins in..."
                 maxLength={80}
-                className="w-full px-6 py-4 text-lg text-gray-900 placeholder:text-gray-900 rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none"
               />
-              <div className="mt-2 text-right text-sm text-gray-900">
+              <div className="mt-2 text-right text-xs sm:text-sm text-gray-900">
                 {formData.title.length}/80 characters
               </div>
             </div>
@@ -467,11 +467,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         const wordCount = formData.discoveryContext.trim().split(/\s+/).filter(w => w).length
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 How did you come across this site?
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 Share the story of your discovery (150-300 words recommended)
               </p>
             </div>
@@ -481,10 +481,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 value={formData.discoveryContext}
                 onChange={(e) => setFormData({ ...formData, discoveryContext: e.target.value })}
                 placeholder="Was it through local people, elders, family stories? During travel, farming, trekking? Through old maps or texts?"
-                rows={10}
-                className="w-full px-6 py-4 text-lg text-gray-900 placeholder:text-gray-900 rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
+                rows={8}
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
               />
-              <div className="mt-2 flex justify-between text-sm">
+              <div className="mt-2 flex flex-col sm:flex-row justify-between gap-1 sm:gap-0 text-xs sm:text-sm">
                 <span className={`${wordCount < 50 ? 'text-red-600' : wordCount > 300 ? 'text-orange-600' : 'text-green-600'}`}>
                   {wordCount} words {wordCount < 50 && '(minimum 50)'}
                 </span>
@@ -499,11 +499,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       case 3:
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Describe your journey to reach this place
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 How far did you travel? What terrain? Any difficulties?
               </p>
             </div>
@@ -513,10 +513,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 value={formData.journeyNarrative}
                 onChange={(e) => setFormData({ ...formData, journeyNarrative: e.target.value })}
                 placeholder="Describe your journey: distance traveled, terrain crossed (forest, hill, farmland, ruins), weather conditions, lack of paths, or safety risks..."
-                rows={10}
-                className="w-full px-6 py-4 text-lg text-gray-900 placeholder:text-gray-900 rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
+                rows={8}
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
               />
-              <div className="mt-2 text-right text-sm">
+              <div className="mt-2 text-right text-xs sm:text-sm">
                 <span className={formData.journeyNarrative.length >= 100 ? 'text-green-600' : 'text-gray-900'}>
                   {formData.journeyNarrative.length} characters (minimum 100)
                 </span>
@@ -528,11 +528,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       case 4:
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 What historical indicators did you observe?
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 Select all that apply from what you personally witnessed
               </p>
             </div>
@@ -590,11 +590,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       case 5:
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 What evidence did you submit privately?
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 Select the types of evidence you've provided for verification
               </p>
             </div>
@@ -639,11 +639,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       case 6:
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Add safe visuals for public viewing (Optional)
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 Maximum 3 images - only verified images with camera EXIF data accepted
               </p>
             </div>
@@ -753,11 +753,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       case 7:
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Why does this discovery matter? (Optional)
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 Share your personal thoughts on its cultural or historical importance
               </p>
             </div>
@@ -767,8 +767,8 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 value={formData.personalReflection}
                 onChange={(e) => setFormData({ ...formData, personalReflection: e.target.value })}
                 placeholder="Why is this discovery important? Is there a risk of damage or neglect? What personal emotions or sense of responsibility do you feel?"
-                rows={8}
-                className="w-full px-6 py-4 text-lg text-gray-900 placeholder:text-gray-900 rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
+                rows={6}
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
               />
             </div>
 
@@ -786,11 +786,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       case 8:
         return (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Review Your Submission
               </h2>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 Please review all information before submitting
               </p>
             </div>
@@ -874,9 +874,18 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
 
   return (
     <div className="min-h-screen bg-linear-to-br from-orange-50 via-amber-50 to-white">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Back Button */}
+        <button
+          onClick={() => router.push('/dashboard/yatra')}
+          className="flex items-center gap-2 text-gray-700 hover:text-gray-900 mb-6 group transition-colors"
+        >
+          <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+          <span className="font-medium">Back to Yatra Gallery</span>
+        </button>
+
         {/* Progress Bar */}
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-12">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-semibold text-gray-900">
               Step {currentStep + 1} of {steps.length}
@@ -922,37 +931,39 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         </div>
 
         {/* Step Content */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-8">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 md:p-12 mb-6 sm:mb-8">
           {renderStepContent()}
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3 sm:gap-4">
           <button
             onClick={handlePrevious}
             disabled={currentStep === 0}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-gray-300 font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl border-2 border-gray-300 font-semibold text-sm sm:text-base text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            <ArrowLeft className="h-5 w-5" />
-            Previous
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="hidden sm:inline">Previous</span>
+            <span className="sm:hidden">Prev</span>
           </button>
 
           {currentStep < steps.length - 1 ? (
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 px-8 py-3 rounded-xl bg-linear-to-r from-orange-500 to-amber-500 text-white font-semibold hover:shadow-lg transition-all"
+              className="flex items-center gap-1.5 sm:gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-linear-to-r from-orange-500 to-amber-500 text-white font-semibold text-sm sm:text-base hover:shadow-lg transition-all"
             >
               Next
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           ) : (
             <button
               onClick={handleSubmit}
               disabled={loading || !formData.submissionConfirmed}
-              className="flex items-center gap-2 px-8 py-3 rounded-xl bg-linear-to-r from-green-500 to-emerald-600 text-white font-semibold hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-1.5 sm:gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-linear-to-r from-green-500 to-emerald-600 text-white font-semibold text-sm sm:text-base hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
-              {loading ? 'Submitting...' : 'Submit Yatra'}
-              <CheckCircle2 className="h-5 w-5" />
+              <span className="hidden sm:inline">{loading ? 'Submitting...' : 'Submit Yatra'}</span>
+              <span className="sm:hidden">{loading ? 'Submitting...' : 'Submit'}</span>
+              <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           )}
         </div>

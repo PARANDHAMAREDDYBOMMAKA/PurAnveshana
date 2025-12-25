@@ -118,11 +118,43 @@ model YatraStory {
   updatedAt                   DateTime     @updatedAt @map("updated_at")
 
   heritageSite                HeritageSite @relation(fields: [heritageSiteId], references: [id], onDelete: Cascade)
+  comments                    YatraComment[]
+  likes                       YatraLike[]
 
   @@index([userId])
   @@index([publishStatus])
   @@index([createdAt(sort: Desc)])
   @@map("yatra_stories")
+}
+
+model YatraComment {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storyId   String   @map("story_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  comment   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  story     YatraStory @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@index([storyId])
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@map("yatra_comments")
+}
+
+model YatraLike {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storyId   String   @map("story_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  story     YatraStory @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@index([storyId])
+  @@index([userId])
+  @@map("yatra_likes")
 }
 
 enum Role {

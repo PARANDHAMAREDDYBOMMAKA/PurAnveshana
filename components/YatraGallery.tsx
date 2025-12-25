@@ -21,8 +21,24 @@ import {
   Trash2,
   Eye,
   BookOpen,
-  FileText
+  FileText,
+  Link as LinkIcon,
+  Facebook,
+  Twitter
 } from 'lucide-react'
+
+interface YatraComment {
+  id: string
+  storyId: string
+  userId: string
+  comment: string
+  createdAt: string
+  updatedAt: string
+  user: {
+    id: string
+    name: string
+  }
+}
 
 interface YatraStory {
   id: string
@@ -56,6 +72,10 @@ interface YatraStory {
       location: string
     }[]
   }
+  _count?: {
+    likes: number
+    comments: number
+  }
 }
 
 interface YatraGalleryProps {
@@ -81,11 +101,44 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
   const [showFilters, setShowFilters] = useState(false)
   const [showMenuForStory, setShowMenuForStory] = useState<string | null>(null)
   const [deletingStory, setDeletingStory] = useState<string | null>(null)
+  const [likedStories, setLikedStories] = useState<Record<string, boolean>>({})
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({})
+  const [savedStories, setSavedStories] = useState<Set<string>>(new Set())
+  const [showShareMenu, setShowShareMenu] = useState<string | null>(null)
+  const [showCommentBox, setShowCommentBox] = useState<string | null>(null)
+  const [commentText, setCommentText] = useState('')
+  const [comments, setComments] = useState<Record<string, YatraComment[]>>({})
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({})
+  const [submittingComment, setSubmittingComment] = useState(false)
+  const [deletingComment, setDeletingComment] = useState<string | null>(null)
+  const [loadingComments, setLoadingComments] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     fetchStories()
   }, [userId])
+
+  // Fetch like status for all stories when they load
+  useEffect(() => {
+    const fetchLikeStatuses = async () => {
+      for (const story of stories) {
+        try {
+          const response = await fetch(`/api/yatra/${story.id}/like`)
+          if (response.ok) {
+            const data = await response.json()
+            setLikedStories(prev => ({ ...prev, [story.id]: data.liked }))
+            setLikeCounts(prev => ({ ...prev, [story.id]: data.likeCount }))
+          }
+        } catch (error) {
+          console.error('Error fetching like status:', error)
+        }
+      }
+    }
+
+    if (stories.length > 0) {
+      fetchLikeStatuses()
+    }
+  }, [stories])
 
   useEffect(() => {
     if (loading) {
@@ -104,11 +157,14 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       if (showMenuForStory) {
         setShowMenuForStory(null)
       }
+      if (showShareMenu) {
+        setShowShareMenu(null)
+      }
     }
 
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
-  }, [showMenuForStory])
+  }, [showMenuForStory, showShareMenu])
 
   const fetchStories = async () => {
     setLoading(true)
@@ -143,7 +199,6 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
 
       if (response.ok) {
         toast.success('Story deleted successfully')
-        // Refresh the list
         fetchStories()
       } else {
         const data = await response.json()
@@ -154,6 +209,158 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       toast.error('An error occurred')
     } finally {
       setDeletingStory(null)
+    }
+  }
+
+  const handleLike = async (storyId: string) => {
+    try {
+      const response = await fetch(`/api/yatra/${storyId}/like`, {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setLikedStories(prev => ({ ...prev, [storyId]: data.liked }))
+        setLikeCounts(prev => ({ ...prev, [storyId]: data.likeCount }))
+      } else {
+        toast.error('Failed to update like')
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error)
+      toast.error('An error occurred')
+    }
+  }
+
+  const handleSave = (storyId: string) => {
+    setSavedStories(prev => {
+      const newSaves = new Set(prev)
+      if (newSaves.has(storyId)) {
+        newSaves.delete(storyId)
+        toast.success('Removed from saved!')
+      } else {
+        newSaves.add(storyId)
+        toast.success('Saved to collection!')
+      }
+      return newSaves
+    })
+  }
+
+  const handleShare = (storyId: string, platform: string, storyTitle: string) => {
+    const url = `${window.location.origin}/dashboard/yatra/${storyId}`
+    const text = `Check out this heritage discovery: ${storyTitle}`
+
+    const shareUrls = {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+    }
+
+    if (platform === 'copy') {
+      navigator.clipboard.writeText(url)
+      toast.success('Link copied to clipboard!')
+      setShowShareMenu(null)
+    } else {
+      window.open(shareUrls[platform as keyof typeof shareUrls], '_blank')
+      setShowShareMenu(null)
+    }
+  }
+
+  const handleComment = async (storyId: string) => {
+    if (showCommentBox === storyId) {
+      setShowCommentBox(null)
+      setCommentText('')
+    } else {
+      setShowCommentBox(storyId)
+      if (!comments[storyId]) {
+        await fetchComments(storyId)
+      }
+    }
+  }
+
+  const fetchComments = async (storyId: string) => {
+    setLoadingComments(true)
+    try {
+      const response = await fetch(`/api/yatra/${storyId}/comments`)
+      if (response.ok) {
+        const data = await response.json()
+        setComments(prev => ({ ...prev, [storyId]: data.comments }))
+        setCommentCounts(prev => ({ ...prev, [storyId]: data.comments.length }))
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error)
+    } finally {
+      setLoadingComments(false)
+    }
+  }
+
+  const submitComment = async (storyId: string) => {
+    if (!commentText.trim()) {
+      toast.error('Please enter a comment')
+      return
+    }
+
+    setSubmittingComment(true)
+    try {
+      const response = await fetch(`/api/yatra/${storyId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment: commentText }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setComments(prev => ({
+          ...prev,
+          [storyId]: [data.comment, ...(prev[storyId] || [])]
+        }))
+        setCommentCounts(prev => ({
+          ...prev,
+          [storyId]: (prev[storyId] || 0) + 1
+        }))
+        toast.success('Comment posted!')
+        setCommentText('')
+      } else {
+        const data = await response.json()
+        toast.error(data.error || 'Failed to post comment')
+      }
+    } catch (error) {
+      console.error('Error posting comment:', error)
+      toast.error('An error occurred')
+    } finally {
+      setSubmittingComment(false)
+    }
+  }
+
+  const deleteComment = async (storyId: string, commentId: string) => {
+    if (!confirm('Are you sure you want to delete this comment?')) {
+      return
+    }
+
+    setDeletingComment(commentId)
+    try {
+      const response = await fetch(`/api/yatra/${storyId}/comments/${commentId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setComments(prev => ({
+          ...prev,
+          [storyId]: (prev[storyId] || []).filter(c => c.id !== commentId)
+        }))
+        setCommentCounts(prev => ({
+          ...prev,
+          [storyId]: Math.max(0, (prev[storyId] || 1) - 1)
+        }))
+        toast.success('Comment deleted!')
+      } else {
+        const data = await response.json()
+        toast.error(data.error || 'Failed to delete comment')
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error)
+      toast.error('An error occurred')
+    } finally {
+      setDeletingComment(null)
     }
   }
 
@@ -540,24 +747,90 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                   </div>
 
                   {/* Action Bar */}
-                  <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-                    <div className="flex items-center gap-4">
-                      <button className="text-gray-600 hover:text-red-500 transition-colors flex items-center gap-1">
-                        <Heart className="h-5 w-5" />
-                        <span className="text-sm font-medium">Like</span>
-                      </button>
-                      <button className="text-gray-600 hover:text-blue-500 transition-colors flex items-center gap-1">
-                        <MessageCircle className="h-5 w-5" />
-                        <span className="text-sm font-medium">Comment</span>
-                      </button>
-                      <button className="text-gray-600 hover:text-green-500 transition-colors flex items-center gap-1">
-                        <Share2 className="h-5 w-5" />
-                        <span className="text-sm font-medium">Share</span>
+                  <div className="border-t border-gray-100">
+                    <div className="flex items-center justify-between px-4 py-3">
+                      <div className="flex items-center gap-4">
+                        <button
+                          onClick={() => handleLike(story.id)}
+                          className={`transition-colors flex items-center gap-1.5 ${
+                            likedStories[story.id]
+                              ? 'text-red-500'
+                              : 'text-gray-600 hover:text-red-500'
+                          }`}
+                        >
+                          <Heart className={`h-5 w-5 ${likedStories[story.id] ? 'fill-current' : ''}`} />
+                          <span className="text-sm font-medium">
+                            {likeCounts[story.id] > 0 ? likeCounts[story.id] : ''}
+                            {likeCounts[story.id] > 0 ? (likeCounts[story.id] === 1 ? ' Like' : ' Likes') : 'Like'}
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => handleComment(story.id)}
+                          className={`transition-colors flex items-center gap-1.5 ${
+                            showCommentBox === story.id
+                              ? 'text-blue-500'
+                              : 'text-gray-600 hover:text-blue-500'
+                          }`}
+                        >
+                          <MessageCircle className="h-5 w-5" />
+                          <span className="text-sm font-medium">
+                            {commentCounts[story.id] > 0 ? commentCounts[story.id] : ''}
+                            {commentCounts[story.id] > 0 ? (commentCounts[story.id] === 1 ? ' Comment' : ' Comments') : 'Comment'}
+                          </span>
+                        </button>
+                        <div className="relative">
+                          <button
+                            onClick={() => setShowShareMenu(showShareMenu === story.id ? null : story.id)}
+                            className="text-gray-600 hover:text-green-500 transition-colors flex items-center gap-1"
+                          >
+                            <Share2 className="h-5 w-5" />
+                            <span className="text-sm font-medium">Share</span>
+                          </button>
+                          {showShareMenu === story.id && (
+                            <div className="absolute bottom-full left-0 mb-2 bg-white rounded-xl shadow-2xl border-2 border-gray-200 py-2 w-48 z-20">
+                              <button
+                                onClick={() => handleShare(story.id, 'whatsapp', story.title)}
+                                className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-900"
+                              >
+                                <MessageCircle className="h-4 w-4 text-green-600" />
+                                WhatsApp
+                              </button>
+                              <button
+                                onClick={() => handleShare(story.id, 'facebook', story.title)}
+                                className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-900"
+                              >
+                                <Facebook className="h-4 w-4 text-blue-600" />
+                                Facebook
+                              </button>
+                              <button
+                                onClick={() => handleShare(story.id, 'twitter', story.title)}
+                                className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-900"
+                              >
+                                <Twitter className="h-4 w-4 text-sky-500" />
+                                Twitter
+                              </button>
+                              <button
+                                onClick={() => handleShare(story.id, 'copy', story.title)}
+                                className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 transition-colors border-t border-gray-100 flex items-center gap-3 text-gray-900"
+                              >
+                                <LinkIcon className="h-4 w-4 text-orange-600" />
+                                Copy Link
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleSave(story.id)}
+                        className={`transition-colors ${
+                          savedStories.has(story.id)
+                            ? 'text-orange-500'
+                            : 'text-gray-600 hover:text-orange-500'
+                        }`}
+                      >
+                        <Bookmark className={`h-5 w-5 ${savedStories.has(story.id) ? 'fill-current' : ''}`} />
                       </button>
                     </div>
-                    <button className="text-gray-600 hover:text-orange-500 transition-colors">
-                      <Bookmark className="h-5 w-5" />
-                    </button>
                   </div>
                 </article>
               )
@@ -605,6 +878,213 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
             </Link>
           )}
         </div>
+      )}
+
+      {/* Comments Sidebar/Bottom Sheet */}
+      {showCommentBox && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+            onClick={() => {
+              setShowCommentBox(null)
+              setCommentText('')
+            }}
+          />
+
+          {/* Desktop Sidebar */}
+          <div className="hidden md:block fixed top-0 right-0 h-full w-[400px] bg-white shadow-2xl z-50 transform transition-transform duration-300">
+            <div className="flex flex-col h-full">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5 text-blue-500" />
+                  Comments
+                  {commentCounts[showCommentBox] > 0 && (
+                    <span className="text-sm font-normal text-gray-600">
+                      ({commentCounts[showCommentBox]})
+                    </span>
+                  )}
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowCommentBox(null)
+                    setCommentText('')
+                  }}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X className="h-5 w-5 text-gray-600" />
+                </button>
+              </div>
+
+              {/* Comments List */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                {loadingComments ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                  </div>
+                ) : comments[showCommentBox] && comments[showCommentBox].length > 0 ? (
+                  comments[showCommentBox].map((comment) => (
+                    <div key={comment.id} className="bg-gray-50 rounded-lg p-3 space-y-2 group">
+                      <div className="flex items-start gap-2">
+                        <div className="h-8 w-8 rounded-full bg-linear-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                          {comment.user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-sm font-semibold text-gray-900">{comment.user.name}</p>
+                            {comment.userId === userId && (
+                              <button
+                                onClick={() => deleteComment(showCommentBox, comment.id)}
+                                disabled={deletingComment === comment.id}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-100 rounded text-red-600 disabled:opacity-50"
+                                title="Delete comment"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 mb-1">
+                            {new Date(comment.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                          <p className="text-sm text-gray-700 leading-relaxed">{comment.comment}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    <MessageCircle className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                    <p className="text-sm">No comments yet. Be the first to comment!</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Comment Input */}
+              <div className="p-4 border-t border-gray-200 bg-gray-50">
+                <textarea
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Write a comment..."
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm resize-none text-gray-900 placeholder:text-gray-400 bg-white"
+                  rows={3}
+                />
+                <div className="flex items-center justify-end gap-2 mt-3">
+                  <button
+                    onClick={() => submitComment(showCommentBox)}
+                    disabled={submittingComment || !commentText.trim()}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submittingComment ? 'Posting...' : 'Post Comment'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Bottom Sheet */}
+          <div className="md:hidden fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[85vh] flex flex-col">
+            {/* Handle */}
+            <div className="flex justify-center py-3">
+              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <MessageCircle className="h-5 w-5 text-blue-500" />
+                Comments
+                {commentCounts[showCommentBox] > 0 && (
+                  <span className="text-sm font-normal text-gray-600">
+                    ({commentCounts[showCommentBox]})
+                  </span>
+                )}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowCommentBox(null)
+                  setCommentText('')
+                }}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Comments List */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {loadingComments ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                </div>
+              ) : comments[showCommentBox] && comments[showCommentBox].length > 0 ? (
+                comments[showCommentBox].map((comment) => (
+                  <div key={comment.id} className="bg-gray-50 rounded-lg p-3 space-y-2">
+                    <div className="flex items-start gap-2">
+                      <div className="h-8 w-8 rounded-full bg-linear-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                        {comment.user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-sm font-semibold text-gray-900">{comment.user.name}</p>
+                          {comment.userId === userId && (
+                            <button
+                              onClick={() => deleteComment(showCommentBox, comment.id)}
+                              disabled={deletingComment === comment.id}
+                              className="p-1 hover:bg-red-100 rounded text-red-600 disabled:opacity-50"
+                              title="Delete comment"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 mb-1">
+                          {new Date(comment.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                        <p className="text-sm text-gray-700 leading-relaxed">{comment.comment}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <MessageCircle className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                  <p className="text-sm">No comments yet. Be the first to comment!</p>
+                </div>
+              )}
+            </div>
+
+            {/* Comment Input */}
+            <div className="p-4 border-t border-gray-200 bg-gray-50">
+              <textarea
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write a comment..."
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm resize-none text-gray-900 placeholder:text-gray-400 bg-white"
+                rows={2}
+              />
+              <div className="flex items-center justify-end gap-2 mt-3">
+                <button
+                  onClick={() => submitComment(showCommentBox)}
+                  disabled={submittingComment || !commentText.trim()}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submittingComment ? 'Posting...' : 'Post Comment'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
