@@ -488,43 +488,86 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
 
   return (
     <div className="mx-auto max-w-6xl">
-      {/* Header - Story Book Style */}
-      <div className="mb-8 sm:mb-12">
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900">
-            Heritage Journeys
-          </h1>
+      {/* Fixed Header - Feature Name, Tagline, and Filters */}
+      <div className="sticky top-16 sm:top-[72px] lg:top-20 z-30 bg-linear-to-br from-amber-50 via-orange-50 to-white py-3 sm:py-4 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 shadow-md border-b border-slate-200">
+        {/* Mobile Layout: Stacked */}
+        <div className="flex flex-col gap-3 md:hidden">
+          {/* Title and Tagline */}
+          <div className="flex flex-col">
+            <h1 className="text-xl font-bold text-slate-900">Yatra</h1>
+            <p className="text-xs text-slate-600 font-medium">The journey behind the discovery.</p>
+          </div>
+
+          {/* Search and Buttons */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-2 py-2 border-2 border-slate-200 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+              />
+            </div>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="p-2 border-2 border-slate-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-all"
+            >
+              <Filter className="h-4 w-4 text-slate-700" />
+            </button>
+            {!isAdmin && (
+              <Link
+                href="/dashboard/yatra/create"
+                className="p-2 bg-linear-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:shadow-xl transition-all"
+              >
+                <Plus className="h-4 w-4" />
+              </Link>
+            )}
+          </div>
         </div>
 
-        {/* Search Bar and Create Button */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 px-4">
-          <div className="relative flex-1 w-full sm:max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search heritage stories..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 border-2 border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-            />
+        {/* Tablet & Desktop Layout: Side by Side */}
+        <div className="hidden md:flex flex-row items-center justify-between gap-4">
+          {/* Left: Feature Name and Tagline */}
+          <div className="flex flex-col">
+            <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">
+              Yatra
+            </h1>
+            <p className="text-sm lg:text-base text-slate-600 font-medium">
+              The journey behind the discovery.
+            </p>
           </div>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-3 border-2 border-slate-200 rounded-2xl hover:border-orange-300 hover:bg-orange-50 transition-all"
-          >
-            <Filter className="h-5 w-5 text-slate-700" />
-            <span className="text-sm font-medium text-slate-700">Filters</span>
-          </button>
-          {!isAdmin && (
-            <Link
-              href="/dashboard/yatra/create"
-              className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-orange-500 to-amber-500 text-white font-semibold rounded-2xl hover:shadow-xl transition-all whitespace-nowrap"
+
+          {/* Right: Search Bar and Buttons */}
+          <div className="flex flex-row items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search stories..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-48 lg:w-64 pl-9 pr-3 py-2 border-2 border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+              />
+            </div>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-3 py-2 border-2 border-slate-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-all"
             >
-              <Plus className="h-5 w-5" />
-              <span className="hidden sm:inline">Share Your Journey</span>
-              <span className="sm:hidden">Share</span>
-            </Link>
-          )}
+              <Filter className="h-4 w-4 text-slate-700" />
+              <span className="text-sm font-medium text-slate-700">Filters</span>
+            </button>
+            {!isAdmin && (
+              <Link
+                href="/dashboard/yatra/create"
+                className="flex items-center gap-2 px-3 py-2 bg-linear-to-r from-orange-500 to-amber-500 text-white font-semibold rounded-lg hover:shadow-xl transition-all whitespace-nowrap"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="text-sm">Share</span>
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Filters */}
@@ -573,6 +616,9 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
           </div>
         )}
       </div>
+
+      {/* Spacing after sticky header */}
+      <div className="h-6"></div>
 
       {/* Stories - Story Book Format */}
       {stories.length > 0 ? (

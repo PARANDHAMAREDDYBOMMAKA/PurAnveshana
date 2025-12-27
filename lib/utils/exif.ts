@@ -77,12 +77,7 @@ export async function extractExifData(file: File): Promise<ExifData> {
 export async function reverseGeocode(lat: number, lon: number): Promise<string | null> {
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
-      {
-        headers: {
-          'User-Agent': 'ImageVerificationApp/1.0',
-        },
-      }
+      `/api/geocode?lat=${lat}&lon=${lon}`
     )
 
     if (!response.ok) return null
