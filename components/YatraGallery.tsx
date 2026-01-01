@@ -568,7 +568,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-slate-900">{story.author.name}</p>
-                      <div className="flex items-center gap-2 text-xs text-slate-800">
+                      <div className="flex items-center gap-2 text-xs text-black">
                         <Calendar className="h-3 w-3" />
                         <span>{new Date(story.createdAt).toLocaleDateString('en-US', {
                           month: 'short',
@@ -647,7 +647,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                         className={`flex items-center gap-1.5 transition-colors ${
                           likedStories[story.id]
                             ? 'text-red-600'
-                            : 'text-slate-600 hover:text-red-600'
+                            : 'text-black hover:text-red-600'
                         }`}
                       >
                         <Heart className={`h-6 w-6 ${likedStories[story.id] ? 'fill-current' : ''}`} />
@@ -778,7 +778,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                         value={commentText}
                         onChange={(e) => setCommentText(e.target.value)}
                         placeholder="Write a comment..."
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm resize-none"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm text-black placeholder:text-gray-400 resize-none"
                         rows={2}
                       />
                       <div className="flex items-center justify-end gap-2 mt-2">
@@ -818,7 +818,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                                 )}
                               </div>
                               <p className="text-sm text-slate-900">{comment.comment}</p>
-                              <p className="text-xs text-slate-800 mt-1">
+                              <p className="text-xs text-black mt-1">
                                 {new Date(comment.createdAt).toLocaleDateString('en-US', {
                                   month: 'short',
                                   day: 'numeric',
