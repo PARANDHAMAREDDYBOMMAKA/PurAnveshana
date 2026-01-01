@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
+import { PublishStatus } from '@prisma/client'
 
 export async function POST(
   request: Request,
@@ -39,13 +40,13 @@ export async function POST(
       return NextResponse.json({ error: 'Story not found' }, { status: 404 })
     }
 
-    let newStatus = 'PENDING_REVIEW'
+    let newStatus: PublishStatus = PublishStatus.PENDING_REVIEW
     if (action === 'approve') {
-      newStatus = 'APPROVED_PUBLIC'
+      newStatus = PublishStatus.APPROVED_PUBLIC
     } else if (action === 'feature') {
-      newStatus = 'FEATURED_YATRA'
+      newStatus = PublishStatus.FEATURED_YATRA
     } else if (action === 'reject') {
-      newStatus = 'PENDING_REVIEW'
+      newStatus = PublishStatus.PENDING_REVIEW
     }
 
     const updatedStory = await withRetry(() =>
