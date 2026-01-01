@@ -416,7 +416,6 @@ export default function Home() {
                 {' '}and{' '}
                 <strong className="text-orange-600 relative">
                   Get Rewarded!
-                  <span className="absolute -top-1 -right-6 sm:-right-8 text-2xl sm:text-3xl">💰</span>
                 </strong>
               </h1>
 
@@ -482,7 +481,7 @@ export default function Home() {
             </h2>
             <div className="bg-linear-to-r from-orange-100 via-amber-100 to-orange-100 rounded-2xl p-4 sm:p-6 max-w-3xl mx-auto mb-2 sm:mb-4 border-2 border-orange-200">
               <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 mb-2 sm:mb-3">
-                💰 How Much Can You Earn?
+               How Much Can You Earn?
               </h1>
               <p className="text-sm sm:text-base lg:text-lg font-semibold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
                 Your discovery = Your reward. The rarer your find, the higher your payout.

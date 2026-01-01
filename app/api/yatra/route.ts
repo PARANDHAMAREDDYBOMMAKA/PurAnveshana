@@ -15,10 +15,19 @@ export async function GET(request: Request) {
 
     const where: any = {}
 
-
     if (heritageSiteId) {
       where.heritageSiteId = heritageSiteId
     }
+
+    // Filter stories based on user role
+    if (session.role !== 'admin') {
+      // For regular users: show approved stories OR their own stories
+      where.OR = [
+        { publishStatus: { in: ['APPROVED_PUBLIC', 'FEATURED_YATRA'] } },
+        { userId: session.userId }
+      ]
+    }
+    // For admins: show all stories (no additional filter)
 
     const stories = await withRetry(() =>
       prisma.yatraStory.findMany({

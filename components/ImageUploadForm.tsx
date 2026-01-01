@@ -21,10 +21,12 @@ interface FileWithPreview {
     latitude: number
     longitude: number
   }
+  processing?: boolean
 }
 
 export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormProps) {
   const [loading, setLoading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{current: number, total: number} | null>(null)
   const [selectedFiles, setSelectedFiles] = useState<FileWithPreview[]>([])
   const [sharedTitle, setSharedTitle] = useState('')
   const [sharedDescription, setSharedDescription] = useState('')
@@ -196,23 +198,45 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     const files = e.target.files
     if (!files || files.length === 0) return
 
-    const newFiles: FileWithPreview[] = []
     const MAX_VIDEO_DURATION = 300 // 5 minutes in seconds
+    const fileArray = Array.from(files)
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
+    // Show previews immediately for better UX
+    const initialPreviews: FileWithPreview[] = []
+
+    for (const file of fileArray) {
       const isVideo = file.type.startsWith('video/')
       const isImage = file.type.startsWith('image/')
 
-      // Check if it's an image or video
       if (!isImage && !isVideo) {
         toast.error(`${file.name} is not an image or video file`)
         continue
       }
 
-      // Handle video files
-      if (isVideo) {
-        // Check video duration and extract metadata
+      // Create preview immediately
+      const preview = URL.createObjectURL(file)
+
+      initialPreviews.push({
+        file,
+        preview,
+        autoDetectedLocation: null,
+        exifData: { isVerified: false },
+        isVideo,
+        processing: true // Mark as processing
+      })
+    }
+
+    // Add files with previews immediately
+    setSelectedFiles(prev => [...prev, ...initialPreviews])
+    toast.success(`Processing ${initialPreviews.length} file${initialPreviews.length > 1 ? 's' : ''}...`)
+
+    // Process EXIF data in background
+    for (let i = 0; i < initialPreviews.length; i++) {
+      const fileData = initialPreviews[i]
+      const file = fileData.file
+
+      if (fileData.isVideo) {
+        // Check video duration
         const videoData = await new Promise<{duration: number, metadata: any}>((resolve) => {
           const video = document.createElement('video')
           video.preload = 'metadata'
@@ -221,104 +245,79 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             window.URL.revokeObjectURL(video.src)
             resolve({
               duration: video.duration,
-              metadata: {
-                width: video.videoWidth,
-                height: video.videoHeight,
-              }
+              metadata: { width: video.videoWidth, height: video.videoHeight }
             })
           }
 
-          video.onerror = () => {
-            resolve({duration: 0, metadata: null})
-          }
-
+          video.onerror = () => resolve({duration: 0, metadata: null})
           video.src = URL.createObjectURL(file)
         })
 
         if (videoData.duration === 0) {
           toast.error(`${file.name}: Unable to read video metadata`)
+          setSelectedFiles(prev => prev.filter(f => f.file !== file))
           continue
         }
 
         if (videoData.duration > MAX_VIDEO_DURATION) {
-          toast.error(`${file.name}: Video duration (${Math.round(videoData.duration)}s) exceeds 5 minute limit`)
+          toast.error(`${file.name}: Video duration exceeds 5 minute limit`)
+          setSelectedFiles(prev => prev.filter(f => f.file !== file))
           continue
         }
 
-        // Accept all videos - create basic EXIF data
-        const videoExifData = {
-          isVerified: true,
-          cameraModel: 'Video Upload',
-          latitude: null,
-          longitude: null,
-          captureDate: new Date(file.lastModified),
-        }
+        // Update with video data
+        setSelectedFiles(prev => prev.map(f =>
+          f.file === file ? {
+            ...f,
+            exifData: {
+              isVerified: true,
+              cameraModel: 'Video Upload',
+              latitude: null,
+              longitude: null,
+              captureDate: new Date(file.lastModified),
+            },
+            videoDuration: videoData.duration,
+            processing: false
+          } : f
+        ))
+      } else {
+        // Process image EXIF data
+        try {
+          const exifData = await extractExifData(file)
 
-        // Create video preview
-        const preview = URL.createObjectURL(file)
+          if (!exifData.isVerified) {
+            toast.error(`${file.name}: No valid camera EXIF data`)
+            setSelectedFiles(prev => prev.filter(f => f.file !== file))
+            continue
+          }
 
-        newFiles.push({
-          file,
-          preview,
-          autoDetectedLocation: null,
-          exifData: videoExifData,
-          isVideo: true,
-          videoDuration: videoData.duration
-        })
+          let autoDetectedLocation: string | null = null
 
-        toast.success(`Video ${file.name} added (${Math.round(videoData.duration)}s) ✓`)
-        continue
-      }
-
-      // Handle image files
-      // Create preview
-      const reader = new FileReader()
-      const preview = await new Promise<string>((resolve) => {
-        reader.onloadend = () => resolve(reader.result as string)
-        reader.readAsDataURL(file)
-      })
-
-      // Extract EXIF data for location
-      let autoDetectedLocation: string | null = null
-      let exifData: any = {}
-
-      try {
-        exifData = await extractExifData(file)
-
-        if (!exifData.isVerified) {
-          toast.error(`${file.name}: Image rejected - No valid camera EXIF data (Make/Model required)`)
-          continue
-        }
-
-        // Extract GPS data from EXIF metadata only
-        if (exifData.latitude && exifData.longitude) {
-          const locationName = await reverseGeocode(exifData.latitude, exifData.longitude)
-          if (locationName) {
-            autoDetectedLocation = locationName
-            // Set shared location from first image with GPS data, if not already set
-            if (!sharedLocation && newFiles.length === 0) {
-              setSharedLocation(locationName)
+          // Extract GPS location
+          if (exifData.latitude && exifData.longitude) {
+            const locationName = await reverseGeocode(exifData.latitude, exifData.longitude)
+            if (locationName) {
+              autoDetectedLocation = locationName
+              if (!sharedLocation) {
+                setSharedLocation(locationName)
+              }
             }
           }
+
+          // Update file with EXIF data
+          setSelectedFiles(prev => prev.map(f =>
+            f.file === file ? {
+              ...f,
+              exifData,
+              autoDetectedLocation,
+              processing: false
+            } : f
+          ))
+        } catch (error) {
+          toast.error(`${file.name}: Failed to extract EXIF data`)
+          setSelectedFiles(prev => prev.filter(f => f.file !== file))
         }
-      } catch (error) {
-        toast.error(`${file.name}: Failed to extract EXIF data`)
-        continue
       }
-
-      newFiles.push({
-        file,
-        preview,
-        autoDetectedLocation,
-        exifData,
-        isVideo: false
-      })
-    }
-
-    setSelectedFiles(prev => [...prev, ...newFiles])
-
-    if (newFiles.length > 0) {
-      toast.success(`${newFiles.length} file${newFiles.length > 1 ? 's' : ''} selected`)
     }
   }
 
@@ -386,34 +385,68 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     }
 
     setLoading(true)
+    setUploadProgress({ current: 0, total: selectedFiles.length })
 
     try {
-      // Upload all files to R2 first
-      const uploadedFiles = []
+      // Upload all files to R2 in parallel for faster performance
+      const uploadedFiles: Array<{
+        location: string
+        r2Url: string
+        r2Key: string
+        isVerified: boolean
+        cameraModel: string | null
+        latitude: number | null
+        longitude: number | null
+      }> = []
       let uploadFailures = 0
+      let completedUploads = 0
 
       // Use shared location if provided, otherwise use first available GPS location
       const finalLocation = sharedLocation || selectedFiles.find(f => f.autoDetectedLocation)?.autoDetectedLocation || ''
 
-      for (const fileData of selectedFiles) {
-        try {
-          const uploadResult = await uploadFile(fileData.file)
-          uploadedFiles.push({
-            location: finalLocation, // Use final location (manual or GPS)
-            r2Url: uploadResult.r2Url || uploadResult.url,
-            r2Key: uploadResult.r2Key || uploadResult.publicId,
-            isVerified: fileData.exifData.isVerified || false,
-            cameraModel: fileData.exifData.cameraModel || null,
-            latitude: fileData.exifData.latitude || null,
-            longitude: fileData.exifData.longitude || null,
+      // Upload all files in parallel with progress tracking
+      const uploadPromises = selectedFiles.map(fileData =>
+        uploadFile(fileData.file)
+          .then(uploadResult => {
+            completedUploads++
+            setUploadProgress({ current: completedUploads, total: selectedFiles.length })
+            return {
+              success: true,
+              data: {
+                location: finalLocation, // Use final location (manual or GPS)
+                r2Url: uploadResult.r2Url || uploadResult.url,
+                r2Key: uploadResult.r2Key || uploadResult.publicId,
+                isVerified: fileData.exifData.isVerified || false,
+                cameraModel: fileData.exifData.cameraModel || null,
+                latitude: fileData.exifData.latitude || null,
+                longitude: fileData.exifData.longitude || null,
+              }
+            }
           })
-        } catch (error: any) {
+          .catch(error => {
+            completedUploads++
+            setUploadProgress({ current: completedUploads, total: selectedFiles.length })
+            return {
+              success: false,
+              error
+            }
+          })
+      )
+
+      const results = await Promise.all(uploadPromises)
+
+      // Process results
+      results.forEach(result => {
+        if (result.success && 'data' in result) {
+          uploadedFiles.push(result.data)
+        } else {
           uploadFailures++
         }
-      }
+      })
 
       if (uploadedFiles.length === 0) {
         toast.error('All file uploads failed')
+        setUploadProgress(null)
         return
       }
 
@@ -460,61 +493,155 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         fileInputRef.current.value = ''
       }
 
-      // Call callback
+      // Call callback with small delay to ensure backend processing is complete
       if (onUploadComplete) {
-        onUploadComplete()
+        setTimeout(() => {
+          onUploadComplete()
+        }, 500)
       }
     } catch (error: any) {
       console.error('Upload error:', error)
       toast.error(error.message || 'Failed to upload files')
     } finally {
       setLoading(false)
+      setUploadProgress(null)
     }
   }
 
   return (
-    <div className="bg-linear-to-br from-white via-orange-50/30 to-amber-50/20 rounded-xl shadow-lg p-3 sm:p-4 md:p-5 border border-orange-100/50 backdrop-blur-sm">
-      <div className="mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
-        <div className="bg-linear-to-br from-orange-400 to-amber-500 p-2 rounded-lg shadow-md shrink-0">
-          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-          </svg>
-        </div>
-        <div>
-          <h2 className="text-lg sm:text-xl font-semibold text-slate-900">Document Heritage Site</h2>
-          <p className="text-xs sm:text-sm text-slate-600">Share your discoveries</p>
-        </div>
+    <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 border border-slate-200">
+      <div className="mb-4 pb-4 border-b border-slate-200">
+        <h2 className="text-xl font-semibold text-slate-900">Upload Heritage Site</h2>
+        <p className="text-sm text-slate-600 mt-1">Share your discovery with the world</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Add Images Button */}
-        <div className="border-t border-slate-200 pt-2 sm:pt-3">
+        <div>
           <button
             type="button"
             onClick={() => setShowUploadOptions(true)}
-            className="w-full py-2.5 sm:py-3 px-3 sm:px-4 border-2 border-dashed border-slate-300 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:text-orange-600 hover:border-orange-400 hover:bg-linear-to-r hover:from-orange-50 hover:to-amber-50 transition-all flex items-center justify-center gap-2 group"
+            className="w-full py-3 px-4 border-2 border-dashed border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:text-orange-600 hover:border-orange-400 hover:bg-orange-50 transition-all flex items-center justify-center gap-2"
           >
-            <div className="bg-slate-200 group-hover:bg-orange-400 p-1 sm:p-1.5 rounded transition-colors">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
             {selectedFiles.length > 0 ? 'Add More Files' : 'Add Images or Videos'}
           </button>
         </div>
 
+        {/* Selected Files Preview */}
+        {selectedFiles.length > 0 && (
+          <div className="bg-slate-50 rounded-lg p-3 space-y-3 border border-slate-200">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-slate-700">
+                {selectedFiles.length} {selectedFiles.length === 1 ? 'file' : 'files'} selected
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedFiles([])}
+                className="text-xs text-red-600 hover:text-red-700 font-medium"
+              >
+                Clear all
+              </button>
+            </div>
+
+            <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-2">
+              {selectedFiles.map((fileData, index) => (
+                <div key={index} className="relative bg-white rounded-lg border border-slate-200 overflow-hidden group hover:border-orange-400 transition-all">
+                  <div className="relative aspect-square">
+                    {fileData.isVideo ? (
+                      <video
+                        src={fileData.preview}
+                        className="w-full h-full object-cover"
+                        muted
+                        loop
+                        onMouseEnter={(e) => e.currentTarget.play()}
+                        onMouseLeave={(e) => e.currentTarget.pause()}
+                      />
+                    ) : (
+                      <img
+                        src={fileData.preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+
+                    {/* Processing overlay */}
+                    {fileData.processing && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Remove button */}
+                    <button
+                      type="button"
+                      onClick={() => removeFile(index)}
+                      className="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white p-1 rounded-md transition-all opacity-0 group-hover:opacity-100"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+
+                    {/* Verified badge */}
+                    {fileData.exifData.isVerified && !fileData.processing && (
+                      <div className="absolute top-1 left-1 bg-green-500 text-white p-0.5 rounded">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* GPS/Video indicator */}
+                    {!fileData.processing && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-1">
+                        <div className="flex items-center justify-between text-white text-[10px]">
+                          <span>{fileData.isVideo ? '🎥' : '📷'}</span>
+                          {fileData.isVideo && fileData.videoDuration && (
+                            <span>{Math.round(fileData.videoDuration)}s</span>
+                          )}
+                          {!fileData.isVideo && fileData.autoDetectedLocation && (
+                            <span>📍</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {/* Site Name */}
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-2">
+            Site Name <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="title"
+            required
+            className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+            placeholder="e.g., Ancient Temple at Hampi"
+            value={sharedTitle}
+            onChange={(e) => setSharedTitle(e.target.value)}
+          />
+        </div>
+
         {/* Site Type */}
         <div>
-          <label htmlFor="type" className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 items-center gap-1.5">
-            <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-            </svg>
+          <label htmlFor="type" className="block text-sm font-medium text-slate-700 mb-2">
             Site Type
           </label>
-          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <select
               id="type"
-              className="w-full md:flex-1 px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-slate-900 bg-white/60 hover:bg-white transition-all"
+              className="flex-1 px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900"
               value={siteType}
               onChange={(e) => {
                 setSiteType(e.target.value)
@@ -540,7 +667,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             {siteType === 'OTHER' && (
               <input
                 type="text"
-                className="w-full md:flex-1 px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-slate-900 placeholder-slate-400 bg-white/60 hover:bg-white transition-all animate-in fade-in duration-300"
+                className="flex-1 px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400"
                 placeholder="Specify type"
                 value={customType}
                 onChange={(e) => setCustomType(e.target.value)}
@@ -550,151 +677,40 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           </div>
         </div>
 
-        {/* Selected Files Preview */}
-        {selectedFiles.length > 0 && (
-          <div className="bg-linear-to-br from-slate-50 to-blue-50/30 rounded-lg p-2 sm:p-3 space-y-2 border border-slate-200/50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="bg-blue-500 p-1 rounded">
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="text-xs sm:text-sm font-medium text-slate-700">
-                  {selectedFiles.length} {selectedFiles.length === 1 ? 'file' : 'files'} selected
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedFiles([])}
-                className="text-[10px] sm:text-xs text-red-600 hover:text-red-700 font-medium hover:underline"
-              >
-                Clear all
-              </button>
-            </div>
-
-            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-1.5 sm:gap-2">
-              {selectedFiles.map((fileData, index) => (
-                <div key={index} className="relative bg-white rounded-lg border border-slate-200 overflow-hidden group hover:border-orange-400 transition-all">
-                  <div className="relative aspect-square">
-                    {fileData.isVideo ? (
-                      <video
-                        src={fileData.preview}
-                        className="w-full h-full object-cover"
-                        muted
-                        loop
-                        onMouseEnter={(e) => e.currentTarget.play()}
-                        onMouseLeave={(e) => e.currentTarget.pause()}
-                      />
-                    ) : (
-                      <img
-                        src={fileData.preview}
-                        alt={`Preview ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-
-                    {/* Remove button */}
-                    <button
-                      type="button"
-                      onClick={() => removeFile(index)}
-                      className="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white p-1 rounded-md transition-all opacity-0 group-hover:opacity-100"
-                    >
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-
-                    {/* Verified badge */}
-                    {fileData.exifData.isVerified && (
-                      <div className="absolute top-1 left-1 bg-green-500 text-white p-0.5 rounded">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    )}
-
-                    {/* GPS/Video indicator */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-1">
-                      <div className="flex items-center justify-between text-white text-[10px]">
-                        <span>{fileData.isVideo ? '🎥' : '📷'}</span>
-                        {fileData.isVideo && fileData.videoDuration && (
-                          <span>{Math.round(fileData.videoDuration)}s</span>
-                        )}
-                        {!fileData.isVideo && fileData.autoDetectedLocation && (
-                          <span>📍</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {/* Shared Title & Description - Two Column on Desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-          {/* Shared Title */}
-          <div>
-            <label htmlFor="title" className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 items-center gap-1.5">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-              </svg>
-              Site Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="title"
-              required
-              className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-slate-900 placeholder-slate-400 bg-white/60 hover:bg-white transition-all"
-              placeholder="e.g., Ancient Temple at Hampi"
-              value={sharedTitle}
-              onChange={(e) => setSharedTitle(e.target.value)}
-            />
-          </div>
-
-          {/* Site Location */}
-          <div>
-            <label htmlFor="location" className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 items-center gap-1.5">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              Location {!selectedFiles.some(f => f.autoDetectedLocation) && <span className="text-red-500">*</span>}
-              {selectedFiles.some(f => f.autoDetectedLocation) && (
-                <span className="ml-1 px-1 py-0.5 bg-green-100 text-green-700 text-[10px] font-medium rounded">✓ GPS</span>
-              )}
-            </label>
-            <input
-              type="text"
-              id="location"
-              required={!selectedFiles.some(f => f.autoDetectedLocation)}
-              className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-slate-900 placeholder-slate-400 bg-white/60 hover:bg-white transition-all"
-              placeholder="Place, District, State, Pincode"
-              value={sharedLocation}
-              onChange={(e) => setSharedLocation(e.target.value)}
-            />
-          </div>
+        {/* Location */}
+        <div>
+          <label htmlFor="location" className="block text-sm font-medium text-slate-700 mb-2">
+            Location {!selectedFiles.some(f => f.autoDetectedLocation) && <span className="text-red-500">*</span>}
+            {selectedFiles.some(f => f.autoDetectedLocation) && (
+              <span className="ml-2 text-xs text-green-600 font-normal">GPS detected</span>
+            )}
+          </label>
+          <input
+            type="text"
+            id="location"
+            required={!selectedFiles.some(f => f.autoDetectedLocation)}
+            className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+            placeholder="Place, District, State, Pincode"
+            value={sharedLocation}
+            onChange={(e) => setSharedLocation(e.target.value)}
+          />
         </div>
 
-        {/* Shared Description */}
+        {/* Description */}
         <div>
-          <div className="flex items-baseline justify-between mb-1">
-            <label htmlFor="description" className="block text-xs sm:text-sm font-medium text-slate-700 items-center gap-1.5">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-              </svg>
+          <div className="flex items-baseline justify-between mb-2">
+            <label htmlFor="description" className="block text-sm font-medium text-slate-700">
               Description <span className="text-red-500">*</span>
             </label>
-            <span className={`text-[10px] sm:text-xs font-medium px-1.5 py-0.5 rounded-full ${sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length >= 20 ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
-              {sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length} / 20
+            <span className={`text-xs px-2 py-0.5 rounded ${sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length >= 20 ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+              {sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length} / 20 words
             </span>
           </div>
           <textarea
             id="description"
             required
-            rows={3}
-            className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-slate-900 placeholder-slate-400 bg-white/60 hover:bg-white transition-all resize-none"
+            rows={4}
+            className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400 resize-none"
             placeholder="Describe the heritage site, its historical significance, architecture..."
             value={sharedDescription}
             onChange={(e) => setSharedDescription(e.target.value)}
@@ -702,19 +718,16 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         </div>
 
         {/* Reference Links */}
-        <div className="border-t border-slate-200 pt-2 sm:pt-3">
-          <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 items-center gap-1">
-            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
-            Reference Links <span className="text-slate-400 text-[10px] sm:text-xs font-normal">(Optional)</span>
+        <div className="pt-4 border-t border-slate-200">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Reference Links <span className="text-slate-400 text-xs font-normal">(Optional)</span>
           </label>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {referenceLinks.map((link, index) => (
-              <div key={index} className="flex gap-1.5">
+              <div key={index} className="flex gap-2">
                 <input
                   type="url"
-                  className="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-xs text-slate-900 placeholder-slate-400 bg-white/60 hover:bg-white transition-all"
+                  className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400"
                   placeholder="https://en.wikipedia.org/wiki/..."
                   value={link}
                   onChange={(e) => updateReferenceLink(index, e.target.value)}
@@ -723,9 +736,9 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                   <button
                     type="button"
                     onClick={() => removeReferenceLink(index)}
-                    className="px-2 py-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                    className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
                   >
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -735,12 +748,12 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             <button
               type="button"
               onClick={addReferenceLink}
-              className="text-xs sm:text-sm text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1 hover:gap-1.5 transition-all"
+              className="text-sm text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1"
             >
-              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Add Another Link
+              Add Link
             </button>
           </div>
         </div>
@@ -759,27 +772,27 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         <button
           type="submit"
           disabled={loading || selectedFiles.length === 0 || !sharedTitle || !sharedDescription || (!sharedLocation && !selectedFiles.some(f => f.autoDetectedLocation))}
-          className="w-full py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg text-xs sm:text-sm font-semibold text-white bg-linear-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:from-slate-300 disabled:to-slate-400 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none"
+          className="w-full py-3 px-6 rounded-lg text-sm font-semibold text-white bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all"
         >
           {loading ? (
-            <span className="flex items-center justify-center gap-1.5 sm:gap-2">
-              <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Uploading...
+              {uploadProgress ? `Uploading ${uploadProgress.current}/${uploadProgress.total}...` : 'Uploading...'}
             </span>
           ) : (
-            <span className="flex items-center justify-center gap-1.5 sm:gap-2">
+            <span className="flex items-center justify-center gap-2">
               {selectedFiles.length > 0 ? (
                 <>
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                   Submit {selectedFiles.length} {selectedFiles.length === 1 ? 'File' : 'Files'}
                 </>
               ) : (
-                'Add files to submit'
+                'Select files to continue'
               )}
             </span>
           )}

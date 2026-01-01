@@ -109,27 +109,27 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
       {!isAdmin && (
         <div className="space-y-6 sm:space-y-8">
           {/* Feature Name and Tagline */}
-          <div className="relative overflow-hidden bg-linear-to-br from-orange-600 via-amber-600 to-orange-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl">
+          <div className="relative overflow-hidden bg-linear-to-br from-orange-600 via-amber-600 to-orange-500 rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-8 text-white shadow-2xl">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
-            <div className="absolute top-0 right-0 w-40 h-40 sm:w-56 sm:h-56 bg-white/10 rounded-full -mr-20 sm:-mr-28 -mt-20 sm:-mt-28"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 sm:w-40 sm:h-40 bg-white/5 rounded-full -ml-16 sm:-ml-20 -mb-16 sm:-mb-20"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-56 lg:h-56 bg-white/10 rounded-full -mr-16 sm:-mr-20 lg:-mr-28 -mt-16 sm:-mt-20 lg:-mt-28"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-white/5 rounded-full -ml-12 sm:-ml-16 lg:-ml-20 -mb-12 sm:-mb-16 lg:-mb-20"></div>
 
-            <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+            <div className="relative flex flex-row items-center justify-between gap-3 sm:gap-4">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                  <div className="p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl">
-                    <MapPin className="h-6 w-6 sm:h-8 sm:w-8" />
+                <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl">
+                    <MapPin className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8" />
                   </div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
                     Anveshan
                   </h1>
                 </div>
-                <p className="text-orange-50 text-sm sm:text-base lg:text-lg font-medium max-w-2xl leading-relaxed">
+                <p className="text-orange-50 text-xs sm:text-sm lg:text-base font-medium leading-relaxed">
                   Discover ancient sites. Get rewarded.
                 </p>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm p-4 sm:p-5 rounded-2xl">
-                <Sparkles className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 animate-pulse" />
+              <div className="hidden sm:block bg-white/20 backdrop-blur-sm p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl">
+                <Sparkles className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 animate-pulse" />
               </div>
             </div>
           </div>
@@ -137,55 +137,23 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
           {/* Quick Action - Upload Site */}
           <button
             onClick={() => setShowUploadModal(true)}
-            className="w-full group relative overflow-hidden bg-linear-to-br from-orange-500 via-amber-500 to-orange-600 rounded-xl sm:rounded-2xl lg:rounded-3xl p-1 shadow-xl hover:shadow-orange-500/50 transition-all duration-500 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full bg-white border-2 border-orange-500 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:bg-orange-50 transition-all shadow-sm hover:shadow-md"
           >
-            {/* Outer glow */}
-            <div className="absolute -inset-1 bg-linear-to-r from-orange-600 via-amber-500 to-orange-600 rounded-xl sm:rounded-2xl lg:rounded-3xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-500"></div>
-
-            {/* Inner content */}
-            <div className="relative bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl p-2.5 sm:p-5 lg:p-7">
-              {/* Animated background elements */}
-              <div className="absolute inset-0 bg-linear-to-br from-orange-50 via-amber-50 to-orange-50 rounded-xl sm:rounded-2xl lg:rounded-3xl opacity-60"></div>
-              <div className="absolute top-0 right-0 w-20 h-20 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-linear-to-br from-orange-200/40 to-amber-200/40 rounded-full -mr-10 sm:-mr-24 lg:-mr-32 -mt-10 sm:-mt-24 lg:-mt-32 blur-2xl group-hover:scale-150 group-hover:rotate-45 transition-all duration-700"></div>
-              <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-32 sm:h-32 bg-linear-to-tr from-orange-100/30 to-transparent rounded-full -ml-6 sm:-ml-16 -mb-6 sm:-mb-16 blur-xl group-hover:scale-150 transition-all duration-700"></div>
-
-              {/* Sparkle effects */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute top-6 right-12 w-2 h-2 bg-orange-400 rounded-full animate-ping"></div>
-                <div className="absolute top-12 right-24 w-1.5 h-1.5 bg-amber-400 rounded-full animate-ping delay-75"></div>
-                <div className="absolute bottom-8 left-16 w-2 h-2 bg-orange-400 rounded-full animate-ping delay-150"></div>
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="p-2 sm:p-3 bg-orange-500 rounded-lg">
+                <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
-
-              <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4 lg:gap-6">
-                {/* Icon */}
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 bg-linear-to-br from-orange-500 to-amber-600 rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                  <div className="relative bg-linear-to-br from-orange-500 via-amber-500 to-orange-600 p-2 sm:p-4 lg:p-5 rounded-lg sm:rounded-2xl shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 border-2 border-white/20">
-                    <Upload className="h-5 w-5 sm:h-8 sm:w-8 lg:h-10 lg:w-10 text-white drop-shadow-lg" />
-                  </div>
-                  {/* Pulse ring */}
-                  <div className="absolute inset-0 rounded-lg sm:rounded-2xl border-2 border-orange-400 animate-ping opacity-20"></div>
-                </div>
-
-                {/* Text content */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-black text-transparent bg-clip-text bg-linear-to-r from-orange-600 via-amber-600 to-orange-600 text-sm sm:text-xl lg:text-2xl mb-0.5 sm:mb-1.5 group-hover:scale-[1.02] transition-transform duration-300">
-                    Upload Heritage Site
-                  </h3>
-                  <p className="text-[11px] sm:text-sm lg:text-base text-slate-600 font-medium leading-tight sm:leading-relaxed">
-                    Document ancient discoveries and earn rewards
-                  </p>
-                </div>
-
-                {/* Arrow */}
-                <div className="hidden sm:flex sm:self-center opacity-60 group-hover:opacity-100 group-hover:translate-x-3 transition-all duration-300">
-                  <div className="bg-linear-to-br from-orange-500 to-amber-600 p-2.5 sm:p-3 rounded-lg sm:rounded-xl shadow-lg">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </div>
-                </div>
+              <div className="flex-1 text-left">
+                <h3 className="font-semibold text-slate-900 text-base sm:text-lg">
+                  Upload Heritage Site
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600">
+                  Document ancient discoveries and earn rewards
+                </p>
               </div>
+              <svg className="hidden sm:block w-5 h-5 sm:w-6 sm:h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
             </div>
           </button>
 
@@ -207,129 +175,38 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
           </Link>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             {/* Heritage Sites Card */}
-            <div className="group relative overflow-hidden bg-linear-to-br from-blue-600 via-indigo-600 to-blue-700 rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 shadow-xl hover:shadow-2xl transition-all duration-500 text-white hover:scale-[1.05] cursor-pointer border border-white/10">
-              {/* Animated gradient orbs */}
-              <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-linear-to-br from-white/20 to-transparent rounded-full -mr-8 sm:-mr-12 lg:-mr-16 -mt-8 sm:-mt-12 lg:-mt-16 group-hover:scale-150 group-hover:rotate-90 transition-all duration-700 blur-xl"></div>
-              <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-linear-to-tr from-white/10 to-transparent rounded-full -ml-6 sm:-ml-10 lg:-ml-12 -mb-6 sm:-mb-10 lg:-mb-12 group-hover:scale-150 transition-all duration-700 blur-xl"></div>
-
-              {/* Sparkle effect */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute top-3 right-3 w-1 h-1 bg-white rounded-full animate-ping"></div>
-                <div className="absolute top-6 right-6 w-1 h-1 bg-white rounded-full animate-ping delay-75"></div>
-                <div className="absolute bottom-3 left-3 w-1 h-1 bg-white rounded-full animate-ping delay-150"></div>
-              </div>
-
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2 sm:mb-2 lg:mb-3">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-white/30 blur-md rounded-lg"></div>
-                    <div className="relative bg-white/20 backdrop-blur-sm p-2 sm:p-1.5 lg:p-2.5 rounded-lg sm:rounded-xl shadow-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 border border-white/20">
-                      <MapPin className="h-5 w-5 sm:h-4 sm:w-4 lg:h-6 lg:w-6 text-white drop-shadow-lg" />
-                    </div>
-                  </div>
-                  <div className="flex sm:hidden items-center gap-1 px-1.5 py-0.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                    <TrendingUp className="h-3 w-3 text-white/90" />
-                    <span className="text-[10px] font-bold text-white/90">+{sites?.length || 0}</span>
-                  </div>
-                </div>
-                <div className="flex items-baseline justify-between sm:block">
-                  <p className="text-4xl sm:text-3xl lg:text-4xl font-black mb-0.5 sm:mb-1 drop-shadow-lg group-hover:scale-110 transition-transform duration-300">{sites?.length || 0}</p>
-                  <p className="text-xs sm:text-[10px] lg:text-xs text-blue-50 font-bold tracking-wide uppercase">Sites Discovered</p>
-                </div>
-                <div className="mt-2 sm:mt-1.5 lg:mt-2 h-1 sm:h-0.5 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-white/40 rounded-full transition-all duration-500" style={{ width: `${Math.min((sites?.length || 0) * 10, 100)}%` }}></div>
+            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-blue-500">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="bg-blue-100 p-1.5 sm:p-3 rounded-lg">
+                  <MapPin className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
                 </div>
               </div>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{sites?.length || 0}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Sites</p>
             </div>
 
-            {/* <div className="relative overflow-hidden bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl p-6 shadow-xl text-white">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
-              <div className="relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
-                    <CheckCircle className="h-7 w-7 text-white" />
-                  </div>
-                  <span className="text-xs font-bold text-white bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                    {totalImages > 0 ? Math.round((verifiedImages / totalImages) * 100) : 0}%
-                  </span>
-                </div>
-                <p className="text-4xl font-bold mb-1">{verifiedImages}</p>
-                <p className="text-sm text-green-100 font-medium">Verified Images</p>
-              </div>
-            </div> */}
-
             {/* Total Images Card */}
-            <div className="group relative overflow-hidden bg-linear-to-br from-emerald-600 via-teal-600 to-emerald-700 rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 shadow-xl hover:shadow-2xl transition-all duration-500 text-white hover:scale-[1.05] cursor-pointer border border-white/10">
-              {/* Animated gradient orbs */}
-              <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-linear-to-br from-white/20 to-transparent rounded-full -mr-8 sm:-mr-12 lg:-mr-16 -mt-8 sm:-mt-12 lg:-mt-16 group-hover:scale-150 group-hover:rotate-90 transition-all duration-700 blur-xl"></div>
-              <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-linear-to-tr from-white/10 to-transparent rounded-full -ml-6 sm:-ml-10 lg:-ml-12 -mb-6 sm:-mb-10 lg:-mb-12 group-hover:scale-150 transition-all duration-700 blur-xl"></div>
-
-              {/* Sparkle effect */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute top-3 right-3 w-1 h-1 bg-white rounded-full animate-ping"></div>
-                <div className="absolute top-6 right-6 w-1 h-1 bg-white rounded-full animate-ping delay-75"></div>
-                <div className="absolute bottom-3 left-3 w-1 h-1 bg-white rounded-full animate-ping delay-150"></div>
-              </div>
-
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2 sm:mb-2 lg:mb-3">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-white/30 blur-md rounded-lg"></div>
-                    <div className="relative bg-white/20 backdrop-blur-sm p-2 sm:p-1.5 lg:p-2.5 rounded-lg sm:rounded-xl shadow-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 border border-white/20">
-                      <Camera className="h-5 w-5 sm:h-4 sm:w-4 lg:h-6 lg:w-6 text-white drop-shadow-lg" />
-                    </div>
-                  </div>
-                  <div className="flex sm:hidden items-center gap-1 px-1.5 py-0.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                    <TrendingUp className="h-3 w-3 text-white/90" />
-                    <span className="text-[10px] font-bold text-white/90">+{totalImages}</span>
-                  </div>
-                </div>
-                <div className="flex items-baseline justify-between sm:block">
-                  <p className="text-4xl sm:text-3xl lg:text-4xl font-black mb-0.5 sm:mb-1 drop-shadow-lg group-hover:scale-110 transition-transform duration-300">{totalImages}</p>
-                  <p className="text-xs sm:text-[10px] lg:text-xs text-emerald-50 font-bold tracking-wide uppercase">Images Captured</p>
-                </div>
-                <div className="mt-2 sm:mt-1.5 lg:mt-2 h-1 sm:h-0.5 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-linear-to-r from-white/30 to-white/50 rounded-full transition-all duration-500" style={{ width: `${Math.min((totalImages || 0) * 5, 100)}%` }}></div>
+            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-green-500">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="bg-green-100 p-1.5 sm:p-3 rounded-lg">
+                  <Camera className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
                 </div>
               </div>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{totalImages}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Images</p>
             </div>
 
             {/* Paid Sites Card */}
-            <div className="group relative overflow-hidden bg-linear-to-br from-amber-600 via-orange-600 to-amber-700 rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 shadow-xl hover:shadow-2xl transition-all duration-500 text-white hover:scale-[1.05] cursor-pointer border border-white/10">
-              {/* Animated gradient orbs */}
-              <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-linear-to-br from-white/20 to-transparent rounded-full -mr-8 sm:-mr-12 lg:-mr-16 -mt-8 sm:-mt-12 lg:-mt-16 group-hover:scale-150 group-hover:rotate-90 transition-all duration-700 blur-xl"></div>
-              <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-linear-to-tr from-white/10 to-transparent rounded-full -ml-6 sm:-ml-10 lg:-ml-12 -mb-6 sm:-mb-10 lg:-mb-12 group-hover:scale-150 transition-all duration-700 blur-xl"></div>
-
-              {/* Sparkle effect */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute top-3 right-3 w-1 h-1 bg-white rounded-full animate-ping"></div>
-                <div className="absolute top-6 right-6 w-1 h-1 bg-white rounded-full animate-ping delay-75"></div>
-                <div className="absolute bottom-3 left-3 w-1 h-1 bg-white rounded-full animate-ping delay-150"></div>
-              </div>
-
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2 sm:mb-2 lg:mb-3">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-white/30 blur-md rounded-lg"></div>
-                    <div className="relative bg-white/20 backdrop-blur-sm p-2 sm:p-1.5 lg:p-2.5 rounded-lg sm:rounded-xl shadow-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 border border-white/20">
-                      <Award className="h-5 w-5 sm:h-4 sm:w-4 lg:h-6 lg:w-6 text-white drop-shadow-lg" />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-500/30 backdrop-blur-sm rounded-full border border-emerald-400/30">
-                    <CheckCircle className="h-3 w-3 sm:h-2.5 sm:w-2.5 lg:h-3 lg:w-3 text-emerald-200" />
-                    <span className="text-[10px] sm:text-[9px] lg:text-[10px] font-bold text-emerald-100">Paid</span>
-                  </div>
-                </div>
-                <div className="flex items-baseline justify-between sm:block">
-                  <p className="text-4xl sm:text-3xl lg:text-4xl font-black mb-0.5 sm:mb-1 drop-shadow-lg group-hover:scale-110 transition-transform duration-300">{completedPayments}</p>
-                  <p className="text-xs sm:text-[10px] lg:text-xs text-amber-50 font-bold tracking-wide uppercase">Sites Rewarded</p>
-                </div>
-                <div className="mt-2 sm:mt-1.5 lg:mt-2 h-1 sm:h-0.5 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-linear-to-r from-emerald-400 to-green-300 rounded-full shadow-lg shadow-emerald-500/50 transition-all duration-500" style={{ width: `${Math.min((completedPayments || 0) * 20, 100)}%` }}></div>
+            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-orange-500">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="bg-orange-100 p-1.5 sm:p-3 rounded-lg">
+                  <Award className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
                 </div>
               </div>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{completedPayments}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Rewarded</p>
             </div>
           </div>
 
@@ -473,44 +350,44 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
 
           {/* Admin Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-blue-500">
-              <div className="flex items-center justify-between mb-3">
-                <div className="bg-blue-100 p-3 rounded-lg">
-                  <MapPin className="h-6 w-6 text-blue-600" />
+            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-blue-500">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="bg-blue-100 p-1.5 sm:p-3 rounded-lg">
+                  <MapPin className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{sites?.length || 0}</p>
-              <p className="text-sm text-gray-600 mt-1">Total Sites</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{sites?.length || 0}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Sites</p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-purple-500">
-              <div className="flex items-center justify-between mb-3">
-                <div className="bg-purple-100 p-3 rounded-lg">
-                  <Users className="h-6 w-6 text-purple-600" />
+            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-purple-500">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="bg-purple-100 p-1.5 sm:p-3 rounded-lg">
+                  <Users className="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{uniqueUsers}</p>
-              <p className="text-sm text-gray-600 mt-1">Active Users</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{uniqueUsers}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Users</p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-orange-500">
-              <div className="flex items-center justify-between mb-3">
-                <div className="bg-orange-100 p-3 rounded-lg">
-                  <Clock className="h-6 w-6 text-orange-600" />
+            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-orange-500">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="bg-orange-100 p-1.5 sm:p-3 rounded-lg">
+                  <Clock className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{pendingPayments}</p>
-              <p className="text-sm text-gray-600 mt-1">Pending Payments</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{pendingPayments}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Pending</p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-green-500">
-              <div className="flex items-center justify-between mb-3">
-                <div className="bg-green-100 p-3 rounded-lg">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-green-500">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="bg-green-100 p-1.5 sm:p-3 rounded-lg">
+                  <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{completedPayments}</p>
-              <p className="text-sm text-gray-600 mt-1">Completed</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{completedPayments}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Completed</p>
             </div>
           </div>
 
