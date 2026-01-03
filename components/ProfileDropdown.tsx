@@ -27,7 +27,6 @@ export default function ProfileDropdown({ userEmail }: ProfileDropdownProps) {
 
       toast.success('Logged out successfully')
       router.push('/')
-      router.refresh()
     } catch (error) {
       toast.error('Error logging out')
     }

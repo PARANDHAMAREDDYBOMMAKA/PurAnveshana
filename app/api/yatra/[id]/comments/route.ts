@@ -22,20 +22,22 @@ export async function GET(
       })
     )
 
-    const commentsWithUsers = await Promise.all(
-      comments.map(async (comment) => {
-        const user = await withRetry(() =>
-          prisma.profile.findUnique({
-            where: { id: comment.userId },
-            select: { id: true, name: true },
-          })
-        )
-        return {
-          ...comment,
-          user: user || { id: comment.userId, name: 'Unknown' },
-        }
+    // Fetch all users in a single query to avoid N+1
+    const userIds = [...new Set(comments.map((c) => c.userId))]
+    const users = await withRetry(() =>
+      prisma.profile.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, name: true },
       })
     )
+
+    // Create a map for O(1) lookups
+    const userMap = new Map(users.map((u) => [u.id, u]))
+
+    const commentsWithUsers = comments.map((comment) => ({
+      ...comment,
+      user: userMap.get(comment.userId) || { id: comment.userId, name: 'Unknown' },
+    }))
 
     return NextResponse.json({ comments: commentsWithUsers })
   } catch (error: any) {

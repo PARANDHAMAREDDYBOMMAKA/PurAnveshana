@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link'
+import Image from 'next/image'
 import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins, BadgeIndianRupee, TrendingUp, Globe, Eye } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import AppDemo from '@/components/AppDemo';
@@ -248,7 +249,15 @@ function SimpleIndiaMap({ sites, activePoint }: { sites: any[], activePoint: num
       <div className="absolute -translate-x-1/2 -translate-y-full" style={latLngToPercent(activeSite.lat, activeSite.lng)}>
         <div className="relative w-14 h-16 drop-shadow-xl">
           <div className="absolute inset-0 w-12 h-12 bg-white rounded-full border-3 border-red-500 overflow-hidden rotate-45">
-            <img src={activeSite.image} className="-rotate-45 scale-150 w-full h-full object-cover" alt="" />
+            <div className="relative w-full h-full -rotate-45 scale-150">
+              <Image
+                src={activeSite.image}
+                fill
+                className="object-cover"
+                alt={activeSite.name}
+                sizes="48px"
+              />
+            </div>
           </div>
           <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-500 rounded-full" />
         </div>

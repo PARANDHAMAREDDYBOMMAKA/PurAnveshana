@@ -108,51 +108,39 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
       {/* User Dashboard */}
       {!isAdmin && (
         <div className="space-y-6 sm:space-y-8">
-          {/* Feature Name and Tagline */}
-          <div className="relative overflow-hidden bg-linear-to-br from-orange-600 via-amber-600 to-orange-500 rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-8 text-white shadow-2xl">
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 sm:w-40 sm:h-40 lg:w-56 lg:h-56 bg-white/10 rounded-full -mr-16 sm:-mr-20 lg:-mr-28 -mt-16 sm:-mt-20 lg:-mt-28"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-white/5 rounded-full -ml-12 sm:-ml-16 lg:-ml-20 -mb-12 sm:-mb-16 lg:-mb-20"></div>
-
-            <div className="relative flex flex-row items-center justify-between gap-3 sm:gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                  <div className="p-1.5 sm:p-2 lg:p-3 bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl">
-                    <MapPin className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8" />
-                  </div>
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
-                    Anveshan
-                  </h1>
-                </div>
-                <p className="text-orange-50 text-xs sm:text-sm lg:text-base font-medium leading-relaxed">
-                  Discover ancient sites. Get rewarded.
-                </p>
-              </div>
-              <div className="hidden sm:block bg-white/20 backdrop-blur-sm p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl">
-                <Sparkles className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 animate-pulse" />
-              </div>
-            </div>
+          {/* Feature Name and Tagline - Compact */}
+          <div className="inline-flex items-center gap-2 bg-linear-to-r from-orange-500 to-amber-500 rounded-lg px-3 py-2 text-white shadow-sm">
+            <MapPin className="h-3.5 w-3.5" />
+            <span className="text-sm font-medium">Anveshan</span>
+            <span className="text-xs text-orange-100">·</span>
+            <span className="text-xs text-orange-100">Discover & Get Rewarded</span>
           </div>
 
           {/* Quick Action - Upload Site */}
           <button
             onClick={() => setShowUploadModal(true)}
-            className="w-full bg-white border-2 border-orange-500 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:bg-orange-50 transition-all shadow-sm hover:shadow-md"
+            className="relative w-full bg-gradient-to-r from-orange-500 via-orange-600 to-red-500 rounded-xl sm:rounded-2xl p-5 sm:p-6 hover:shadow-2xl hover:shadow-orange-500/50 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] group overflow-hidden"
           >
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="p-2 sm:p-3 bg-orange-500 rounded-lg">
-                <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+            {/* Animated background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-400 via-orange-500 to-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            {/* Pulse animation */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl animate-pulse bg-white/10"></div>
+
+            <div className="relative flex items-center gap-4 sm:gap-5">
+              <div className="p-3 sm:p-4 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-colors">
+                <Upload className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
               </div>
               <div className="flex-1 text-left">
-                <h3 className="font-semibold text-slate-900 text-base sm:text-lg">
+                <h3 className="font-bold text-white text-xl sm:text-2xl mb-1 drop-shadow-lg">
                   Upload Heritage Site
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600">
+                <p className="text-sm sm:text-base text-orange-50 font-medium">
                   Document ancient discoveries and earn rewards
                 </p>
               </div>
-              <svg className="hidden sm:block w-5 h-5 sm:w-6 sm:h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              <svg className="hidden sm:block w-7 h-7 text-white group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </div>
           </button>

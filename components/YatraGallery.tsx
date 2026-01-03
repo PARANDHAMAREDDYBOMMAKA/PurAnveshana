@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Search,
   Plus,
@@ -70,10 +71,9 @@ interface YatraStory {
       location: string
     }[]
   }
-  _count?: {
-    likes: number
-    comments: number
-  }
+  likeCount: number
+  commentCount: number
+  isLikedByUser: boolean
 }
 
 interface YatraGalleryProps {
@@ -115,47 +115,6 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
   }, [userId])
 
   useEffect(() => {
-    const fetchLikeStatuses = async () => {
-      for (const story of stories) {
-        try {
-          const response = await fetch(`/api/yatra/${story.id}/like`)
-          if (response.ok) {
-            const data = await response.json()
-            setLikedStories(prev => ({ ...prev, [story.id]: data.liked }))
-            setLikeCounts(prev => ({ ...prev, [story.id]: data.likeCount }))
-          }
-        } catch (error) {
-          console.error('Error fetching like status:', error)
-        }
-      }
-    }
-
-    if (stories.length > 0) {
-      fetchLikeStatuses()
-    }
-  }, [stories])
-
-  useEffect(() => {
-    const fetchCommentCounts = async () => {
-      for (const story of stories) {
-        try {
-          const response = await fetch(`/api/yatra/${story.id}/comments`)
-          if (response.ok) {
-            const data = await response.json()
-            setCommentCounts(prev => ({ ...prev, [story.id]: data.comments.length }))
-          }
-        } catch (error) {
-          console.error('Error fetching comment count:', error)
-        }
-      }
-    }
-
-    if (stories.length > 0) {
-      fetchCommentCounts()
-    }
-  }, [stories])
-
-  useEffect(() => {
     if (loading) {
       let index = 0
       const interval = setInterval(() => {
@@ -187,6 +146,21 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       if (response.ok) {
         const data = await response.json()
         setStories(data.stories)
+
+        // Initialize like and comment data from API response
+        const newLikedStories: Record<string, boolean> = {}
+        const newLikeCounts: Record<string, number> = {}
+        const newCommentCounts: Record<string, number> = {}
+
+        data.stories.forEach((story: YatraStory) => {
+          newLikedStories[story.id] = story.isLikedByUser
+          newLikeCounts[story.id] = story.likeCount
+          newCommentCounts[story.id] = story.commentCount
+        })
+
+        setLikedStories(newLikedStories)
+        setLikeCounts(newLikeCounts)
+        setCommentCounts(newCommentCounts)
       } else {
         toast.error('Failed to fetch stories')
       }
@@ -627,13 +601,13 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                 {/* Post Image */}
                 {story.safeVisuals && story.safeVisuals.length > 0 && (
                   <div className="relative w-full" style={{ aspectRatio: '4/3' }}>
-                    <img
+                    <Image
                       src={story.safeVisuals[0]}
                       alt={story.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f1f5f9" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" font-size="18" text-anchor="middle" dy=".3em" fill="%2394a3b8"%3EHeritage Site%3C/text%3E%3C/svg%3E'
-                      }}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover"
+                      loading="lazy"
                     />
                   </div>
                 )}

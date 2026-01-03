@@ -74,26 +74,32 @@ export async function GET(request: Request) {
         )
       }
 
-      const sitesWithPayments = await Promise.all(
-        sites.map(async (site) => {
-          const payments = await withRetry(() =>
-            prisma.payment.findMany({
-              where: {
-                heritageSiteId: site.id,
-                status: 'COMPLETED',
-              },
-              select: {
-                amount: true,
-              },
-            })
-          )
-          const totalAmount = payments.reduce((sum, payment) => sum + payment.amount, 0)
-          return {
-            ...site,
-            paymentAmount: totalAmount,
-          }
+      // Fetch all payments in a single query to avoid N+1
+      const siteIds = sites.map((s) => s.id)
+      const allPayments = await withRetry(() =>
+        prisma.payment.findMany({
+          where: {
+            heritageSiteId: { in: siteIds },
+            status: 'COMPLETED',
+          },
+          select: {
+            heritageSiteId: true,
+            amount: true,
+          },
         })
       )
+
+      // Group payments by heritageSiteId for O(1) lookup
+      const paymentMap = new Map<string, number>()
+      allPayments.forEach((payment) => {
+        const current = paymentMap.get(payment.heritageSiteId || '') || 0
+        paymentMap.set(payment.heritageSiteId || '', current + payment.amount)
+      })
+
+      const sitesWithPayments = sites.map((site) => ({
+        ...site,
+        paymentAmount: paymentMap.get(site.id) || 0,
+      }))
 
       return NextResponse.json({
         success: true,

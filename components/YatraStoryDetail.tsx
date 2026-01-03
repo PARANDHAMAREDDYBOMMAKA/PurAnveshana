@@ -3,13 +3,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import toast from 'react-hot-toast'
 import {
   ArrowLeft,
   Heart,
-  MessageCircle,
-  Share2,
-  Bookmark,
   MapPin,
   Calendar,
   Edit2,
@@ -71,9 +69,6 @@ export default function YatraStoryDetail({
   const router = useRouter()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [liked, setLiked] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [showShareMenu, setShowShareMenu] = useState(false)
 
   const isAuthor = story.userId === currentUserId
 
@@ -97,26 +92,6 @@ export default function YatraStoryDetail({
     } finally {
       setDeleting(false)
       setShowDeleteConfirm(false)
-    }
-  }
-
-  const handleShare = (platform: string) => {
-    const url = window.location.href
-    const text = `Check out this heritage discovery: ${story.title}`
-
-    const shareUrls = {
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-    }
-
-    if (platform === 'copy') {
-      navigator.clipboard.writeText(url)
-      toast.success('Link copied!')
-      setShowShareMenu(false)
-    } else {
-      window.open(shareUrls[platform as keyof typeof shareUrls], '_blank')
-      setShowShareMenu(false)
     }
   }
 
@@ -185,79 +160,6 @@ export default function YatraStoryDetail({
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Action Bar */}
-          <div className="flex items-center justify-between px-6 py-4 border-b-2 border-gray-100">
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => {
-                  setLiked(!liked)
-                  toast.success(liked ? 'Removed from favorites' : 'Added to favorites!')
-                }}
-                className={`flex items-center gap-2 transition-colors ${liked ? 'text-red-500' : 'text-gray-700 hover:text-red-500'}`}
-                title="Like"
-              >
-                <Heart className={`h-6 w-6 ${liked ? 'fill-current' : ''}`} />
-                <span className="text-sm font-semibold hidden sm:inline">{liked ? 'Liked' : 'Like'}</span>
-              </button>
-              <button
-                onClick={() => toast.success('Comments coming soon!')}
-                className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition-colors"
-                title="Comment"
-              >
-                <MessageCircle className="h-6 w-6" />
-                <span className="text-sm font-semibold hidden sm:inline">Comment</span>
-              </button>
-              <div className="relative">
-                <button
-                  onClick={() => setShowShareMenu(!showShareMenu)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-green-500 transition-colors"
-                  title="Share"
-                >
-                  <Share2 className="h-6 w-6" />
-                  <span className="text-sm font-semibold hidden sm:inline">Share</span>
-                </button>
-                {showShareMenu && (
-                  <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border-2 border-gray-200 py-2 w-48 z-10">
-                    <button
-                      onClick={() => handleShare('whatsapp')}
-                      className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 transition-colors"
-                    >
-                      📱 WhatsApp
-                    </button>
-                    <button
-                      onClick={() => handleShare('facebook')}
-                      className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 transition-colors"
-                    >
-                      👥 Facebook
-                    </button>
-                    <button
-                      onClick={() => handleShare('twitter')}
-                      className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 transition-colors"
-                    >
-                      🐦 Twitter
-                    </button>
-                    <button
-                      onClick={() => handleShare('copy')}
-                      className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 transition-colors border-t border-gray-100"
-                    >
-                      🔗 Copy Link
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                setSaved(!saved)
-                toast.success(saved ? 'Removed from saved!' : 'Saved to collection!')
-              }}
-              className={`transition-colors ${saved ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'}`}
-              title="Save"
-            >
-              <Bookmark className={`h-6 w-6 ${saved ? 'fill-current' : ''}`} />
-            </button>
           </div>
 
           {/* Content */}
@@ -370,13 +272,13 @@ export default function YatraStoryDetail({
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {story.safeVisuals.map((imageUrl, index) => (
                     <div key={index} className="aspect-square bg-gray-100 relative rounded-xl overflow-hidden border-2 border-gray-200 hover:border-teal-300 transition-colors">
-                      <img
+                      <Image
                         src={imageUrl}
                         alt={`Safe visual ${index + 1}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f3f4f6" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" font-size="14" text-anchor="middle" dy=".3em" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E'
-                        }}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 33vw"
+                        className="object-cover"
+                        loading="lazy"
                       />
                     </div>
                   ))}

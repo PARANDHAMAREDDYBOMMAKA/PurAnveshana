@@ -47,7 +47,6 @@ export default function LoginPage() {
 
       toast.success('Login successful!')
       router.push('/dashboard/yatra')
-      router.refresh()
     } catch (error: any) {
       toast.error(error.message || 'An error occurred during login')
     } finally {

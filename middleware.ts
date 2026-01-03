@@ -114,7 +114,7 @@ export async function middleware(request: NextRequest) {
     (pathname === '/login' || pathname === '/signup' || pathname === '/')
   ) {
     const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+    url.pathname = '/dashboard/yatra'
     return NextResponse.redirect(url)
   }
 

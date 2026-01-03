@@ -49,12 +49,30 @@ export async function GET(request: Request) {
               },
             },
           },
+          _count: {
+            select: {
+              likes: true,
+              comments: true,
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
         },
       })
     )
+
+    // Fetch all user likes in a single query
+    const userLikes = await withRetry(() =>
+      prisma.yatraLike.findMany({
+        where: {
+          userId: session.userId,
+          storyId: { in: stories.map((s) => s.id) },
+        },
+        select: { storyId: true },
+      })
+    )
+    const likedStoryIds = new Set(userLikes.map((like) => like.storyId))
 
     const storiesWithUsers = await Promise.all(
       stories.map(async (story) => {
@@ -87,6 +105,9 @@ export async function GET(request: Request) {
           updatedAt: story.updatedAt,
           heritageSite: story.heritageSite,
           author: user,
+          likeCount: story._count.likes,
+          commentCount: story._count.comments,
+          isLikedByUser: likedStoryIds.has(story.id),
         }
       })
     )
