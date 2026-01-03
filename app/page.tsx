@@ -555,7 +555,7 @@ export default function Home() {
                           <span className="font-semibold text-slate-900 text-xs sm:text-sm lg:text-base">Rare Find 🏆</span>
                         </div>
                       </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹5000-₹5,0000</td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-amber-600 font-bold text-xs sm:text-sm lg:text-base whitespace-nowrap">₹5000-₹20,000</td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-slate-600 text-xs sm:text-sm lg:text-base hidden md:table-cell">
                         Extraordinary finds — hidden temples, ancient inscriptions, rare idols, or undocumented archaeological sites. Make history!
                       </td>

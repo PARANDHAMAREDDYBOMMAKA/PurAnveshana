@@ -120,6 +120,7 @@ model YatraStory {
   heritageSite                HeritageSite @relation(fields: [heritageSiteId], references: [id], onDelete: Cascade)
   comments                    YatraComment[]
   likes                       YatraLike[]
+  saves                       YatraSaved[]
 
   @@index([userId])
   @@index([publishStatus])
@@ -155,6 +156,20 @@ model YatraLike {
   @@index([storyId])
   @@index([userId])
   @@map("yatra_likes")
+}
+
+model YatraSaved {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storyId   String   @map("story_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  story     YatraStory @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@index([storyId])
+  @@index([userId])
+  @@map("yatra_saved")
 }
 
 enum Role {

@@ -46,7 +46,7 @@ export default function YatraPendingBanner() {
             Share Your Discovery Journey
           </h3>
           <p className="text-sm text-orange-800">
-            You have <strong>{unpromptedSites.length}</strong> paid heritage{' '}
+            You have <strong>{unpromptedSites.length}</strong> heritage{' '}
             {unpromptedSites.length === 1 ? 'site' : 'sites'} waiting for your
             story! Share how you discovered{' '}
             {unpromptedSites.length === 1 ? 'it' : 'them'} and inspire others.

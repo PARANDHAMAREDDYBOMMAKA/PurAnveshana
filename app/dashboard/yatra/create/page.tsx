@@ -19,7 +19,9 @@ export default async function CreateYatraPage({
     prisma.heritageSite.findMany({
       where: {
         userId: session.userId,
-        paymentStatus: 'COMPLETED',
+        paymentStatus: {
+          in: ['COMPLETED', 'IN_PROGRESS']
+        },
         yatraStory: null,
       },
       select: {
@@ -58,10 +60,10 @@ export default async function CreateYatraPage({
               No Eligible Sites
             </h1>
             <p className="mb-4 text-gray-600">
-              You don't have any paid heritage sites without Yatra Journey yet.
+              You don't have any heritage sites available for Yatra Journey creation.
             </p>
             <p className="text-sm text-gray-500">
-              Once you receive payment for your submissions, you'll be able to share your discovery journey here.
+              Sites with payment in progress or completed are eligible. Upload a heritage site to get started!
             </p>
           </div>
         </div>

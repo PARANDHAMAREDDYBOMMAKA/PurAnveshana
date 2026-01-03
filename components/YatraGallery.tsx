@@ -74,6 +74,7 @@ interface YatraStory {
   likeCount: number
   commentCount: number
   isLikedByUser: boolean
+  isSavedByUser: boolean
 }
 
 interface YatraGalleryProps {
@@ -98,10 +99,12 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
   const [likedStories, setLikedStories] = useState<Record<string, boolean>>({})
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({})
   const [savedStories, setSavedStories] = useState<Set<string>>(new Set())
+  const [currentPage, setCurrentPage] = useState(0)
   const [showShareMenu, setShowShareMenu] = useState<string | null>(null)
   const [showCommentBox, setShowCommentBox] = useState<string | null>(null)
   const [commentText, setCommentText] = useState('')
   const [comments, setComments] = useState<Record<string, YatraComment[]>>({})
+  const [savingStory, setSavingStory] = useState<string | null>(null)
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({})
   const [submittingComment, setSubmittingComment] = useState(false)
   const [deletingComment, setDeletingComment] = useState<string | null>(null)
@@ -147,18 +150,23 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
         const data = await response.json()
         setStories(data.stories)
 
-        // Initialize like and comment data from API response
+        // Initialize like, save, and comment data from API response
         const newLikedStories: Record<string, boolean> = {}
         const newLikeCounts: Record<string, number> = {}
         const newCommentCounts: Record<string, number> = {}
+        const newSavedStories = new Set<string>()
 
         data.stories.forEach((story: YatraStory) => {
           newLikedStories[story.id] = story.isLikedByUser
           newLikeCounts[story.id] = story.likeCount
           newCommentCounts[story.id] = story.commentCount
+          if (story.isSavedByUser) {
+            newSavedStories.add(story.id)
+          }
         })
 
         setLikedStories(newLikedStories)
+        setSavedStories(newSavedStories)
         setLikeCounts(newLikeCounts)
         setCommentCounts(newCommentCounts)
       } else {
@@ -244,18 +252,38 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     }
   }
 
-  const handleSave = (storyId: string) => {
-    setSavedStories(prev => {
-      const newSaves = new Set(prev)
-      if (newSaves.has(storyId)) {
-        newSaves.delete(storyId)
-        toast.success('Removed from saved!')
+  const handleSave = async (storyId: string) => {
+    // Prevent duplicate calls
+    if (savingStory === storyId) return
+
+    setSavingStory(storyId)
+    try {
+      const response = await fetch(`/api/yatra/${storyId}/save`, {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setSavedStories(prev => {
+          const newSaves = new Set(prev)
+          if (data.saved) {
+            newSaves.add(storyId)
+          } else {
+            newSaves.delete(storyId)
+          }
+          return newSaves
+        })
+        // Show toast after state update
+        toast.success(data.saved ? 'Saved!' : 'Removed from saved!')
       } else {
-        newSaves.add(storyId)
-        toast.success('Saved!')
+        toast.error('Failed to save story')
       }
-      return newSaves
-    })
+    } catch (error) {
+      console.error('Error saving story:', error)
+      toast.error('An error occurred')
+    } finally {
+      setSavingStory(null)
+    }
   }
 
   const handleShare = (storyId: string, platform: string, storyTitle: string) => {
@@ -427,6 +455,11 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     return filtered
   }, [stories, searchQuery, statusFilter, isAdmin])
 
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(0)
+  }, [searchQuery, statusFilter])
+
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -439,32 +472,46 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pb-20">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-slate-200 -mx-4 px-4 py-4 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-slate-900">Yatra</h1>
+    <div className="pb-20">
+      {/* Header - Anveshan Style */}
+      <div className="mb-6">
+        <div className="w-full bg-linear-to-r from-orange-500 to-orange-600 rounded-2xl p-5 sm:p-6 text-white shadow-lg mb-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+              <MapPin className="h-6 w-6 sm:h-7 sm:w-7" />
+            </div>
+            <div className="flex flex-col">
+              <h2 className="text-2xl sm:text-3xl font-bold">Yatra</h2>
+              <p className="text-sm sm:text-base text-white/90 mt-0.5">Your heritage discovery journey</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Search and Create Section */}
+        <div className="flex flex-row gap-2 sm:gap-3">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search stories..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 border-2 border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all bg-white hover:border-slate-300"
+            />
+          </div>
+
+          {/* Create Button */}
           {!isAdmin && (
             <Link
               href="/dashboard/yatra/create"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 active:scale-95 transition-all shadow-md hover:shadow-lg whitespace-nowrap"
             >
-              <Plus className="h-4 w-4" />
-              Create
+              <Plus className="h-5 w-5" />
+              <span className="hidden sm:inline">Create Story</span>
+              <span className="sm:hidden">Create</span>
             </Link>
           )}
-        </div>
-
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-700" />
-          <input
-            type="text"
-            placeholder="Search stories..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-          />
         </div>
 
         {/* Admin Filters */}
@@ -525,11 +572,41 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
         )}
       </div>
 
-      {/* Stories Feed */}
+      {/* Book Reader */}
       {stories.length > 0 ? (
         filteredStories.length > 0 ? (
-          <div className="space-y-6">
-            {filteredStories.map((story) => (
+          <>
+            {/* Navigation Controls */}
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+                disabled={currentPage === 0}
+                className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-white border-2 border-orange-500 text-orange-600 font-semibold rounded-xl hover:bg-orange-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span className="hidden sm:inline">Previous</span>
+              </button>
+
+              <div className="text-sm font-medium text-slate-600">
+                Page <span className="text-orange-600 font-bold">{currentPage + 1}</span> of {filteredStories.length}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(Math.min(filteredStories.length - 1, currentPage + 1))}
+                disabled={currentPage === filteredStories.length - 1}
+                className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md"
+              >
+                <span className="hidden sm:inline">Next</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Single Story (Book Page) */}
+            {filteredStories.slice(currentPage, currentPage + 1).map((story) => (
               <article
                 key={story.id}
                 className="bg-white border border-slate-200 rounded-lg overflow-hidden"
@@ -612,8 +689,136 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                   </div>
                 )}
 
-                {/* Post Actions */}
+                {/* Full Story Content */}
                 <div className="px-4 pt-3">
+                  <div className="mb-6 space-y-6">
+                    {/* Title */}
+                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                      {story.title}
+                    </h2>
+
+                    {/* Heritage Site Info */}
+                    <div className="flex items-start gap-3 p-4 bg-linear-to-r from-orange-50 to-amber-50 rounded-xl border-2 border-orange-200">
+                      <MapPin className="h-5 w-5 text-orange-600 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-bold text-orange-900 mb-1">
+                          {story.heritageSite.title}
+                        </p>
+                        {story.heritageSite.images[0]?.location && (
+                          <p className="text-sm text-orange-700">
+                            {story.heritageSite.images[0].location}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Discovery Context */}
+                    {story.discoveryContext && (
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                          <span className="text-orange-500">Chapter 1:</span> Discovery Context
+                        </h3>
+                        <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          {story.discoveryContext}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Journey Narrative */}
+                    {story.journeyNarrative && (
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                          <span className="text-orange-500">Chapter 2:</span> Journey Narrative
+                        </h3>
+                        <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          {story.journeyNarrative}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Cultural Insights */}
+                    {story.culturalInsights && (
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                          <span className="text-orange-500">Chapter 3:</span> Cultural Insights
+                        </h3>
+                        <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          {story.culturalInsights}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Historical Indicators */}
+                    {story.historicalIndicators && story.historicalIndicators.length > 0 && (
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-slate-900">Historical Indicators</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {story.historicalIndicators.map((indicator, index) => (
+                            <span key={index} className="px-3 py-1.5 bg-purple-100 text-purple-800 rounded-full text-sm font-medium border border-purple-200">
+                              {indicator}
+                            </span>
+                          ))}
+                        </div>
+                        {story.historicalIndicatorsDetails && (
+                          <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200 mt-2">
+                            {story.historicalIndicatorsDetails}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Evidence Types */}
+                    {story.evidenceTypes && story.evidenceTypes.length > 0 && (
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-slate-900">Evidence Types</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {story.evidenceTypes.map((evidence, index) => (
+                            <span key={index} className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium border border-blue-200">
+                              {evidence}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* All Safe Visuals */}
+                    {story.safeVisuals && story.safeVisuals.length > 1 && (
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-slate-900">
+                          All Images ({story.safeVisuals.length})
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {story.safeVisuals.map((imageUrl, index) => (
+                            <div key={index} className="aspect-square bg-slate-100 relative rounded-xl overflow-hidden border-2 border-slate-200 hover:border-orange-300 transition-colors">
+                              <Image
+                                src={imageUrl}
+                                alt={`Image ${index + 1}`}
+                                fill
+                                sizes="(max-width: 640px) 50vw, 33vw"
+                                className="object-cover"
+                                loading="lazy"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Personal Reflection */}
+                    {story.personalReflection && (
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-slate-900">Personal Reflection</h3>
+                        <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-orange-50 p-4 rounded-xl border-l-4 border-orange-500">
+                          <p className="italic">{story.personalReflection}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t border-slate-200 my-4"></div>
+
+                  {/* Post Actions - Moved to Bottom */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-4">
                       <button
@@ -689,18 +894,6 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                     >
                       <Bookmark className={`h-6 w-6 ${savedStories.has(story.id) ? 'fill-current' : ''}`} />
                     </button>
-                  </div>
-
-                  {/* Post Content */}
-                  <div className="mb-3">
-                    <Link href={`/dashboard/yatra/${story.id}`}>
-                      <h2 className="text-lg font-bold text-slate-900 mb-1 hover:text-orange-600 transition-colors cursor-pointer">
-                        {story.title}
-                      </h2>
-                    </Link>
-                    <p className="text-sm text-slate-900 line-clamp-2">
-                      {story.discoveryContext || story.journeyNarrative}
-                    </p>
                   </div>
 
                   {/* Status Badge (for user's own stories or admin) */}
@@ -814,7 +1007,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                 )}
               </article>
             ))}
-          </div>
+          </>
         ) : (
           <div className="text-center py-20">
             <Search className="h-16 w-16 text-slate-400 mx-auto mb-4" />

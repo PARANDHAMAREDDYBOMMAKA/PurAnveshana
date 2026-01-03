@@ -74,6 +74,18 @@ export async function GET(request: Request) {
     )
     const likedStoryIds = new Set(userLikes.map((like) => like.storyId))
 
+    // Fetch all user saves in a single query
+    const userSaves = await withRetry(() =>
+      prisma.yatraSaved.findMany({
+        where: {
+          userId: session.userId,
+          storyId: { in: stories.map((s) => s.id) },
+        },
+        select: { storyId: true },
+      })
+    )
+    const savedStoryIds = new Set(userSaves.map((save) => save.storyId))
+
     const storiesWithUsers = await Promise.all(
       stories.map(async (story) => {
         const user = await withRetry(() =>
@@ -108,6 +120,7 @@ export async function GET(request: Request) {
           likeCount: story._count.likes,
           commentCount: story._count.comments,
           isLikedByUser: likedStoryIds.has(story.id),
+          isSavedByUser: savedStoryIds.has(story.id),
         }
       })
     )

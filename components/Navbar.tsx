@@ -19,16 +19,20 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
         <div className="flex justify-between items-center h-16 sm:h-18 lg:h-20">
           {/* Logo and Brand */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 lg:flex-none">
-            <div className="bg-linear-to-br from-orange-500 to-amber-600 p-2 sm:p-2.5 rounded-xl shadow-lg shrink-0">
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
+            <div className="relative group shrink-0">
+              <div className="absolute inset-0 bg-linear-to-br from-orange-400 to-amber-500 rounded-xl blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-300 animate-pulse"></div>
+              <div className="absolute inset-0 bg-linear-to-br from-orange-300 to-amber-400 rounded-xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
+              <div className="relative bg-linear-to-br from-orange-500 to-amber-600 p-3 sm:p-4 rounded-xl shadow-2xl shadow-orange-500/50">
+                <svg className="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+              </div>
             </div>
             <div className="flex flex-col min-w-0">
-              <h1 className="text-base sm:text-xl lg:text-2xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
                 Puranveshana
               </h1>
-              <span className="text-[10px] sm:text-xs lg:text-sm text-orange-600 font-medium -mt-0.5 notranslate" translate="no">
+              <span className="text-xs sm:text-sm lg:text-base text-orange-600 font-medium -mt-0.5 notranslate" translate="no">
                 पुरातन अन्वेषण
               </span>
             </div>

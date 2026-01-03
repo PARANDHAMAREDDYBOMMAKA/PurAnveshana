@@ -14,7 +14,9 @@ export async function GET() {
       prisma.heritageSite.findMany({
         where: {
           userId: session.userId,
-          paymentStatus: 'COMPLETED',
+          paymentStatus: {
+            in: ['COMPLETED', 'IN_PROGRESS']
+          },
           yatraStoryPrompted: false,
           yatraStory: null,
         },
