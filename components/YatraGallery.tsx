@@ -676,7 +676,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                 </div>
 
                 {/* Post Image */}
-                {story.safeVisuals && story.safeVisuals.length > 0 && (
+                {/* {story.safeVisuals && story.safeVisuals.length > 0 && (
                   <div className="relative w-full" style={{ aspectRatio: '4/3' }}>
                     <Image
                       src={story.safeVisuals[0]}
@@ -687,7 +687,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                       loading="lazy"
                     />
                   </div>
-                )}
+                )} */}
 
                 {/* Full Story Content */}
                 <div className="px-4 pt-3">
@@ -698,7 +698,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                     </h2>
 
                     {/* Heritage Site Info */}
-                    <div className="flex items-start gap-3 p-4 bg-linear-to-r from-orange-50 to-amber-50 rounded-xl border-2 border-orange-200">
+                    {/* <div className="flex items-start gap-3 p-4 bg-linear-to-r from-orange-50 to-amber-50 rounded-xl border-2 border-orange-200">
                       <MapPin className="h-5 w-5 text-orange-600 shrink-0 mt-0.5" />
                       <div className="flex-1">
                         <p className="font-bold text-orange-900 mb-1">
@@ -710,13 +710,13 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                           </p>
                         )}
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Discovery Context */}
                     {story.discoveryContext && (
                       <div className="space-y-2">
                         <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                          <span className="text-orange-500">Chapter 1:</span> Discovery Context
+                          <span className="text-orange-500">Discovery Context</span>
                         </h3>
                         <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
                           {story.discoveryContext}
@@ -728,7 +728,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                     {story.journeyNarrative && (
                       <div className="space-y-2">
                         <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                          <span className="text-orange-500">Chapter 2:</span> Journey Narrative
+                          <span className="text-orange-500">Journey Narrative</span>
                         </h3>
                         <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
                           {story.journeyNarrative}
@@ -740,7 +740,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                     {story.culturalInsights && (
                       <div className="space-y-2">
                         <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                          <span className="text-orange-500">Chapter 3:</span> Cultural Insights
+                          <span className="text-orange-500">Cultural Insights</span>
                         </h3>
                         <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
                           {story.culturalInsights}
@@ -748,27 +748,9 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                       </div>
                     )}
 
-                    {/* Historical Indicators */}
-                    {story.historicalIndicators && story.historicalIndicators.length > 0 && (
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-bold text-slate-900">Historical Indicators</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {story.historicalIndicators.map((indicator, index) => (
-                            <span key={index} className="px-3 py-1.5 bg-purple-100 text-purple-800 rounded-full text-sm font-medium border border-purple-200">
-                              {indicator}
-                            </span>
-                          ))}
-                        </div>
-                        {story.historicalIndicatorsDetails && (
-                          <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200 mt-2">
-                            {story.historicalIndicatorsDetails}
-                          </div>
-                        )}
-                      </div>
-                    )}
 
                     {/* Evidence Types */}
-                    {story.evidenceTypes && story.evidenceTypes.length > 0 && (
+                    {/* {story.evidenceTypes && story.evidenceTypes.length > 0 && (
                       <div className="space-y-2">
                         <h3 className="text-lg font-bold text-slate-900">Evidence Types</h3>
                         <div className="flex flex-wrap gap-2">
@@ -779,10 +761,10 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                           ))}
                         </div>
                       </div>
-                    )}
+                    )} */}
 
                     {/* All Safe Visuals */}
-                    {story.safeVisuals && story.safeVisuals.length > 1 && (
+                    {/* {story.safeVisuals && story.safeVisuals.length > 1 && (
                       <div className="space-y-2">
                         <h3 className="text-lg font-bold text-slate-900">
                           All Images ({story.safeVisuals.length})
@@ -802,18 +784,36 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                           ))}
                         </div>
                       </div>
-                    )}
+                    )} */}
 
                     {/* Personal Reflection */}
                     {story.personalReflection && (
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-bold text-slate-900">Personal Reflection</h3>
+                      <div className="space-y-2 ">
+                        <h3 className="text-lg font-bold text-orange-500">Personal Reflection</h3>
                         <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-orange-50 p-4 rounded-xl border-l-4 border-orange-500">
                           <p className="italic">{story.personalReflection}</p>
                         </div>
                       </div>
                     )}
                   </div>
+
+                   {story.historicalIndicators && story.historicalIndicators.length > 0 && (
+                      <div className="space-y-2">
+                        {/* <h3 className="text-lg font-bold text-slate-900">Historical Indicators</h3> */}
+                        <div className="flex flex-wrap gap-2">
+                          {story.historicalIndicators.map((indicator, index) => (
+                            <span key={index} className="px-3 py-1.5 bg-purple-100 text-purple-800 rounded-full text-sm font-medium border border-purple-200">
+                              # {indicator}
+                            </span>
+                          ))}
+                        </div>
+                        {story.historicalIndicatorsDetails && (
+                          <div className="text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200 mt-2">
+                            {story.historicalIndicatorsDetails}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                   {/* Divider */}
                   <div className="border-t border-slate-200 my-4"></div>

@@ -29,10 +29,10 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               </div>
             </div>
             <div className="flex flex-col min-w-0">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
                 Puranveshana
               </h1>
-              <span className="text-xs sm:text-sm lg:text-base text-orange-600 font-medium -mt-0.5 notranslate" translate="no">
+              <span className="text-lg sm:text-md lg:text-base text-orange-600 font-medium -mt-0.5 notranslate" translate="no">
                 पुरातन अन्वेषण
               </span>
             </div>
@@ -111,7 +111,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-slate-200 space-y-2 animate-in slide-in-from-top duration-200">
+          <div className="md:hidden py-2 border-t border-slate-200 space-y-2 animate-in slide-in-from-top duration-200 text-5xl">
             <button
               onClick={() => {
                 router.push('/dashboard/yatra')
@@ -122,7 +122,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
               </svg>
-              Yatra
+              <p className='text-xl font-bold'>Yatra</p>
             </button>
             <button
               onClick={() => {
@@ -134,7 +134,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
-              Anveshan
+              <p className='text-xl font-bold'>Anveshan</p>
             </button>
             <button
               onClick={() => {
@@ -146,7 +146,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Payments
+              <p className='text-xl font-bold'>Payments</p>
             </button>
             <button
               onClick={() => {
@@ -158,7 +158,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
-              Support
+              <p className='text-xl font-bold'>Support</p>
             </button>
           </div>
         )}
