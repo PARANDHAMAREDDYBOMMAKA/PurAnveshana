@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast'
 import TranslateErrorBoundary from '@/components/TranslateErrorBoundary';
+import { PostHogProvider, PostHogPageView } from '@/providers/posthog-provider';
+import { Suspense } from 'react';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -191,10 +193,15 @@ export default function RootLayout({
         suppressHydrationWarning
         style={{position: 'static', top: 0, marginTop: 0, paddingTop: 0}}
       >
-        <TranslateErrorBoundary>
-          <Toaster position="top-right" />
-          {children}
-        </TranslateErrorBoundary>
+        <PostHogProvider>
+          <TranslateErrorBoundary>
+            <Suspense fallback={null}>
+              <PostHogPageView />
+            </Suspense>
+            <Toaster position="top-right" />
+            {children}
+          </TranslateErrorBoundary>
+        </PostHogProvider>
       </body>
     </html>
   );

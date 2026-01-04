@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { withRetry } from '@/lib/db-utils'
 import { deleteFromR2 } from '@/lib/r2'
 import { v2 as cloudinary } from 'cloudinary'
+import { getCached, setCached, deleteCached, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -27,6 +28,13 @@ export async function GET(request: Request) {
 
     if (!profile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+    }
+
+    // Try to get from cache
+    const cacheKey = `${CACHE_KEYS.HERITAGE_SITES}${profile.role}:${profile.id}`
+    const cached = await getCached<any>(cacheKey)
+    if (cached) {
+      return NextResponse.json(cached)
     }
 
     let sites: any[] = []
@@ -101,11 +109,16 @@ export async function GET(request: Request) {
         paymentAmount: paymentMap.get(site.id) || 0,
       }))
 
-      return NextResponse.json({
+      const response = {
         success: true,
         sites: sitesWithPayments || [],
         userRole: profile.role,
-      })
+      }
+
+      // Cache the response
+      await setCached(cacheKey, response, CACHE_TTL.MEDIUM)
+
+      return NextResponse.json(response)
     } catch (err) {
       console.error('Error fetching from new schema:', err)
       sites = []
@@ -205,6 +218,9 @@ export async function POST(request: Request) {
         },
       })
     )
+
+    // Invalidate cache for this user
+    await deleteCached(`${CACHE_KEYS.HERITAGE_SITES}*`)
 
     return NextResponse.json({ success: true, data: site })
   } catch (error: any) {

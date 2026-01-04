@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import { withRetry } from '@/lib/db-utils'
+import { notifyStoryLike } from '@/lib/notifications'
 
 export async function POST(
   request: Request,
@@ -54,11 +55,36 @@ export async function POST(
         })
       )
 
-      const likeCount = await withRetry(() =>
-        prisma.yatraLike.count({
-          where: { storyId: id },
-        })
-      )
+      const [likeCount, user, story] = await Promise.all([
+        withRetry(() =>
+          prisma.yatraLike.count({
+            where: { storyId: id },
+          })
+        ),
+        withRetry(() =>
+          prisma.profile.findUnique({
+            where: { id: session.userId },
+            select: { name: true },
+          })
+        ),
+        withRetry(() =>
+          prisma.yatraStory.findUnique({
+            where: { id },
+            select: { userId: true, title: true },
+          })
+        ),
+      ])
+
+      // Send notification to story owner
+      if (story && user) {
+        await notifyStoryLike(
+          id,
+          story.userId,
+          user.name,
+          session.userId,
+          story.title
+        )
+      }
 
       return NextResponse.json({
         success: true,

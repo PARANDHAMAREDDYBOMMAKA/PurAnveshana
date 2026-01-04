@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import { withRetry } from '@/lib/db-utils'
+import { notifyStoryComment } from '@/lib/notifications'
 
 export async function GET(
   request: Request,
@@ -80,12 +81,31 @@ export async function POST(
       })
     )
 
-    const user = await withRetry(() =>
-      prisma.profile.findUnique({
-        where: { id: session.userId },
-        select: { id: true, name: true },
-      })
-    )
+    const [user, story] = await Promise.all([
+      withRetry(() =>
+        prisma.profile.findUnique({
+          where: { id: session.userId },
+          select: { id: true, name: true },
+        })
+      ),
+      withRetry(() =>
+        prisma.yatraStory.findUnique({
+          where: { id },
+          select: { userId: true, title: true },
+        })
+      ),
+    ])
+
+    // Send notification to story owner
+    if (story && user) {
+      await notifyStoryComment(
+        id,
+        story.userId,
+        user.name,
+        session.userId,
+        story.title
+      )
+    }
 
     return NextResponse.json({
       success: true,

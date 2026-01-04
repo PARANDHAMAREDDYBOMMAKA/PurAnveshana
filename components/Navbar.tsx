@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import ProfileDropdown from './ProfileDropdown'
+import NotificationBell from './NotificationBell'
 import toast from 'react-hot-toast'
 
 interface NavbarProps {
@@ -122,6 +123,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               </span>
             )}
 
+            <NotificationBell />
             <ProfileDropdown userEmail={userEmail} />
           </div>
 
@@ -132,6 +134,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                 ADMIN
               </span>
             )}
+            <NotificationBell />
             <div className="relative" ref={mobileMenuRef}>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
+import { invalidatePattern, CACHE_KEYS } from '@/lib/redis'
 
 export async function GET(
   request: Request,
@@ -85,7 +86,7 @@ export async function PUT(
 
     const { id } = await params
     const body = await request.json()
-    const { title, journeyNarrative, culturalInsights, safeVisuals } = body
+    const { title, journeyNarrative, culturalInsights, safeVisuals, changeDescription } = body
 
     const existingStory = await withRetry(() =>
       prisma.yatraStory.findUnique({
@@ -107,8 +108,41 @@ export async function PUT(
       )
     }
 
-    const updatedStory = await withRetry(() =>
-      prisma.yatraStory.update({
+    // Get the latest version number
+    const latestVersion = await withRetry(() =>
+      prisma.yatraStoryVersion.findFirst({
+        where: { storyId: id },
+        orderBy: { versionNumber: 'desc' },
+        select: { versionNumber: true },
+      })
+    )
+
+    const nextVersionNumber = (latestVersion?.versionNumber || 0) + 1
+
+    // Create version snapshot and update story in a transaction
+    const updatedStory = await prisma.$transaction(async (tx) => {
+      // Save current state as a version
+      await tx.yatraStoryVersion.create({
+        data: {
+          storyId: id,
+          versionNumber: nextVersionNumber,
+          title: existingStory.title,
+          discoveryContext: existingStory.discoveryContext,
+          journeyNarrative: existingStory.journeyNarrative,
+          historicalIndicators: existingStory.historicalIndicators,
+          historicalIndicatorsDetails: existingStory.historicalIndicatorsDetails,
+          evidenceTypes: existingStory.evidenceTypes,
+          safeVisuals: existingStory.safeVisuals,
+          personalReflection: existingStory.personalReflection,
+          culturalInsights: existingStory.culturalInsights,
+          publishStatus: existingStory.publishStatus,
+          editedBy: session.userId,
+          changeDescription: changeDescription || 'Story updated',
+        },
+      })
+
+      // Update the story
+      return await tx.yatraStory.update({
         where: { id },
         data: {
           title,
@@ -126,7 +160,11 @@ export async function PUT(
           },
         },
       })
-    )
+    })
+
+    // Invalidate cache
+    await invalidatePattern(`${CACHE_KEYS.YATRA_STORY}${id}*`)
+    await invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`)
 
     return NextResponse.json({
       success: true,

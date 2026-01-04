@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
+import { getCached, setCached, invalidatePattern, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
 
 export async function GET(request: Request) {
   try {
@@ -12,6 +13,13 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const heritageSiteId = searchParams.get('heritageSiteId')
+
+    // Try to get from cache
+    const cacheKey = `${CACHE_KEYS.YATRA_STORIES}${session.role}:${session.userId}:${heritageSiteId || 'all'}`
+    const cached = await getCached<any>(cacheKey)
+    if (cached) {
+      return NextResponse.json(cached)
+    }
 
     const where: any = {}
 
@@ -125,7 +133,12 @@ export async function GET(request: Request) {
       })
     )
 
-    return NextResponse.json({ stories: storiesWithUsers })
+    const response = { stories: storiesWithUsers }
+
+    // Cache the response
+    await setCached(cacheKey, response, CACHE_TTL.SHORT)
+
+    return NextResponse.json(response)
   } catch (error: any) {
     console.error('Error fetching Yatra stories:', error)
     return NextResponse.json(

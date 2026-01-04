@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
 import { PublishStatus } from '@prisma/client'
+import { notifyStoryApproved, notifyStoryFeatured, notifyStoryRejected } from '@/lib/notifications'
 
 export async function POST(
   request: Request,
@@ -57,6 +58,15 @@ export async function POST(
         },
       })
     )
+
+    // Send appropriate notification
+    if (action === 'approve') {
+      await notifyStoryApproved(id, story.userId, story.title)
+    } else if (action === 'feature') {
+      await notifyStoryFeatured(id, story.userId, story.title)
+    } else if (action === 'reject') {
+      await notifyStoryRejected(id, story.userId, story.title)
+    }
 
     return NextResponse.json({
       success: true,

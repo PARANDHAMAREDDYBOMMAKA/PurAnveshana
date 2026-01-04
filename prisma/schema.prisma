@@ -121,11 +121,40 @@ model YatraStory {
   comments                    YatraComment[]
   likes                       YatraLike[]
   saves                       YatraSaved[]
+  versions                    YatraStoryVersion[]
 
   @@index([userId])
   @@index([publishStatus])
   @@index([createdAt(sort: Desc)])
   @@map("yatra_stories")
+}
+
+model YatraStoryVersion {
+  id                          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storyId                     String       @map("story_id") @db.Uuid
+  versionNumber               Int          @map("version_number")
+
+  title                       String       @db.VarChar(80)
+  discoveryContext            String       @map("discovery_context") @db.Text
+  journeyNarrative            String       @map("journey_narrative") @db.Text
+  historicalIndicators        String[]     @default([]) @map("historical_indicators")
+  historicalIndicatorsDetails String?      @map("historical_indicators_details") @db.Text
+  evidenceTypes               String[]     @default([]) @map("evidence_types")
+  safeVisuals                 String[]     @default([]) @map("safe_visuals")
+  personalReflection          String?      @map("personal_reflection") @db.Text
+  culturalInsights            String?      @map("cultural_insights") @db.Text
+  publishStatus               PublishStatus @map("publish_status")
+
+  editedBy                    String       @map("edited_by") @db.Uuid
+  changeDescription           String?      @map("change_description") @db.Text
+  createdAt                   DateTime     @default(now()) @map("created_at")
+
+  story                       YatraStory   @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, versionNumber])
+  @@index([storyId])
+  @@index([createdAt(sort: Desc)])
+  @@map("yatra_story_versions")
 }
 
 model YatraComment {
@@ -260,4 +289,56 @@ enum TicketPriority {
   MEDIUM
   HIGH
   URGENT
+}
+
+model Notification {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String           @map("user_id") @db.Uuid
+  type        NotificationType
+  title       String
+  message     String           @db.Text
+  link        String?
+  isRead      Boolean          @default(false) @map("is_read")
+
+  relatedId   String?          @map("related_id") @db.Uuid
+  actorId     String?          @map("actor_id") @db.Uuid
+  actorName   String?          @map("actor_name")
+
+  createdAt   DateTime         @default(now()) @map("created_at")
+  readAt      DateTime?        @map("read_at")
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id                    String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String  @unique @map("user_id") @db.Uuid
+
+  emailComments         Boolean @default(true) @map("email_comments")
+  emailLikes            Boolean @default(true) @map("email_likes")
+  emailStoryApproval    Boolean @default(true) @map("email_story_approval")
+  emailStoryFeatured    Boolean @default(true) @map("email_story_featured")
+
+  pushComments          Boolean @default(true) @map("push_comments")
+  pushLikes             Boolean @default(true) @map("push_likes")
+  pushStoryApproval     Boolean @default(true) @map("push_story_approval")
+  pushStoryFeatured     Boolean @default(true) @map("push_story_featured")
+
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("notification_preferences")
+}
+
+enum NotificationType {
+  COMMENT
+  COMMENT_REPLY
+  LIKE
+  STORY_APPROVED
+  STORY_FEATURED
+  STORY_REJECTED
+  SYSTEM
 }
