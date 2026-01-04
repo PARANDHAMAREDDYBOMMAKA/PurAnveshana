@@ -203,11 +203,11 @@ export async function POST(request: Request) {
       )
     }
 
-    if (heritageSite.paymentStatus !== 'COMPLETED') {
+    if (heritageSite.paymentStatus !== 'COMPLETED' && heritageSite.paymentStatus !== 'IN_PROGRESS') {
       return NextResponse.json(
         {
           error:
-            'You can only create Yatra stories for heritage sites that have been paid for',
+            'You can only create Yatra stories for heritage sites that have been paid for or have payment in progress',
         },
         { status: 403 }
       )
