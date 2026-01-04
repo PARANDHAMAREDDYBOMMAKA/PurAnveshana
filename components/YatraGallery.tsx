@@ -467,6 +467,14 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
 
   // Swipe handlers for mobile navigation with smooth animation
   const handleTouchStart = (e: React.TouchEvent) => {
+    // Don't trigger swipe if touch started on interactive elements
+    const target = e.target as HTMLElement
+    const isInteractive = target.closest('button, a, textarea, input, [role="button"]')
+
+    if (isInteractive) {
+      return
+    }
+
     setTouchStart(e.targetTouches[0].clientX)
     setIsDragging(true)
   }
