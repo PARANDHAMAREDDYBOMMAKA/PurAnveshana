@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import ProfileDropdown from './ProfileDropdown'
+import toast from 'react-hot-toast'
 
 interface NavbarProps {
   userEmail?: string
@@ -12,6 +13,47 @@ interface NavbarProps {
 export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
   const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isMobileMenuOpen])
+
+  // Get initials from email
+  const getInitials = (email?: string) => {
+    if (!email) return 'U'
+    return email.charAt(0).toUpperCase()
+  }
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        throw new Error('Logout failed')
+      }
+
+      toast.success('Logged out successfully')
+      router.push('/')
+    } catch (error) {
+      toast.error('Error logging out')
+    }
+  }
 
   return (
     <nav className="bg-white shadow-md border-b border-slate-200 sticky top-0 z-50">
@@ -83,85 +125,123 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
             <ProfileDropdown userEmail={userEmail} />
           </div>
 
-          {/* Mobile Menu Button and Profile */}
+          {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-2">
             {isAdmin && (
               <span className="px-2 py-1 text-[9px] font-bold rounded-full bg-linear-to-r from-orange-500 to-amber-600 text-white shadow-md">
                 ADMIN
               </span>
             )}
-            <ProfileDropdown userEmail={userEmail} />
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+            <div className="relative" ref={mobileMenuRef}>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="flex items-center justify-center bg-linear-to-br from-orange-500 to-amber-600 rounded-full w-9 h-9 shadow-md hover:shadow-lg transition-shadow"
+                aria-label="Toggle menu"
+              >
+                <span className="text-white text-sm font-bold">{getInitials(userEmail)}</span>
+              </button>
+
+              {/* Mobile Menu Popover */}
+              {isMobileMenuOpen && (
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl py-2 z-50 border border-slate-200 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {/* User Info Section */}
+                  <div className="px-4 py-3 border-b border-slate-200">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-linear-to-br from-orange-500 to-amber-600 rounded-full w-10 h-10 flex items-center justify-center shrink-0">
+                        <span className="text-white text-base font-bold">{getInitials(userEmail)}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-slate-500 mb-0.5">Signed in as</p>
+                        <p className="text-sm font-semibold text-slate-900 truncate">{userEmail}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Navigation Links */}
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        router.push('/dashboard/yatra')
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 transition-colors flex items-center gap-3"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                      </svg>
+                      <p className='text-base font-semibold'>Yatra</p>
+                    </button>
+                    <button
+                      onClick={() => {
+                        router.push('/dashboard')
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 transition-colors flex items-center gap-3"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                      <p className='text-base font-semibold'>Anveshan</p>
+                    </button>
+                    <button
+                      onClick={() => {
+                        router.push('/dashboard/payment-history')
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 transition-colors flex items-center gap-3"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className='text-base font-semibold'>Payments</p>
+                    </button>
+                    <button
+                      onClick={() => {
+                        router.push('/dashboard/support')
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 transition-colors flex items-center gap-3"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                      <p className='text-base font-semibold'>Support</p>
+                    </button>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t border-slate-200 my-2"></div>
+
+                  {/* Profile Options */}
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        router.push('/profile')
+                      }}
+                      className="flex items-center w-full px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors group"
+                    >
+                      <svg className="w-5 h-5 mr-3 text-slate-500 group-hover:text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Profile Settings
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors group"
+                    >
+                      <svg className="w-5 h-5 mr-3 text-slate-500 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      Logout
+                    </button>
+                  </div>
+                </div>
               )}
-            </button>
+            </div>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-2 border-t border-slate-200 space-y-2 animate-in slide-in-from-top duration-200 text-5xl">
-            <button
-              onClick={() => {
-                router.push('/dashboard/yatra')
-                setIsMobileMenuOpen(false)
-              }}
-              className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors flex items-center gap-3"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
-              <p className='text-xl font-bold'>Yatra</p>
-            </button>
-            <button
-              onClick={() => {
-                router.push('/dashboard')
-                setIsMobileMenuOpen(false)
-              }}
-              className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors flex items-center gap-3"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              <p className='text-xl font-bold'>Anveshan</p>
-            </button>
-            <button
-              onClick={() => {
-                router.push('/dashboard/payment-history')
-                setIsMobileMenuOpen(false)
-              }}
-              className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors flex items-center gap-3"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className='text-xl font-bold'>Payments</p>
-            </button>
-            <button
-              onClick={() => {
-                router.push('/dashboard/support')
-                setIsMobileMenuOpen(false)
-              }}
-              className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors flex items-center gap-3"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              <p className='text-xl font-bold'>Support</p>
-            </button>
-          </div>
-        )}
       </div>
     </nav>
   )

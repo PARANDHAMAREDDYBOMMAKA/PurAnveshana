@@ -40,6 +40,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
   const [paymentFilter, setPaymentFilter] = useState<string>('')
   const [searchQuery, setSearchQuery] = useState('')
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [yatraStats, setYatraStats] = useState({ total: 0, pendingReview: 0 })
 
   useEffect(() => {
     const newDisplaySites = !isAdmin && (!initialSites || initialSites.length === 0)
@@ -47,6 +48,20 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
       : initialSites
     setSites(newDisplaySites)
   }, [initialSites, isAdmin])
+
+  // Fetch Yatra stats for admin
+  useEffect(() => {
+    if (isAdmin) {
+      fetch('/api/yatra')
+        .then(res => res.json())
+        .then(data => {
+          const total = data.stories?.length || 0
+          const pendingReview = data.stories?.filter((story: any) => story.publishStatus === 'PENDING_REVIEW').length || 0
+          setYatraStats({ total, pendingReview })
+        })
+        .catch(err => console.error('Error fetching yatra stats:', err))
+    }
+  }, [isAdmin])
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -360,21 +375,21 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-orange-500">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="bg-orange-100 p-1.5 sm:p-3 rounded-lg">
-                  <Clock className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
+                  <Sparkles className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
                 </div>
               </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{pendingPayments}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Pending</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{yatraStats.total}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Yatra Stories</p>
             </div>
 
-            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-green-500">
+            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-amber-500">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="bg-green-100 p-1.5 sm:p-3 rounded-lg">
-                  <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
+                <div className="bg-amber-100 p-1.5 sm:p-3 rounded-lg">
+                  <AlertCircle className="h-4 w-4 sm:h-6 sm:w-6 text-amber-600" />
                 </div>
               </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{completedPayments}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Completed</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{yatraStats.pendingReview}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Needs Review</p>
             </div>
           </div>
 

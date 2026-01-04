@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link'
 import Image from 'next/image'
-import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins, BadgeIndianRupee, TrendingUp, Globe, Eye } from 'lucide-react';
+import { Camera, MapPin, Award, Users, Shield, ChevronRight, Menu, X, Check, ChevronDown, Mail, Phone, Search, FileText, Coins, BadgeIndianRupee, TrendingUp, Globe, Eye, BookOpen } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import AppDemo from '@/components/AppDemo';
 
@@ -311,11 +311,10 @@ export default function Home() {
     }
   ];
 
-  const howItWorks = [
-    { icon: Search, title: "Discover", desc: "Find ancient or historical sites in your area" },
-    { icon: Camera, title: "Document", desc: "Capture photos and write descriptions" },
-    // { step: "3", title: "Verify", desc: "Our system validates using EXIF data" },
-    { icon: Coins, title: "Earn", desc: "Get rewards for verified contributions" }
+  const yatraFeatures = [
+    { icon: Search, title: "Discover Heritage", desc: "Explore ancient sites during your journeys and pilgrimages across India" },
+    { icon: BookOpen, title: "Share Your Story", desc: "Document discoveries with photos, narratives, historical insights, and cultural observations" },
+    { icon: Users, title: "Inspire Community", desc: "Share yatra experiences and inspire others to preserve our rich cultural legacy" }
   ];
 
   return (
@@ -339,7 +338,7 @@ export default function Home() {
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#how-it-works" className="text-slate-700 hover:text-orange-600 transition">How It Works</a>
+              <a href="#yatra" className="text-slate-700 hover:text-orange-600 transition">Yatra</a>
               <a href="#rewards" className="text-slate-700 hover:text-orange-600 transition flex items-center gap-1">
                 <Award className="w-4 h-4" />
                 Rewards
@@ -364,7 +363,7 @@ export default function Home() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t">
             <div className="px-4 py-4 space-y-3">
-              <a href="#how-it-works" className="block text-slate-700 hover:text-orange-600">How It Works</a>
+              <a href="#yatra" className="block text-slate-700 hover:text-orange-600">Yatra</a>
               <a href="#rewards" className="flex items-center gap-2 text-slate-700 hover:text-orange-600">
                 <Award className="w-4 h-4" />
                 Rewards
@@ -627,22 +626,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-amber-50 via-orange-50/30 to-white relative overflow-hidden">
+      {/* About Yatra */}
+      <section id="yatra" className="py-12 sm:py-16 lg:py-20 bg-linear-to-b from-amber-50 via-orange-50/30 to-white relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">How It Works</h2>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">Yatra - Share Your Heritage Journey</h2>
             <p className="text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto">
-              Start your journey as a PurAnveshi in three simple steps
+              Document your spiritual and cultural journeys, share discoveries, and inspire others through your heritage experiences
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
-            {howItWorks.map((item, idx) => (
+            {yatraFeatures.map((item, idx) => (
               <div key={idx} className="relative group">
                 <div className="bg-white rounded-xl p-5 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-orange-100 hover:border-orange-300">
                   <div className="flex flex-col items-center text-center">
@@ -653,7 +652,7 @@ export default function Home() {
                     <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
-                {idx < howItWorks.length - 1 && (
+                {idx < yatraFeatures.length - 1 && (
                   <div className="hidden md:flex absolute top-1/2 -translate-y-1/2 -right-3 lg:-right-4 items-center justify-center">
                     <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6 text-orange-400" />
                   </div>
@@ -690,9 +689,9 @@ export default function Home() {
 
           {/* Additional Info */}
           <div className="bg-linear-to-r from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 text-white text-center shadow-xl">
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3">Start Your Heritage Journey Today</h3>
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3">Share Your Yatra Journey Today</h3>
             <p className="text-xs sm:text-sm lg:text-base text-orange-100 mb-4 sm:mb-6 max-w-2xl mx-auto">
-              Join a community of passionate explorers documenting India's forgotten heritage. Every upload helps preserve our cultural legacy.
+              Join fellow travelers in documenting sacred sites and heritage discoveries from your spiritual journeys. Your yatra stories inspire others.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
               <Link href="/signup" className="w-full sm:w-auto">
@@ -1256,7 +1255,7 @@ export default function Home() {
             <div>
               <h4 className="font-bold mb-2 sm:mb-3 text-sm sm:text-base text-orange-400">Platform</h4>
               <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-slate-300">
-                <li><a href="#how-it-works" className="hover:text-orange-400 transition-colors">How It Works</a></li>
+                <li><a href="#yatra" className="hover:text-orange-400 transition-colors">Yatra</a></li>
                 <li><a href="#features" className="hover:text-orange-400 transition-colors">Features</a></li>
                 <li><Link href="/dashboard" className="hover:text-orange-400 transition-colors">Dashboard</Link></li>
                 <li><a href="#faq" className="hover:text-orange-400 transition-colors">FAQ</a></li>
@@ -1484,7 +1483,7 @@ export default function Home() {
             <div className="space-y-6">
               <div className="bg-orange-50 border-l-4 border-orange-600 p-4 rounded-r-lg">
                 <h3 className="font-bold text-slate-900 mb-2">Quick Start</h3>
-                <p className="text-sm text-slate-700">New to PurAnveshana? Check out our <a href="#how-it-works" onClick={() => setShowHelp(false)} className="text-orange-600 font-semibold">How It Works</a> section to get started!</p>
+                <p className="text-sm text-slate-700">New to PurAnveshana? Check out our <a href="#yatra" onClick={() => setShowHelp(false)} className="text-orange-600 font-semibold">Yatra</a> section to learn about sharing your heritage journeys!</p>
               </div>
 
               <div>
@@ -1540,7 +1539,7 @@ export default function Home() {
                 <ul className="space-y-2 text-sm text-slate-700">
                   <li><a href="/" className="hover:text-orange-600 transition-colors">Home</a></li>
                   <li><a href="#features" onClick={() => setShowSitemap(false)} className="hover:text-orange-600 transition-colors">Features</a></li>
-                  <li><a href="#how-it-works" onClick={() => setShowSitemap(false)} className="hover:text-orange-600 transition-colors">How It Works</a></li>
+                  <li><a href="#yatra" onClick={() => setShowSitemap(false)} className="hover:text-orange-600 transition-colors">Yatra</a></li>
                   <li><a href="#faq" onClick={() => setShowSitemap(false)} className="hover:text-orange-600 transition-colors">FAQ</a></li>
                   <li><Link href="/dashboard" className="hover:text-orange-600 transition-colors">Dashboard</Link></li>
                 </ul>

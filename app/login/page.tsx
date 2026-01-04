@@ -46,7 +46,13 @@ export default function LoginPage() {
       }
 
       toast.success('Login successful!')
-      router.push('/dashboard/yatra')
+
+      // Redirect based on user role
+      if (data.user?.role === 'admin') {
+        router.push('/dashboard')
+      } else {
+        router.push('/dashboard/yatra')
+      }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred during login')
     } finally {

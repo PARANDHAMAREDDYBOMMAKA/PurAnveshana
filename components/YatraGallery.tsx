@@ -111,6 +111,10 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
   const [loadingComments, setLoadingComments] = useState(false)
   const [approvingStory, setApprovingStory] = useState<string | null>(null)
   const [showFilters, setShowFilters] = useState(false)
+  const [touchStart, setTouchStart] = useState<number>(0)
+  const [touchEnd, setTouchEnd] = useState<number>(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragOffset, setDragOffset] = useState<number>(0)
   const router = useRouter()
 
   useEffect(() => {
@@ -148,6 +152,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       const response = await fetch('/api/yatra')
       if (response.ok) {
         const data = await response.json()
+
         setStories(data.stories)
 
         // Initialize like, save, and comment data from API response
@@ -460,6 +465,58 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     setCurrentPage(0)
   }, [searchQuery, statusFilter])
 
+  // Swipe handlers for mobile navigation with smooth animation
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+    setIsDragging(true)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStart) return
+
+    const currentTouch = e.targetTouches[0].clientX
+    const diff = currentTouch - touchStart
+
+    // Apply resistance at edges
+    const canSwipeLeft = currentPage < filteredStories.length - 1
+    const canSwipeRight = currentPage > 0
+
+    if ((diff < 0 && !canSwipeLeft) || (diff > 0 && !canSwipeRight)) {
+      // Add resistance when trying to swipe beyond bounds
+      setDragOffset(diff * 0.2)
+    } else {
+      setDragOffset(diff)
+    }
+
+    setTouchEnd(currentTouch)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) {
+      setIsDragging(false)
+      setDragOffset(0)
+      return
+    }
+
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 75 // Increased threshold for better UX
+    const isRightSwipe = distance < -75
+
+    if (isLeftSwipe && currentPage < filteredStories.length - 1) {
+      // Swipe left - go to next story
+      setCurrentPage(currentPage + 1)
+    } else if (isRightSwipe && currentPage > 0) {
+      // Swipe right - go to previous story
+      setCurrentPage(currentPage - 1)
+    }
+
+    // Reset with animation
+    setIsDragging(false)
+    setDragOffset(0)
+    setTouchStart(0)
+    setTouchEnd(0)
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -576,8 +633,8 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       {stories.length > 0 ? (
         filteredStories.length > 0 ? (
           <>
-            {/* Navigation Controls */}
-            <div className="flex items-center justify-between mb-6">
+            {/* Navigation Controls - Hidden on mobile, visible on desktop */}
+            <div className="hidden md:flex items-center justify-between mb-6">
               <button
                 onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
                 disabled={currentPage === 0}
@@ -605,12 +662,53 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
               </button>
             </div>
 
-            {/* Single Story (Book Page) */}
-            {filteredStories.slice(currentPage, currentPage + 1).map((story) => (
-              <article
-                key={story.id}
-                className="bg-white border border-slate-200 rounded-lg overflow-hidden"
-              >
+            {/* Swipe Container */}
+            <div
+              className="relative"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              {/* Swipe Indicator - Only show on mobile */}
+              {filteredStories.length > 1 && (
+                <div className="md:hidden flex items-center justify-center gap-2 mb-3">
+                  {filteredStories.length <= 8 ? (
+                    // Show dots for 8 or fewer stories
+                    <div className="flex gap-1">
+                      {filteredStories.map((_, index) => (
+                        <div
+                          key={index}
+                          className={`h-1.5 rounded-full transition-all duration-300 ${
+                            index === currentPage
+                              ? 'w-8 bg-orange-500'
+                              : 'w-1.5 bg-slate-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    // Show counter for more than 8 stories
+                    <div className="px-3 py-1 bg-slate-100 rounded-full">
+                      <span className="text-xs font-semibold text-slate-700">
+                        {currentPage + 1} / {filteredStories.length}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Single Story (Book Page) */}
+              {filteredStories.slice(currentPage, currentPage + 1).map((story) => (
+                <article
+                  key={story.id}
+                  className={`bg-white border border-slate-200 rounded-lg overflow-hidden ${
+                    isDragging ? '' : 'transition-all duration-300 ease-out'
+                  }`}
+                  style={{
+                    transform: `translateX(${dragOffset}px) scale(${isDragging ? 0.98 : 1})`,
+                    opacity: isDragging ? Math.max(0.7, 1 - Math.abs(dragOffset) / 800) : 1,
+                  }}
+                >
                 {/* Post Header */}
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3">
@@ -1007,6 +1105,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                 )}
               </article>
             ))}
+            </div>
           </>
         ) : (
           <div className="text-center py-20">
