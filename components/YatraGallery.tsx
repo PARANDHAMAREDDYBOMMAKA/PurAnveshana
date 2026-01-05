@@ -115,6 +115,9 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
   const [touchEnd, setTouchEnd] = useState<number>(0)
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState<number>(0)
+  const [allStories, setAllStories] = useState<YatraStory[]>([])
+  const [hasMore, setHasMore] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -153,7 +156,13 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       if (response.ok) {
         const data = await response.json()
 
-        setStories(data.stories)
+        // Store all stories for filtering
+        setAllStories(data.stories)
+
+        // Initially load only first 10 stories for performance
+        const initialStories = data.stories.slice(0, 10)
+        setStories(initialStories)
+        setHasMore(data.stories.length > 10)
 
         // Initialize like, save, and comment data from API response
         const newLikedStories: Record<string, boolean> = {}
@@ -183,6 +192,20 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const loadMoreStories = () => {
+    if (loadingMore || !hasMore) return
+
+    setLoadingMore(true)
+    const currentLength = stories.length
+    const nextStories = allStories.slice(currentLength, currentLength + 10)
+
+    setTimeout(() => {
+      setStories(prev => [...prev, ...nextStories])
+      setHasMore(currentLength + nextStories.length < allStories.length)
+      setLoadingMore(false)
+    }, 300)
   }
 
   const handleDelete = async (storyId: string) => {
@@ -439,7 +462,9 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
   }
 
   const filteredStories = useMemo(() => {
-    let filtered = [...stories]
+    // Use allStories for filtering if search/filter is active, otherwise use lazy-loaded stories
+    const sourceStories = searchQuery.trim() || (isAdmin && statusFilter !== 'all') ? allStories : stories
+    let filtered = [...sourceStories]
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
@@ -458,7 +483,15 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     }
 
     return filtered
-  }, [stories, searchQuery, statusFilter, isAdmin])
+  }, [stories, allStories, searchQuery, statusFilter, isAdmin])
+
+  // Auto-load more stories when user approaches the end
+  useEffect(() => {
+    // When user is within 3 stories of the end, load more
+    if (currentPage >= stories.length - 3 && hasMore && !loadingMore) {
+      loadMoreStories()
+    }
+  }, [currentPage, stories.length, hasMore, loadingMore])
 
   // Reset to first page when filters change
   useEffect(() => {
@@ -1113,6 +1146,16 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                 )}
               </article>
             ))}
+
+            {/* Loading More Indicator */}
+            {loadingMore && (
+              <div className="flex items-center justify-center py-8 mt-4">
+                <div className="flex items-center gap-3 text-orange-600">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="text-sm font-medium">Loading more stories...</span>
+                </div>
+              </div>
+            )}
             </div>
           </>
         ) : (

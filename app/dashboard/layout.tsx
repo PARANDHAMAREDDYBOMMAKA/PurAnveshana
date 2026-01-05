@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import BottomNav from '@/components/BottomNav'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -18,5 +19,12 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <>
+      <div className="pb-16 md:pb-0">
+        {children}
+      </div>
+      <BottomNav />
+    </>
+  )
 }

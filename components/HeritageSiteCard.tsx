@@ -73,8 +73,66 @@ export default function HeritageSiteCard({
   const [transactionId, setTransactionId] = useState('')
   const [paymentNotes, setPaymentNotes] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [touchStart, setTouchStart] = useState<number>(0)
+  const [touchEnd, setTouchEnd] = useState<number>(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragOffset, setDragOffset] = useState<number>(0)
 
   const canEdit = false
+
+  // Swipe handlers for image navigation in modal
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const target = e.target as HTMLElement
+    const isInteractive = target.closest('button, a, textarea, input, [role="button"]')
+
+    if (isInteractive) {
+      return
+    }
+
+    setTouchStart(e.targetTouches[0].clientX)
+    setIsDragging(true)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStart) return
+
+    const currentTouch = e.targetTouches[0].clientX
+    const diff = currentTouch - touchStart
+
+    const canSwipeLeft = selectedImage < site.images.length - 1
+    const canSwipeRight = selectedImage > 0
+
+    if ((diff < 0 && !canSwipeLeft) || (diff > 0 && !canSwipeRight)) {
+      setDragOffset(diff * 0.2)
+    } else {
+      setDragOffset(diff)
+    }
+
+    setTouchEnd(currentTouch)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) {
+      setIsDragging(false)
+      setDragOffset(0)
+      return
+    }
+
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 75
+    const isRightSwipe = distance < -75
+
+    if (isLeftSwipe && selectedImage < site.images.length - 1) {
+      setSelectedImage(selectedImage + 1)
+    } else if (isRightSwipe && selectedImage > 0) {
+      setSelectedImage(selectedImage - 1)
+    }
+
+    setIsDragging(false)
+    setDragOffset(0)
+    setTouchStart(0)
+    setTouchEnd(0)
+  }
 
   const handleEdit = async () => {
     setIsLoading(true)
@@ -254,7 +312,8 @@ export default function HeritageSiteCard({
               }`}>
                 {site.paymentStatus === 'COMPLETED' && <CheckCircle className="h-3.5 w-3.5" />}
                 {site.paymentStatus === 'IN_PROGRESS' && <Clock className="h-3.5 w-3.5 animate-pulse" />}
-                {site.paymentStatus === 'COMPLETED' ? 'Paid' :
+                {site.paymentStatus === 'COMPLETED' && site.paymentAmount ? `Paid ₹${site.paymentAmount}` :
+                 site.paymentStatus === 'COMPLETED' ? 'Paid' :
                  site.paymentStatus === 'IN_PROGRESS' ? 'Processing' :
                  'Pending'}
               </span>
@@ -374,29 +433,70 @@ export default function HeritageSiteCard({
 
             {/* Modal Content - Scrollable */}
             <div className="overflow-y-auto">
-              {/* Hero Image */}
-              <div className="relative w-full bg-linear-to-br from-slate-100 to-slate-50 flex items-center justify-center" style={{ minHeight: '300px', maxHeight: '500px' }}>
-                <div className="relative w-full h-full flex items-center justify-center p-4">
+              {/* Hero Image with Swipe */}
+              <div
+                className="relative w-full bg-linear-to-br from-slate-100 to-slate-50 flex items-center justify-center"
+                style={{ height: '500px' }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div
+                  className={`relative w-full h-full flex items-center justify-center p-4 ${
+                    isDragging ? '' : 'transition-all duration-300 ease-out'
+                  }`}
+                  style={{
+                    transform: `translateX(${dragOffset}px)`,
+                    opacity: isDragging ? Math.max(0.7, 1 - Math.abs(dragOffset) / 800) : 1,
+                  }}
+                >
                   {isVideo(currentImageUrl) ? (
                     <video
                       src={currentImageUrl}
                       controls
                       className="max-w-full max-h-full object-contain"
-                      style={{ width: '100%', height: 'auto', maxHeight: '500px' }}
                     />
                   ) : (
-                    <div className="relative w-full" style={{ maxHeight: '500px', aspectRatio: 'auto' }}>
-                      <Image
-                        src={currentImageUrl}
-                        alt={site.title}
-                        width={1200}
-                        height={800}
-                        className="object-contain w-full h-auto"
-                        style={{ maxHeight: '500px' }}
-                      />
-                    </div>
+                    <Image
+                      src={currentImageUrl}
+                      alt={site.title}
+                      width={1200}
+                      height={800}
+                      className="object-contain max-w-full max-h-full"
+                    />
                   )}
                 </div>
+
+                {/* Navigation Buttons for Desktop Only */}
+                {site.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setSelectedImage(Math.max(0, selectedImage - 1))}
+                      disabled={selectedImage === 0}
+                      className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all z-10"
+                    >
+                      <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => setSelectedImage(Math.min(site.images.length - 1, selectedImage + 1))}
+                      disabled={selectedImage === site.images.length - 1}
+                      className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all z-10"
+                    >
+                      <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
+
+                {/* Image Counter */}
+                {site.images.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/70 backdrop-blur-xl text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-10">
+                    {selectedImage + 1} / {site.images.length}
+                  </div>
+                )}
               </div>
 
               {/* Content */}
@@ -417,7 +517,8 @@ export default function HeritageSiteCard({
                       site.paymentStatus === 'IN_PROGRESS' ? 'bg-yellow-100 text-yellow-700' :
                       'bg-gray-100 text-gray-700'
                     }`}>
-                      {site.paymentStatus === 'COMPLETED' ? '✓ Paid' :
+                      {site.paymentStatus === 'COMPLETED' && site.paymentAmount ? `✓ Paid ₹${site.paymentAmount}` :
+                       site.paymentStatus === 'COMPLETED' ? '✓ Paid' :
                        site.paymentStatus === 'IN_PROGRESS' ? 'Processing' :
                        'Pending Payment'}
                     </div>
@@ -470,44 +571,6 @@ export default function HeritageSiteCard({
                     <p className="text-sm text-gray-600">{verifiedCount} of {site.images.length} verified</p>
                   </div>
                 </div>
-
-                {/* Image Gallery */}
-                {site.images.length > 1 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">All Images ({site.images.length})</h3>
-                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                      {site.images.map((img, idx) => {
-                        const imgUrl = getImageUrl(img)
-                        return (
-                          <div
-                            key={img.id}
-                            onClick={() => setSelectedImage(idx)}
-                            className={`relative aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
-                              idx === selectedImage ? 'border-orange-500 ring-2 ring-orange-200' : 'border-slate-200 hover:border-orange-300'
-                            }`}
-                          >
-                            {isVideo(imgUrl) ? (
-                              <video src={imgUrl} className="w-full h-full object-cover" />
-                            ) : (
-                              <Image
-                                src={imgUrl}
-                                alt={`${site.title} ${idx + 1}`}
-                                fill
-                                className="object-cover"
-                                sizes="100px"
-                              />
-                            )}
-                            {img.isVerified && (
-                              <div className="absolute top-1 right-1 bg-green-500 rounded-full p-0.5">
-                                <CheckCircle className="h-3 w-3 text-white" />
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
 
                 {/* Reference Links */}
                 {site.referenceLinks && site.referenceLinks.length > 0 && (

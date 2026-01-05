@@ -41,6 +41,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
   const [searchQuery, setSearchQuery] = useState('')
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [yatraStats, setYatraStats] = useState({ total: 0, pendingReview: 0 })
+  const [totalUsers, setTotalUsers] = useState(0)
 
   useEffect(() => {
     const newDisplaySites = !isAdmin && (!initialSites || initialSites.length === 0)
@@ -60,6 +61,18 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
           setYatraStats({ total, pendingReview })
         })
         .catch(err => console.error('Error fetching yatra stats:', err))
+    }
+  }, [isAdmin])
+
+  // Fetch total user count for admin
+  useEffect(() => {
+    if (isAdmin) {
+      fetch('/api/admin/users/count')
+        .then(res => res.json())
+        .then(data => {
+          setTotalUsers(data.count || 0)
+        })
+        .catch(err => console.error('Error fetching user count:', err))
     }
   }, [isAdmin])
 
@@ -114,7 +127,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
   const pendingPayments = sites?.filter((site: any) => site.paymentStatus === 'NOT_STARTED').length || 0
   const inProgressPayments = sites?.filter((site: any) => site.paymentStatus === 'IN_PROGRESS').length || 0
   const completedPayments = sites?.filter((site: any) => site.paymentStatus === 'COMPLETED').length || 0
-  const uniqueUsers = [...new Set(sites?.map((site: any) => site.userId))].length || 0
 
   return (
     <>
@@ -368,7 +380,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
                   <Users className="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" />
                 </div>
               </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{uniqueUsers}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{totalUsers}</p>
               <p className="text-xs sm:text-sm text-gray-600 mt-1">Users</p>
             </div>
 
