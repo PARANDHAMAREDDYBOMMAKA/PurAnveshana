@@ -32,6 +32,10 @@ export async function GET(request: Request) {
         membershipTier: profile.membershipTier,
         createdAt: profile.createdAt,
       },
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
     })
   } catch (error: any) {
     console.error('Profile fetch error:', error)

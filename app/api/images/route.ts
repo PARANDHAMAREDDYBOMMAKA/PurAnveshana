@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma'
 import { withRetry } from '@/lib/db-utils'
 import { deleteFromR2 } from '@/lib/r2'
 import { v2 as cloudinary } from 'cloudinary'
-import { getCached, setCached, deleteCached, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -32,22 +31,8 @@ export async function GET(request: Request) {
 
     // Make role comparison case-insensitive and robust
     const isAdmin = profile.role?.toString().toLowerCase().trim() === 'admin'
-    console.log('[GET /api/images] Email:', profile.email, '| Role:', profile.role, '| IsAdmin:', isAdmin)
 
-    const cacheKey = isAdmin
-      ? `${CACHE_KEYS.HERITAGE_SITES}admin`
-      : `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
-
-    const cached = await getCached<any>(cacheKey)
-    if (cached) {
-      return NextResponse.json(cached, {
-        headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-          'X-Cache-Status': 'HIT',
-        },
-      })
-    }
-
+    // CACHING DISABLED - fetch fresh data every time
     let sites: any[] = []
 
     try {
@@ -124,11 +109,10 @@ export async function GET(request: Request) {
         userRole: profile.role,
       }
 
-      await setCached(cacheKey, response, CACHE_TTL.MEDIUM)
-
+      // CACHING DISABLED - return fresh data with no-cache headers
       return NextResponse.json(response, {
         headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
         },
       })
     } catch (err) {
@@ -231,14 +215,6 @@ export async function POST(request: Request) {
       })
     )
 
-    // Clear admin cache (all admins need to see new site) and user's cache
-    const adminCacheKey = `${CACHE_KEYS.HERITAGE_SITES}admin`
-    const userCacheKey = `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
-    await Promise.all([
-      deleteCached(adminCacheKey),
-      deleteCached(userCacheKey),
-    ])
-
     return NextResponse.json({ success: true, data: site })
   } catch (error: any) {
     console.error('Error in POST /api/images:', error)
@@ -315,14 +291,6 @@ export async function PUT(request: Request) {
         },
       })
     )
-
-    // Clear admin cache (all admins need to see updated site) and user's cache
-    const adminCacheKey = `${CACHE_KEYS.HERITAGE_SITES}admin`
-    const userCacheKey = `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
-    await Promise.all([
-      deleteCached(adminCacheKey),
-      deleteCached(userCacheKey),
-    ])
 
     return NextResponse.json({ success: true, data: updatedSite })
   } catch (error: any) {
@@ -408,14 +376,6 @@ export async function DELETE(request: Request) {
         where: { id: siteId },
       })
     )
-
-    // Clear admin cache (all admins need to see deletion) and user's cache
-    const adminCacheKey = `${CACHE_KEYS.HERITAGE_SITES}admin`
-    const userCacheKey = `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
-    await Promise.all([
-      deleteCached(adminCacheKey),
-      deleteCached(userCacheKey),
-    ])
 
     return NextResponse.json({ success: true, message: 'Heritage site deleted successfully' })
   } catch (error: any) {
