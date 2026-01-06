@@ -90,7 +90,6 @@ export default function VersionHistory({ storyId, currentVersion }: VersionHisto
         toast.success('Version restored successfully!')
         setShowModal(false)
         fetchVersions()
-        // Refresh the page to show updated story
         setTimeout(() => window.location.reload(), 1000)
       } else {
         const error = await response.json()

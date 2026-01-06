@@ -3,10 +3,6 @@ import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { invalidatePattern, CACHE_KEYS } from '@/lib/redis';
 
-/**
- * POST /api/notifications/mark-all-read
- * Mark all notifications as read for the user
- */
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
@@ -25,7 +21,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Invalidate cache
     await invalidatePattern(`${CACHE_KEYS.NOTIFICATIONS}${session.userId}*`);
 
     return NextResponse.json({

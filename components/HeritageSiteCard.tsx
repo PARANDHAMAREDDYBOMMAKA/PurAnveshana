@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import toast from 'react-hot-toast'
 import {
   MapPin,
@@ -52,7 +52,7 @@ interface HeritageSiteCardProps {
   userId?: string
 }
 
-export default function HeritageSiteCard({
+const HeritageSiteCard = memo(function HeritageSiteCard({
   site,
   showUser = false,
   isOwner = false,
@@ -80,7 +80,6 @@ export default function HeritageSiteCard({
 
   const canEdit = false
 
-  // Swipe handlers for image navigation in modal
   const handleTouchStart = (e: React.TouchEvent) => {
     const target = e.target as HTMLElement
     const isInteractive = target.closest('button, a, textarea, input, [role="button"]')
@@ -250,7 +249,6 @@ export default function HeritageSiteCard({
   }
   const currentImageUrl = getImageUrl(currentImage)
 
-  // Type color mapping
   const typeColors: Record<string, string> = {
     'TEMPLE': 'bg-purple-100 text-purple-700 border-purple-200',
     'FORT_PALACE': 'bg-red-100 text-red-700 border-red-200',
@@ -270,9 +268,7 @@ export default function HeritageSiteCard({
 
   return (
     <>
-      {/* Modern Card Design */}
       <div className="group relative bg-linear-to-br from-white via-orange-50/20 to-white rounded-3xl shadow-lg hover:shadow-2xl overflow-hidden border border-slate-200/50 transition-all duration-500 flex flex-col h-full hover:-translate-y-2">
-        {/* Image Section with Overlay */}
         <div className="relative h-52 overflow-hidden bg-linear-to-br from-slate-100 via-slate-50 to-blue-50">
           {isVideo(currentImageUrl) ? (
             <video
@@ -289,11 +285,9 @@ export default function HeritageSiteCard({
             />
           )}
 
-          {/* Gradient Overlay with shimmer effect */}
           <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
           <div className="absolute inset-0 bg-linear-to-br from-orange-500/10 via-transparent to-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* Top Left - Type Badge with glassmorphism */}
           {site.type && (
             <div className="absolute top-3 left-3 z-10">
               <span className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-xl bg-white/90 border shadow-lg ${typeColor.replace('bg-', 'border-')}`}>
@@ -302,7 +296,6 @@ export default function HeritageSiteCard({
             </div>
           )}
 
-          {/* Top Right - Payment Status with glassmorphism */}
           {site.paymentStatus && (
             <div className="absolute top-3 right-3 z-10">
               <span className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-xl flex items-center gap-1.5 shadow-lg border ${
@@ -320,7 +313,6 @@ export default function HeritageSiteCard({
             </div>
           )}
 
-          {/* Bottom Left - Image Count with glassmorphism */}
           {site.images.length > 1 && (
             <div className="absolute bottom-3 left-3 z-10 bg-slate-900/70 backdrop-blur-xl border border-white/20 text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg">
               <Camera className="h-3.5 w-3.5" />
@@ -328,7 +320,6 @@ export default function HeritageSiteCard({
             </div>
           )}
 
-          {/* Bottom Right - Verified Badge with glow effect */}
           {verifiedCount > 0 && (
             <div className="absolute bottom-3 right-3 z-10">
               <div className="absolute inset-0 bg-emerald-400 rounded-full blur-md opacity-50" />
@@ -340,21 +331,16 @@ export default function HeritageSiteCard({
           )}
         </div>
 
-        {/* Content Section */}
         <div className="p-6 flex-1 flex flex-col">
-          {/* Title */}
           <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors leading-tight">
             {site.title}
           </h3>
 
-          {/* Description */}
           <p className="text-sm text-slate-600 mb-4 line-clamp-3 flex-1 leading-relaxed">
             {site.description}
           </p>
 
-          {/* Metadata Grid */}
           <div className="space-y-2.5 mb-4">
-            {/* Location */}
             <div className="flex items-center gap-2.5 text-sm text-slate-700">
               <div className="p-1.5 bg-orange-100 rounded-lg">
                 <MapPin className="h-3.5 w-3.5 text-orange-600 shrink-0" />
@@ -362,7 +348,6 @@ export default function HeritageSiteCard({
               <span className="truncate font-medium">{currentImage.location}</span>
             </div>
 
-            {/* Created Date */}
             <div className="flex items-center gap-2.5 text-sm text-slate-700">
               <div className="p-1.5 bg-blue-100 rounded-lg">
                 <Calendar className="h-3.5 w-3.5 text-blue-600 shrink-0" />
@@ -370,7 +355,6 @@ export default function HeritageSiteCard({
               <span className="font-medium">{new Date(site.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
             </div>
 
-            {/* Admin: Show User Email */}
             {showUser && site.profile?.email && (
               <div className="flex items-center gap-2.5 text-sm text-slate-700">
                 <div className="p-1.5 bg-purple-100 rounded-lg">
@@ -383,7 +367,6 @@ export default function HeritageSiteCard({
             )}
           </div>
 
-          {/* Actions with modern gradient button */}
           <div className="flex items-center gap-2 mt-auto pt-4 border-t border-slate-200">
             <button
               onClick={() => setShowDetailsModal(true)}
@@ -413,7 +396,6 @@ export default function HeritageSiteCard({
         </div>
       </div>
 
-      {/* Details Modal - Keep existing modal code */}
       {showDetailsModal && (
         <div
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
@@ -423,7 +405,6 @@ export default function HeritageSiteCard({
             className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full my-4 sm:my-8 mx-auto overflow-hidden max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button
               onClick={() => setShowDetailsModal(false)}
               className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center text-slate-700 hover:text-slate-900 transition-all shadow-lg"
@@ -431,9 +412,7 @@ export default function HeritageSiteCard({
               <X className="w-5 h-5" />
             </button>
 
-            {/* Modal Content - Scrollable */}
             <div className="overflow-y-auto">
-              {/* Hero Image with Swipe */}
               <div
                 className="relative w-full bg-linear-to-br from-slate-100 to-slate-50 flex items-center justify-center"
                 style={{ height: '500px' }}
@@ -467,7 +446,6 @@ export default function HeritageSiteCard({
                   )}
                 </div>
 
-                {/* Navigation Buttons for Desktop Only */}
                 {site.images.length > 1 && (
                   <>
                     <button
@@ -491,7 +469,6 @@ export default function HeritageSiteCard({
                   </>
                 )}
 
-                {/* Image Counter */}
                 {site.images.length > 1 && (
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/70 backdrop-blur-xl text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-10">
                     {selectedImage + 1} / {site.images.length}
@@ -499,9 +476,7 @@ export default function HeritageSiteCard({
                 )}
               </div>
 
-              {/* Content */}
               <div className="p-6 sm:p-8">
-                {/* Title and Type */}
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1">
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">{site.title}</h2>
@@ -525,13 +500,11 @@ export default function HeritageSiteCard({
                   )}
                 </div>
 
-                {/* Description */}
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
                   <p className="text-gray-700 leading-relaxed">{site.description}</p>
                 </div>
 
-                {/* Metadata */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <div className="bg-slate-50 rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-2">
@@ -572,7 +545,6 @@ export default function HeritageSiteCard({
                   </div>
                 </div>
 
-                {/* Reference Links */}
                 {site.referenceLinks && site.referenceLinks.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">Reference Links</h3>
@@ -593,7 +565,6 @@ export default function HeritageSiteCard({
                   </div>
                 )}
 
-                {/* Admin Actions */}
                 {showUser && site.paymentStatus !== 'COMPLETED' && (
                   <div className="flex gap-3 pt-6 border-t border-gray-200">
                     <button
@@ -614,7 +585,6 @@ export default function HeritageSiteCard({
         </div>
       )}
 
-      {/* Payment Modal - Keep existing payment modal code */}
       {showPaymentModal && (
         <div
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
@@ -714,4 +684,6 @@ export default function HeritageSiteCard({
       )}
     </>
   )
-}
+})
+
+export default HeritageSiteCard

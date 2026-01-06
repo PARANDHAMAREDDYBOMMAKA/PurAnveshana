@@ -49,6 +49,9 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
         throw new Error('Logout failed')
       }
 
+      // Clear the yatra prompt flag so it shows again on next login
+      localStorage.removeItem('yatraPromptShown')
+
       toast.success('Logged out successfully')
       router.push('/')
     } catch (error) {
@@ -70,7 +73,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
               </div>
-            </div>
+           \ </div>
             <div className="flex flex-col min-w-0">
               <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
                 Puranveshana

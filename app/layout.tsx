@@ -154,7 +154,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google tag (gtag.js) */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17767521164"></script>
         <script
           dangerouslySetInnerHTML={{
@@ -166,7 +165,6 @@ export default function RootLayout({
             `
           }}
         />
-        {/* Suppress Google Translate DOM manipulation errors */}
         <script
           dangerouslySetInnerHTML={{
             __html: `

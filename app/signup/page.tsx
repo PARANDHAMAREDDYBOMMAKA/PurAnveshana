@@ -104,16 +104,13 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-slate-50">
-      {/* Left Side - Decorative */}
       <div className="hidden md:flex md:w-5/12 lg:w-1/2 relative bg-linear-to-br from-orange-500 via-amber-500 to-orange-600 p-6 md:p-8 lg:p-12 items-center justify-center overflow-hidden">
-        {/* Animated background patterns */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-48 md:w-64 lg:w-72 h-48 md:h-64 lg:h-72 bg-white rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-0 right-0 w-64 md:w-80 lg:w-96 h-64 md:h-80 lg:h-96 bg-white rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
           <div className="absolute top-1/2 left-1/2 w-48 md:w-56 lg:w-64 h-48 md:h-56 lg:h-64 bg-white rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}} />
         </div>
 
-        {/* Content */}
         <div className="relative z-10 max-w-md text-white">
           <div className="mb-6 md:mb-8">
             <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
@@ -135,7 +132,6 @@ export default function SignupPage() {
               Join thousands of heritage enthusiasts documenting and preserving India's cultural treasures.
             </p>
 
-            {/* Features */}
             <div className="space-y-3 md:space-y-4">
               {[
                 'Free account with unlimited uploads',
@@ -156,16 +152,13 @@ export default function SignupPage() {
         </div>
       </div>
 
-      {/* Right Side - Form */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 relative min-h-screen md:min-h-0">
-        {/* Mobile background */}
         <div className="absolute inset-0 md:hidden">
           <div className="absolute top-0 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-orange-200 rounded-full blur-3xl opacity-20 animate-pulse" />
           <div className="absolute bottom-0 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-amber-200 rounded-full blur-3xl opacity-20 animate-pulse" style={{animationDelay: '1s'}} />
         </div>
 
         <div className="w-full max-w-md relative z-10">
-          {/* Mobile Logo */}
           <Link href="/" className="md:hidden flex items-center justify-center gap-2 mb-6 sm:mb-8 group">
             <div className="w-10 sm:w-12 h-10 sm:h-12 bg-linear-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
               <svg className="w-6 sm:w-7 h-6 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,7 +175,6 @@ export default function SignupPage() {
             </div>
           </Link>
 
-          {/* Form Card */}
           <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 border border-slate-200/50 backdrop-blur-xl max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto">
             <div className="mb-5 sm:mb-6">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-2">

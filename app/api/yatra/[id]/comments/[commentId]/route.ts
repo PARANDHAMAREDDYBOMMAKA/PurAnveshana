@@ -15,7 +15,6 @@ export async function DELETE(
 
     const { commentId } = await params
 
-    // Find the comment
     const comment = await withRetry(() =>
       prisma.yatraComment.findUnique({
         where: { id: commentId },
@@ -26,7 +25,6 @@ export async function DELETE(
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 })
     }
 
-    // Check if the user owns the comment
     if (comment.userId !== session.userId) {
       return NextResponse.json(
         { error: 'You can only delete your own comments' },
@@ -34,7 +32,6 @@ export async function DELETE(
       )
     }
 
-    // Delete the comment
     await withRetry(() =>
       prisma.yatraComment.delete({
         where: { id: commentId },

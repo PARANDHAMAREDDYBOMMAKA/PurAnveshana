@@ -26,7 +26,6 @@ export default async function YatraPage() {
       <Navbar userEmail={userEmail} isAdmin={isAdmin} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Show pending banner only for non-admin users */}
         {!isAdmin && <YatraPendingBanner />}
 
         <YatraGallery userId={session.userId} isAdmin={isAdmin} />

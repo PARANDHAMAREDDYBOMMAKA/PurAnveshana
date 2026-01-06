@@ -102,7 +102,6 @@ export default function NotificationPreferencesPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-4 sm:py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="mb-6 sm:mb-8">
           <button
             onClick={() => router.back()}
@@ -121,7 +120,6 @@ export default function NotificationPreferencesPage() {
         </div>
 
         <div className="space-y-6">
-          {/* Email Notifications */}
           <div className="bg-white rounded-lg shadow-sm border border-orange-200 p-4 sm:p-6">
             <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">
               Email Notifications
@@ -158,7 +156,6 @@ export default function NotificationPreferencesPage() {
             </div>
           </div>
 
-          {/* Push Notifications */}
           <div className="bg-white rounded-lg shadow-sm border border-orange-200 p-4 sm:p-6">
             <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">
               Push Notifications
@@ -195,7 +192,6 @@ export default function NotificationPreferencesPage() {
             </div>
           </div>
 
-          {/* Save Button */}
           <div className="flex justify-end">
             <button
               onClick={savePreferences}

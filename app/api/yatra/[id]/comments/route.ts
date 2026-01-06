@@ -23,7 +23,6 @@ export async function GET(
       })
     )
 
-    // Fetch all users in a single query to avoid N+1
     const userIds = [...new Set(comments.map((c) => c.userId))]
     const users = await withRetry(() =>
       prisma.profile.findMany({
@@ -32,7 +31,6 @@ export async function GET(
       })
     )
 
-    // Create a map for O(1) lookups
     const userMap = new Map(users.map((u) => [u.id, u]))
 
     const commentsWithUsers = comments.map((comment) => ({
@@ -96,7 +94,6 @@ export async function POST(
       ),
     ])
 
-    // Send notification to story owner
     if (story && user) {
       await notifyStoryComment(
         id,

@@ -2,7 +2,6 @@ import { POST as loginHandler } from '@/app/api/auth/login/route'
 import { POST as signupHandler } from '@/app/api/auth/signup/route'
 import { POST as logoutHandler } from '@/app/api/auth/logout/route'
 
-// Mock dependencies
 jest.mock('@/lib/prisma', () => ({
   prisma: {
     profile: {
@@ -124,7 +123,6 @@ describe('Auth API Routes', () => {
         method: 'POST',
         body: JSON.stringify({
           email: 'test@example.com',
-          // missing name and password
         }),
         headers: { 'Content-Type': 'application/json' },
       })

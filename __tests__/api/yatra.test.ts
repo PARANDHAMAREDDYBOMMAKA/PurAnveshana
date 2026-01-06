@@ -3,7 +3,6 @@ import { POST as approveYatra } from '@/app/api/yatra/[id]/approve/route'
 import { POST as likeYatra, GET as getLikeStatus } from '@/app/api/yatra/[id]/like/route'
 import { POST as createComment, GET as getComments } from '@/app/api/yatra/[id]/comments/route'
 
-// Mock dependencies
 jest.mock('@/lib/auth/session', () => ({
   getSession: jest.fn(),
 }))

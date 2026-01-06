@@ -30,11 +30,15 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    // Try to get from cache
     const cacheKey = `${CACHE_KEYS.HERITAGE_SITES}${profile.role}:${profile.id}`
     const cached = await getCached<any>(cacheKey)
     if (cached) {
-      return NextResponse.json(cached)
+      return NextResponse.json(cached, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          'X-Cache-Status': 'HIT',
+        },
+      })
     }
 
     let sites: any[] = []
@@ -82,7 +86,6 @@ export async function GET(request: Request) {
         )
       }
 
-      // Fetch all payments in a single query to avoid N+1
       const siteIds = sites.map((s) => s.id)
       const allPayments = await withRetry(() =>
         prisma.payment.findMany({
@@ -97,7 +100,6 @@ export async function GET(request: Request) {
         })
       )
 
-      // Group payments by heritageSiteId for O(1) lookup
       const paymentMap = new Map<string, number>()
       allPayments.forEach((payment) => {
         const current = paymentMap.get(payment.heritageSiteId || '') || 0
@@ -115,10 +117,13 @@ export async function GET(request: Request) {
         userRole: profile.role,
       }
 
-      // Cache the response
       await setCached(cacheKey, response, CACHE_TTL.MEDIUM)
 
-      return NextResponse.json(response)
+      return NextResponse.json(response, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        },
+      })
     } catch (err) {
       console.error('Error fetching from new schema:', err)
       sites = []
@@ -219,8 +224,12 @@ export async function POST(request: Request) {
       })
     )
 
-    // Invalidate cache for this user
-    await deleteCached(`${CACHE_KEYS.HERITAGE_SITES}*`)
+    const userCacheKey = `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
+    const adminCacheKey = `${CACHE_KEYS.HERITAGE_SITES}admin:${profile.id}`
+    await Promise.all([
+      deleteCached(userCacheKey),
+      deleteCached(adminCacheKey),
+    ])
 
     return NextResponse.json({ success: true, data: site })
   } catch (error: any) {

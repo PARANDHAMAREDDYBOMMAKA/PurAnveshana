@@ -22,7 +22,6 @@ export default async function PaymentHistoryPage() {
 
   const userEmail = profile?.email || ''
 
-  // Fetch payment stats
   const sites = await prisma.heritageSite.findMany({
     where: { userId: session.userId },
     select: {

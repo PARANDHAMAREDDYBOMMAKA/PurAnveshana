@@ -53,17 +53,15 @@ export default function BottomNav() {
               onClick={() => router.push(item.path)}
               className="relative flex flex-col items-center justify-center gap-1 flex-1 h-full group"
             >
-              {/* Active indicator */}
               {active && (
-                <div className={`absolute -top-0.5 left-1/2 -translate-x-1/2 w-12 h-1 rounded-full bg-gradient-to-r ${item.gradient}`}></div>
+                <div className={`absolute -top-0.5 left-1/2 -translate-x-1/2 w-12 h-1 rounded-full bg-linear-to-r ${item.gradient}`}></div>
               )}
 
-              {/* Icon container */}
               <div className={`relative transition-all duration-300 ${active ? 'scale-110' : 'scale-100 group-hover:scale-105'}`}>
                 {active && (
                   <>
-                    <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-xl blur-lg opacity-50`}></div>
-                    <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-xl`}></div>
+                    <div className={`absolute inset-0 bg-linear-to-r ${item.gradient} rounded-xl blur-lg opacity-50`}></div>
+                    <div className={`absolute inset-0 bg-linear-to-r ${item.gradient} rounded-xl`}></div>
                   </>
                 )}
                 <div className={`relative p-2 rounded-xl ${active ? '' : 'group-hover:bg-slate-100'}`}>
@@ -74,7 +72,7 @@ export default function BottomNav() {
               {/* Label */}
               <span className={`text-xs font-semibold transition-colors ${
                 active
-                  ? `bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`
+                  ? `bg-linear-to-r ${item.gradient} bg-clip-text text-transparent`
                   : 'text-slate-600 group-hover:text-slate-900'
               }`}>
                 {item.name}

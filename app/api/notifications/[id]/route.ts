@@ -3,10 +3,6 @@ import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { invalidatePattern, CACHE_KEYS } from '@/lib/redis';
 
-/**
- * PATCH /api/notifications/[id]
- * Mark a notification as read/unread
- */
 export async function PATCH(
   request: NextRequest,
   props: { params: Promise<{ id: string }> }
@@ -21,7 +17,6 @@ export async function PATCH(
     const notificationId = params.id;
     const { isRead } = await request.json();
 
-    // Check if notification belongs to user
     const notification = await prisma.notification.findUnique({
       where: { id: notificationId },
     });
@@ -37,7 +32,6 @@ export async function PATCH(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Update notification
     const updated = await prisma.notification.update({
       where: { id: notificationId },
       data: {
@@ -46,7 +40,6 @@ export async function PATCH(
       },
     });
 
-    // Invalidate cache
     await invalidatePattern(`${CACHE_KEYS.NOTIFICATIONS}${session.userId}*`);
 
     return NextResponse.json({ success: true, notification: updated });
@@ -59,10 +52,6 @@ export async function PATCH(
   }
 }
 
-/**
- * DELETE /api/notifications/[id]
- * Delete a specific notification
- */
 export async function DELETE(
   request: NextRequest,
   props: { params: Promise<{ id: string }> }
@@ -76,7 +65,6 @@ export async function DELETE(
     const params = await props.params;
     const notificationId = params.id;
 
-    // Check if notification belongs to user
     const notification = await prisma.notification.findUnique({
       where: { id: notificationId },
     });
@@ -92,12 +80,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Delete notification
     await prisma.notification.delete({
       where: { id: notificationId },
     });
 
-    // Invalidate cache
     await invalidatePattern(`${CACHE_KEYS.NOTIFICATIONS}${session.userId}*`);
 
     return NextResponse.json({

@@ -108,7 +108,6 @@ export async function PUT(
       )
     }
 
-    // Get the latest version number
     const latestVersion = await withRetry(() =>
       prisma.yatraStoryVersion.findFirst({
         where: { storyId: id },
@@ -119,9 +118,7 @@ export async function PUT(
 
     const nextVersionNumber = (latestVersion?.versionNumber || 0) + 1
 
-    // Create version snapshot and update story in a transaction
     const updatedStory = await prisma.$transaction(async (tx) => {
-      // Save current state as a version
       await tx.yatraStoryVersion.create({
         data: {
           storyId: id,
@@ -141,7 +138,6 @@ export async function PUT(
         },
       })
 
-      // Update the story
       return await tx.yatraStory.update({
         where: { id },
         data: {
@@ -162,7 +158,6 @@ export async function PUT(
       })
     })
 
-    // Invalidate cache
     await invalidatePattern(`${CACHE_KEYS.YATRA_STORY}${id}*`)
     await invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`)
 

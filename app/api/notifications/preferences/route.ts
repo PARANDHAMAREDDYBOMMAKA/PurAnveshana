@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 
-/**
- * GET /api/notifications/preferences
- * Get notification preferences for the user
- */
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -17,7 +13,6 @@ export async function GET(request: NextRequest) {
       where: { userId: session.userId },
     });
 
-    // Create default preferences if they don't exist
     if (!preferences) {
       preferences = await prisma.notificationPreference.create({
         data: {
@@ -36,10 +31,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * PUT /api/notifications/preferences
- * Update notification preferences for the user
- */
 export async function PUT(request: NextRequest) {
   try {
     const session = await getSession();

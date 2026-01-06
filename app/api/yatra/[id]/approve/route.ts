@@ -15,7 +15,6 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Only admins can approve stories
     if (session.role !== 'admin') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
@@ -59,7 +58,6 @@ export async function POST(
       })
     )
 
-    // Send appropriate notification
     if (action === 'approve') {
       await notifyStoryApproved(id, story.userId, story.title)
     } else if (action === 'feature') {

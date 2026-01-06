@@ -25,6 +25,8 @@ export default function ProfileDropdown({ userEmail }: ProfileDropdownProps) {
         throw new Error('Logout failed')
       }
 
+      localStorage.removeItem('yatraPromptShown')
+
       toast.success('Logged out successfully')
       router.push('/')
     } catch (error) {

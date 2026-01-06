@@ -23,7 +23,13 @@ export default function YatraPromptModal() {
   const router = useRouter()
 
   useEffect(() => {
-    checkUnpromptedSites()
+    // Only check for unprompted sites if we haven't shown the modal in this session
+    const hasShownModal = localStorage.getItem('yatraPromptShown')
+    if (!hasShownModal) {
+      checkUnpromptedSites()
+    } else {
+      setLoading(false)
+    }
   }, [])
 
   // Lock body scroll when modal is open
@@ -47,6 +53,8 @@ export default function YatraPromptModal() {
           setSites(data.sites)
           setSelectedSite(data.sites[0])
           setIsOpen(true)
+          // Mark that we've shown the modal in this session
+          localStorage.setItem('yatraPromptShown', 'true')
         }
       }
     } catch (error) {

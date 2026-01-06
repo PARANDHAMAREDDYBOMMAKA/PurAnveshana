@@ -42,7 +42,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  // Cleanup camera stream on unmount
   useEffect(() => {
     return () => {
       if (cameraStream) {
@@ -51,7 +50,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     }
   }, [cameraStream])
 
-  // Get current location
   const getCurrentLocation = (): Promise<{latitude: number, longitude: number}> => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
@@ -78,7 +76,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     })
   }
 
-  // Open camera modal
   const openCamera = async () => {
     try {
       // Request location first
@@ -88,13 +85,11 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       toast.dismiss()
       toast.success('Location acquired!')
 
-      // Get location name
       const locationName = await reverseGeocode(location.latitude, location.longitude)
       if (locationName && !sharedLocation) {
         setSharedLocation(locationName)
       }
 
-      // Request camera access
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
         audio: false
@@ -104,7 +99,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       setShowCameraModal(true)
       setShowUploadOptions(false)
 
-      // Set video stream
       setTimeout(() => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream
@@ -121,7 +115,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     }
   }
 
-  // Close camera modal
   const closeCamera = () => {
     if (cameraStream) {
       cameraStream.getTracks().forEach(track => track.stop())
@@ -130,41 +123,33 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     setShowCameraModal(false)
   }
 
-  // Capture photo from camera
   const capturePhoto = async () => {
     if (!videoRef.current || !canvasRef.current || !currentLocation) return
 
     const video = videoRef.current
     const canvas = canvasRef.current
 
-    // Set canvas dimensions to match video
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
 
-    // Draw video frame to canvas
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-    // Convert canvas to blob
     canvas.toBlob(async (blob) => {
       if (!blob) {
         toast.error('Failed to capture photo')
         return
       }
 
-      // Create file from blob
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
       const file = new File([blob], `IMG_${timestamp}.jpg`, { type: 'image/jpeg' })
 
-      // Create preview
       const preview = URL.createObjectURL(blob)
 
-      // Get location name
       const locationName = await reverseGeocode(currentLocation.latitude, currentLocation.longitude)
 
-      // Create file data with live capture info
       const fileData: FileWithPreview = {
         file,
         preview,
@@ -184,12 +169,10 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       setSelectedFiles(prev => [...prev, fileData])
       toast.success('Photo captured!')
 
-      // Update shared location if not set
       if (!sharedLocation && locationName) {
         setSharedLocation(locationName)
       }
 
-      // Close camera modal
       closeCamera()
     }, 'image/jpeg', 0.95)
   }
@@ -201,7 +184,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     const MAX_VIDEO_DURATION = 300 // 5 minutes in seconds
     const fileArray = Array.from(files)
 
-    // Show previews immediately for better UX
     const initialPreviews: FileWithPreview[] = []
 
     for (const file of fileArray) {
@@ -213,7 +195,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         continue
       }
 
-      // Create preview immediately
       const preview = URL.createObjectURL(file)
 
       initialPreviews.push({
@@ -226,17 +207,14 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       })
     }
 
-    // Add files with previews immediately
     setSelectedFiles(prev => [...prev, ...initialPreviews])
     toast.success(`Processing ${initialPreviews.length} file${initialPreviews.length > 1 ? 's' : ''}...`)
 
-    // Process EXIF data in background
     for (let i = 0; i < initialPreviews.length; i++) {
       const fileData = initialPreviews[i]
       const file = fileData.file
 
       if (fileData.isVideo) {
-        // Check video duration
         const videoData = await new Promise<{duration: number, metadata: any}>((resolve) => {
           const video = document.createElement('video')
           video.preload = 'metadata'
@@ -265,7 +243,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           continue
         }
 
-        // Update with video data
         setSelectedFiles(prev => prev.map(f =>
           f.file === file ? {
             ...f,
@@ -281,7 +258,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           } : f
         ))
       } else {
-        // Process image EXIF data
         try {
           const exifData = await extractExifData(file)
 
@@ -293,7 +269,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
           let autoDetectedLocation: string | null = null
 
-          // Extract GPS location
           if (exifData.latitude && exifData.longitude) {
             const locationName = await reverseGeocode(exifData.latitude, exifData.longitude)
             if (locationName) {
@@ -304,7 +279,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             }
           }
 
-          // Update file with EXIF data
           setSelectedFiles(prev => prev.map(f =>
             f.file === file ? {
               ...f,
@@ -350,33 +324,27 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       return
     }
 
-    // Validate description word count (minimum 20 words)
     const wordCount = sharedDescription.trim().split(/\s+/).filter(word => word.length > 0).length
     if (wordCount < 20) {
       toast.error(`Description must be at least 20 words. Current: ${wordCount} words`)
       return
     }
 
-    // Check if any file has GPS location data
     const hasGPSLocation = selectedFiles.some(f => f.autoDetectedLocation)
 
-    // Only require manual location if no GPS data exists
     if (!hasGPSLocation && !sharedLocation) {
       toast.error('Please enter location (no GPS data found in images)')
       return
     }
 
-    // If location is provided (either manual or GPS), validate the format
     if (sharedLocation) {
       const locationParts = sharedLocation.split(',').map(part => part.trim()).filter(part => part.length > 0)
 
-      // Require at least 3 parts (e.g., Place, District, State)
       if (locationParts.length < 3) {
         toast.error('Location must include at least: Place, District, and State (separated by commas)')
         return
       }
 
-      // Validate that location contains a 6-digit pincode somewhere
       const hasPincode = locationParts.some(part => /\b\d{6}\b/.test(part))
       if (!hasPincode) {
         toast.error('Location must contain a valid 6-digit pincode')
@@ -388,7 +356,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
     setUploadProgress({ current: 0, total: selectedFiles.length })
 
     try {
-      // Upload all files to R2 in parallel for faster performance
       const uploadedFiles: Array<{
         location: string
         r2Url: string
@@ -401,10 +368,8 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       let uploadFailures = 0
       let completedUploads = 0
 
-      // Use shared location if provided, otherwise use first available GPS location
       const finalLocation = sharedLocation || selectedFiles.find(f => f.autoDetectedLocation)?.autoDetectedLocation || ''
 
-      // Upload all files in parallel with progress tracking
       const uploadPromises = selectedFiles.map(fileData =>
         uploadFile(fileData.file)
           .then(uploadResult => {
@@ -435,7 +400,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
       const results = await Promise.all(uploadPromises)
 
-      // Process results
       results.forEach(result => {
         if (result.success && 'data' in result) {
           uploadedFiles.push(result.data)
@@ -493,7 +457,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         fileInputRef.current.value = ''
       }
 
-      // Call callback with small delay to ensure backend processing is complete
       if (onUploadComplete) {
         setTimeout(() => {
           onUploadComplete()
@@ -516,7 +479,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Add Images Button */}
         <div>
           <button
             type="button"
@@ -530,7 +492,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           </button>
         </div>
 
-        {/* Selected Files Preview */}
         {selectedFiles.length > 0 && (
           <div className="bg-slate-50 rounded-lg p-3 space-y-3 border border-slate-200">
             <div className="flex items-center justify-between">
@@ -567,7 +528,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                       />
                     )}
 
-                    {/* Processing overlay */}
                     {fileData.processing && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                         <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -577,7 +537,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                       </div>
                     )}
 
-                    {/* Remove button */}
                     <button
                       type="button"
                       onClick={() => removeFile(index)}
@@ -588,7 +547,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                       </svg>
                     </button>
 
-                    {/* Verified badge */}
                     {fileData.exifData.isVerified && !fileData.processing && (
                       <div className="absolute top-1 left-1 bg-green-500 text-white p-0.5 rounded">
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -597,7 +555,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                       </div>
                     )}
 
-                    {/* GPS/Video indicator */}
                     {!fileData.processing && (
                       <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-1">
                         <div className="flex items-center justify-between text-white text-[10px]">
@@ -617,7 +574,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             </div>
           </div>
         )}
-        {/* Site Name */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-2">
             Site Name <span className="text-red-500">*</span>
@@ -633,7 +589,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           />
         </div>
 
-        {/* Site Type */}
         <div>
           <label htmlFor="type" className="block text-sm font-medium text-slate-700 mb-2">
             Site Type
@@ -677,7 +632,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           </div>
         </div>
 
-        {/* Location */}
         <div>
           <label htmlFor="location" className="block text-sm font-medium text-slate-700 mb-2">
             Location {!selectedFiles.some(f => f.autoDetectedLocation) && <span className="text-red-500">*</span>}
@@ -696,7 +650,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           />
         </div>
 
-        {/* Description */}
         <div>
           <div className="flex items-baseline justify-between mb-2">
             <label htmlFor="description" className="block text-sm font-medium text-slate-700">
@@ -717,7 +670,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           />
         </div>
 
-        {/* Reference Links */}
         <div className="pt-4 border-t border-slate-200">
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Reference Links <span className="text-slate-400 text-xs font-normal">(Optional)</span>
@@ -758,7 +710,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           </div>
         </div>
 
-        {/* Hidden File Input */}
         <input
           ref={fileInputRef}
           type="file"
@@ -768,7 +719,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           className="hidden"
         />
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading || selectedFiles.length === 0 || !sharedTitle || !sharedDescription || (!sharedLocation && !selectedFiles.some(f => f.autoDetectedLocation))}
@@ -799,7 +749,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         </button>
       </form>
 
-      {/* Upload Options Modal */}
       {showUploadOptions && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
@@ -816,7 +765,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             </div>
 
             <div className="space-y-2">
-              {/* Upload from Gallery */}
               <button
                 onClick={() => {
                   fileInputRef.current?.click()
@@ -833,7 +781,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                 </div>
               </button>
 
-              {/* Take Live Photo */}
               <button
                 onClick={openCamera}
                 className="w-full p-3 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg transition-all flex items-center gap-3 shadow-md hover:shadow-lg transform hover:scale-[1.02]"
@@ -852,10 +799,8 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         </div>
       )}
 
-      {/* Camera Modal */}
       {showCameraModal && (
         <div className="fixed inset-0 bg-black z-50 flex flex-col">
-          {/* Camera Header */}
           <div className="bg-black/80 backdrop-blur-sm p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-green-500 w-3 h-3 rounded-full animate-pulse"></div>
@@ -874,7 +819,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             </button>
           </div>
 
-          {/* Camera View */}
           <div className="flex-1 relative bg-black flex items-center justify-center">
             <video
               ref={videoRef}
@@ -884,7 +828,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
               className="w-full h-full object-cover"
             />
 
-            {/* Capture Button */}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
               <button
                 onClick={capturePhoto}
@@ -894,7 +837,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
               </button>
             </div>
 
-            {/* Location Info */}
             {currentLocation && (
               <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
                 📍 {currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}
@@ -902,7 +844,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             )}
           </div>
 
-          {/* Hidden Canvas for Photo Capture */}
           <canvas ref={canvasRef} className="hidden" />
         </div>
       )}

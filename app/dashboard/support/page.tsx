@@ -173,7 +173,6 @@ export default function SupportPage() {
           </div>
         </div>
 
-        {/* New Ticket Form - Only for non-admin users */}
         {!isAdmin && showNewTicketForm && (
           <div className="mb-8 bg-white rounded-xl shadow-lg border border-orange-200 p-6">
             <div className="flex justify-between items-center mb-6">

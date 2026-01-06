@@ -14,11 +14,15 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const heritageSiteId = searchParams.get('heritageSiteId')
 
-    // Try to get from cache
     const cacheKey = `${CACHE_KEYS.YATRA_STORIES}${session.role}:${session.userId}:${heritageSiteId || 'all'}`
     const cached = await getCached<any>(cacheKey)
     if (cached) {
-      return NextResponse.json(cached)
+      return NextResponse.json(cached, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+          'X-Cache-Status': 'HIT',
+        },
+      })
     }
 
     const where: any = {}
@@ -26,16 +30,12 @@ export async function GET(request: Request) {
     if (heritageSiteId) {
       where.heritageSiteId = heritageSiteId
     }
-
-    // Filter stories based on user role
     if (session.role !== 'admin') {
-      // For regular users: show approved stories OR their own stories
       where.OR = [
         { publishStatus: { in: ['APPROVED_PUBLIC', 'FEATURED_YATRA'] } },
         { userId: session.userId }
       ]
     }
-    // For admins: show all stories (no additional filter)
 
     const stories = await withRetry(() =>
       prisma.yatraStory.findMany({
@@ -70,7 +70,6 @@ export async function GET(request: Request) {
       })
     )
 
-    // Fetch all user likes in a single query
     const userLikes = await withRetry(() =>
       prisma.yatraLike.findMany({
         where: {
@@ -82,7 +81,6 @@ export async function GET(request: Request) {
     )
     const likedStoryIds = new Set(userLikes.map((like) => like.storyId))
 
-    // Fetch all user saves in a single query
     const userSaves = await withRetry(() =>
       prisma.yatraSaved.findMany({
         where: {
@@ -94,51 +92,54 @@ export async function GET(request: Request) {
     )
     const savedStoryIds = new Set(userSaves.map((save) => save.storyId))
 
-    const storiesWithUsers = await Promise.all(
-      stories.map(async (story) => {
-        const user = await withRetry(() =>
-          prisma.profile.findUnique({
-            where: { id: story.userId },
-            select: {
-              id: true,
-              name: true,
-            },
-          })
-        )
-
-        return {
-          id: story.id,
-          userId: story.userId,
-          heritageSiteId: story.heritageSiteId,
-          title: story.title,
-          discoveryContext: story.discoveryContext,
-          journeyNarrative: story.journeyNarrative,
-          historicalIndicators: story.historicalIndicators,
-          historicalIndicatorsDetails: story.historicalIndicatorsDetails,
-          evidenceTypes: story.evidenceTypes,
-          safeVisuals: story.safeVisuals,
-          personalReflection: story.personalReflection,
-          submissionConfirmed: story.submissionConfirmed,
-          publishStatus: story.publishStatus,
-          culturalInsights: story.culturalInsights,
-          createdAt: story.createdAt,
-          updatedAt: story.updatedAt,
-          heritageSite: story.heritageSite,
-          author: user,
-          likeCount: story._count.likes,
-          commentCount: story._count.comments,
-          isLikedByUser: likedStoryIds.has(story.id),
-          isSavedByUser: savedStoryIds.has(story.id),
-        }
+    const userIds = [...new Set(stories.map((s) => s.userId))]
+    const users = await withRetry(() =>
+      prisma.profile.findMany({
+        where: { id: { in: userIds } },
+        select: {
+          id: true,
+          name: true,
+        },
       })
     )
+    const userMap = new Map(users.map((u) => [u.id, u]))
+
+    const storiesWithUsers = stories.map((story) => {
+      return {
+        id: story.id,
+        userId: story.userId,
+        heritageSiteId: story.heritageSiteId,
+        title: story.title,
+        discoveryContext: story.discoveryContext,
+        journeyNarrative: story.journeyNarrative,
+        historicalIndicators: story.historicalIndicators,
+        historicalIndicatorsDetails: story.historicalIndicatorsDetails,
+        evidenceTypes: story.evidenceTypes,
+        safeVisuals: story.safeVisuals,
+        personalReflection: story.personalReflection,
+        submissionConfirmed: story.submissionConfirmed,
+        publishStatus: story.publishStatus,
+        culturalInsights: story.culturalInsights,
+        createdAt: story.createdAt,
+        updatedAt: story.updatedAt,
+        heritageSite: story.heritageSite,
+        author: userMap.get(story.userId) || null,
+        likeCount: story._count.likes,
+        commentCount: story._count.comments,
+        isLikedByUser: likedStoryIds.has(story.id),
+        isSavedByUser: savedStoryIds.has(story.id),
+      }
+    })
 
     const response = { stories: storiesWithUsers }
 
-    // Cache the response
     await setCached(cacheKey, response, CACHE_TTL.SHORT)
 
-    return NextResponse.json(response)
+    return NextResponse.json(response, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+      },
+    })
   } catch (error: any) {
     console.error('Error fetching Yatra stories:', error)
     return NextResponse.json(
@@ -268,6 +269,8 @@ export async function POST(request: Request) {
         data: { yatraStoryPrompted: true },
       })
     )
+
+    await invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`)
 
     return NextResponse.json({
       success: true,

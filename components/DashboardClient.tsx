@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, memo } from 'react'
 import Link from 'next/link'
 import HeritageSiteCard from './HeritageSiteCard'
 import ImageUploadForm from './ImageUploadForm'
@@ -31,7 +31,7 @@ interface DashboardClientProps {
   onUploadSuccess?: () => void
 }
 
-export default function DashboardClient({ images: initialSites, isAdmin, onUploadSuccess }: DashboardClientProps) {
+const DashboardClient = memo(function DashboardClient({ images: initialSites, isAdmin, onUploadSuccess }: DashboardClientProps) {
   const displaySites = !isAdmin && (!initialSites || initialSites.length === 0)
     ? defaultHeritageSites
     : initialSites
@@ -50,7 +50,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     setSites(newDisplaySites)
   }, [initialSites, isAdmin])
 
-  // Fetch Yatra stats for admin
   useEffect(() => {
     if (isAdmin) {
       fetch('/api/yatra')
@@ -64,7 +63,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     }
   }, [isAdmin])
 
-  // Fetch total user count for admin
   useEffect(() => {
     if (isAdmin) {
       fetch('/api/admin/users/count')
@@ -76,7 +74,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     }
   }, [isAdmin])
 
-  // Lock body scroll when modal is open
   useEffect(() => {
     if (showUploadModal) {
       document.body.style.overflow = 'hidden'
@@ -88,7 +85,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     }
   }, [showUploadModal])
 
-  // Close modal on ESC key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && showUploadModal) {
@@ -103,7 +99,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     if (onUploadSuccess) {
       onUploadSuccess()
     }
-    setShowUploadModal(false) // Close modal after successful upload
+    setShowUploadModal(false)
   }, [onUploadSuccess])
 
   const isShowingDefaults = !isAdmin && (!initialSites || initialSites.length === 0)
@@ -123,7 +119,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     acc + (site.images?.filter((img: any) => img.isVerified).length || 0), 0
   ) || 0
 
-  // Admin-specific stats
   const pendingPayments = sites?.filter((site: any) => site.paymentStatus === 'NOT_STARTED').length || 0
   const inProgressPayments = sites?.filter((site: any) => site.paymentStatus === 'IN_PROGRESS').length || 0
   const completedPayments = sites?.filter((site: any) => site.paymentStatus === 'COMPLETED').length || 0
@@ -132,10 +127,8 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
     <>
       {!isAdmin && <YatraPromptModal />}
 
-      {/* User Dashboard */}
       {!isAdmin && (
         <div className="space-y-6 sm:space-y-8">
-          {/* Feature Name and Tagline - Large Card */}
           <div className="w-full bg-linear-to-r from-orange-500 to-orange-600 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
@@ -148,7 +141,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             </div>
           </div>
 
-          {/* Quick Action - Upload Site */}
           <button
             onClick={() => setShowUploadModal(true)}
             className="relative w-full bg-white border-2 border-orange-500 rounded-xl sm:rounded-2xl p-5 sm:p-6 hover:shadow-xl hover:shadow-orange-500/30 hover:border-orange-600 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] group overflow-hidden"
@@ -171,7 +163,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             </div>
           </button>
 
-          {/* Floating Support Button */}
           <Link
             href="/dashboard/support"
             className="fixed bottom-6 right-6 z-40 group"
@@ -188,9 +179,7 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             </div>
           </Link>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-3 gap-3 sm:gap-4">
-            {/* Heritage Sites Card */}
             <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-blue-500">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="bg-blue-100 p-1.5 sm:p-3 rounded-lg">
@@ -201,7 +190,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
               <p className="text-xs sm:text-sm text-gray-600 mt-1">Sites</p>
             </div>
 
-            {/* Total Images Card */}
             <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-green-500">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="bg-green-100 p-1.5 sm:p-3 rounded-lg">
@@ -212,7 +200,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
               <p className="text-xs sm:text-sm text-gray-600 mt-1">Images</p>
             </div>
 
-            {/* Paid Sites Card */}
             <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-orange-500">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="bg-orange-100 p-1.5 sm:p-3 rounded-lg">
@@ -224,15 +211,12 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             </div>
           </div>
 
-          {/* Sites Section with modern header */}
           <div className="relative bg-linear-to-br from-white via-orange-50/30 to-white rounded-2xl sm:rounded-3xl shadow-xl p-5 sm:p-6 lg:p-8 border border-slate-200/50 overflow-hidden">
-            {/* Animated background gradient */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-orange-100 via-amber-100 to-orange-100 rounded-full blur-3xl opacity-30 -mr-32 -mt-32 animate-pulse" />
 
             <div className="relative">
               <div className="flex items-center justify-between mb-5 sm:mb-6">
                 <div className="flex items-center gap-3 sm:gap-4">
-                  {/* Glassmorphic icon container */}
                   <div className="relative">
                     <div className="absolute inset-0 bg-linear-to-br from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl blur opacity-30" />
                     <div className="relative p-2 sm:p-3 bg-linear-to-br from-orange-500 via-amber-500 to-orange-600 rounded-xl sm:rounded-2xl shadow-lg">
@@ -293,22 +277,17 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             </div>
           </div>
 
-          {/* Upload Modal - Modern Glassmorphism Design */}
           {showUploadModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
-              {/* Enhanced Backdrop with blur */}
               <div
                 className="fixed inset-0 bg-linear-to-br from-black/80 via-slate-900/60 to-black/80 backdrop-blur-md"
                 onClick={() => setShowUploadModal(false)}
               />
 
-              {/* Modal Container with animated entrance */}
               <div className="relative w-full max-w-4xl my-8 z-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                {/* Glow effect behind modal */}
                 <div className="absolute inset-0 bg-linear-to-r from-orange-500 via-amber-500 to-orange-600 rounded-3xl blur-2xl opacity-30 animate-pulse" />
 
                 <div className="relative bg-linear-to-br from-white via-orange-50/20 to-white rounded-3xl shadow-2xl overflow-hidden max-h-[calc(100vh-4rem)] border border-slate-200/50">
-                  {/* Modal Header - Glassmorphic */}
                   <div className="sticky top-0 bg-linear-to-r from-orange-500 via-amber-500 to-orange-600 px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between z-20 shadow-xl border-b border-white/20">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div className="relative">
@@ -333,7 +312,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
                     </button>
                   </div>
 
-                  {/* Modal Content - Scrollable with gradient background */}
                   <div className="overflow-y-auto max-h-[calc(100vh-12rem)] p-5 sm:p-6 lg:p-8 bg-linear-to-br from-white via-orange-50/20 to-white">
                     <ImageUploadForm onUploadComplete={handleUploadComplete} />
                   </div>
@@ -344,10 +322,8 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
         </div>
       )}
 
-      {/* Admin Dashboard */}
       {isAdmin && (
         <div className="space-y-6">
-          {/* Admin Header */}
           <div className="bg-linear-to-r from-slate-800 via-slate-700 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
             <div className="flex items-center justify-between">
               <div>
@@ -362,7 +338,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             </div>
           </div>
 
-          {/* Admin Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-blue-500">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
@@ -405,7 +380,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             </div>
           </div>
 
-          {/* Payment Status Overview */}
           <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
             <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <DollarSign className="h-6 w-6 text-slate-700" />
@@ -438,7 +412,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             </div>
           </div>
 
-          {/* Filters and Search */}
           <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
@@ -488,7 +461,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
             )}
           </div>
 
-          {/* Heritage Sites Grid */}
           <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
             <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
               <MapPin className="h-6 w-6 text-slate-700" />
@@ -524,4 +496,6 @@ export default function DashboardClient({ images: initialSites, isAdmin, onUploa
       )}
     </>
   )
-}
+})
+
+export default DashboardClient

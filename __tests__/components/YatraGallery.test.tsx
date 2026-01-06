@@ -2,7 +2,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import YatraGallery from '@/components/YatraGallery'
 
-// Mock fetch globally
 global.fetch = jest.fn()
 
 describe('YatraGallery Component', () => {
@@ -60,7 +59,6 @@ describe('YatraGallery Component', () => {
     ;(fetch as jest.Mock).mockImplementation(
       () =>
         new Promise(() => {
-          /* never resolves */
         })
     )
 

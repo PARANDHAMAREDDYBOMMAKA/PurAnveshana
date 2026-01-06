@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000, // Cache images for 1 year
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   // Enable compression for better performance (helps SEO)
   compress: true,
@@ -28,6 +31,13 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Trailing slashes for better URL consistency
   trailingSlash: false,
+  // Enable SWC minifier for faster builds (default in Next.js 16)
+  swcMinify: true,
+  // Experimental features for better performance
+  experimental: {
+    // Optimize CSS loading
+    optimizeCss: true,
+  },
   // Ensure security headers are properly set
   async headers() {
     return [

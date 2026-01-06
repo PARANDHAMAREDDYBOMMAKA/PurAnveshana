@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 
 export default function TranslateErrorBoundary({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    // Patch DOM methods to handle Google Translate conflicts
     const originalRemoveChild = Node.prototype.removeChild;
     const originalInsertBefore = Node.prototype.insertBefore;
 

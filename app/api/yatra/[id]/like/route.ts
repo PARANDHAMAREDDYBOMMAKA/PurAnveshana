@@ -75,7 +75,6 @@ export async function POST(
         ),
       ])
 
-      // Send notification to story owner
       if (story && user) {
         await notifyStoryLike(
           id,

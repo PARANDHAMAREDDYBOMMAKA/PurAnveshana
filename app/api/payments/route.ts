@@ -163,7 +163,6 @@ export async function PUT(request: Request) {
       )
     }
 
-    // If resetting, delete all payments for this heritage site
     if (resetAmount && paymentStatus === 'NOT_STARTED') {
       await withRetry(() =>
         prisma.payment.deleteMany({

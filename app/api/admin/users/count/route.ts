@@ -10,7 +10,6 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin
     const profile = await prisma.profile.findUnique({
       where: { id: session.userId },
     })
@@ -19,7 +18,6 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    // Get total user count from database (excluding admins)
     const userCount = await prisma.profile.count({
       where: {
         role: 'user'

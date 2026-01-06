@@ -7,7 +7,6 @@ export async function GET(request: NextRequest) {
     const lat = searchParams.get('lat')
     const lon = searchParams.get('lon')
 
-    // Reverse geocoding (coordinates to location name)
     if (lat && lon) {
       const geocodeResponse = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
@@ -27,7 +26,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(data)
     }
 
-    // Forward geocoding (location name to coordinates)
     if (!location) {
       return NextResponse.json(
         { error: 'Location or coordinates (lat/lon) required' },

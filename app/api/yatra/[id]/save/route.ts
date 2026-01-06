@@ -14,7 +14,6 @@ export async function POST(
 
     const { id: storyId } = await params
 
-    // Check if already saved
     const existingSave = await prisma.yatraSaved.findUnique({
       where: {
         storyId_userId: {
@@ -25,13 +24,11 @@ export async function POST(
     })
 
     if (existingSave) {
-      // Unsave
       await prisma.yatraSaved.delete({
         where: { id: existingSave.id },
       })
       return NextResponse.json({ saved: false })
     } else {
-      // Save
       await prisma.yatraSaved.create({
         data: {
           storyId,

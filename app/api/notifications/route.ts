@@ -3,10 +3,7 @@ import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { getCached, setCached, invalidatePattern, CACHE_KEYS, CACHE_TTL } from '@/lib/redis';
 
-/**
- * GET /api/notifications
- * Get all notifications for the logged-in user
- */
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -19,7 +16,6 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    // Try to get from cache
     const cacheKey = `${CACHE_KEYS.NOTIFICATIONS}${session.userId}:${unreadOnly}:${limit}:${offset}`;
     const cached = await getCached<any>(cacheKey);
     if (cached) {
@@ -44,7 +40,6 @@ export async function GET(request: NextRequest) {
 
     const response = { notifications, unreadCount };
 
-    // Cache for short duration
     await setCached(cacheKey, response, CACHE_TTL.SHORT);
 
     return NextResponse.json(response);
@@ -57,10 +52,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * DELETE /api/notifications
- * Delete all read notifications for the user
- */
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getSession();
@@ -75,7 +66,6 @@ export async function DELETE(request: NextRequest) {
       },
     });
 
-    // Invalidate cache
     await invalidatePattern(`${CACHE_KEYS.NOTIFICATIONS}${session.userId}*`);
 
     return NextResponse.json({
