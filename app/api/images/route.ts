@@ -30,7 +30,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    const cacheKey = `${CACHE_KEYS.HERITAGE_SITES}${profile.role}:${profile.id}`
+    const cacheKey = profile.role === 'admin'
+      ? `${CACHE_KEYS.HERITAGE_SITES}admin`
+      : `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
+
     const cached = await getCached<any>(cacheKey)
     if (cached) {
       return NextResponse.json(cached, {
@@ -224,11 +227,12 @@ export async function POST(request: Request) {
       })
     )
 
+    // Clear admin cache (all admins need to see new site) and user's cache
+    const adminCacheKey = `${CACHE_KEYS.HERITAGE_SITES}admin`
     const userCacheKey = `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
-    const adminCacheKey = `${CACHE_KEYS.HERITAGE_SITES}admin:${profile.id}`
     await Promise.all([
-      deleteCached(userCacheKey),
       deleteCached(adminCacheKey),
+      deleteCached(userCacheKey),
     ])
 
     return NextResponse.json({ success: true, data: site })
@@ -307,6 +311,14 @@ export async function PUT(request: Request) {
         },
       })
     )
+
+    // Clear admin cache (all admins need to see updated site) and user's cache
+    const adminCacheKey = `${CACHE_KEYS.HERITAGE_SITES}admin`
+    const userCacheKey = `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
+    await Promise.all([
+      deleteCached(adminCacheKey),
+      deleteCached(userCacheKey),
+    ])
 
     return NextResponse.json({ success: true, data: updatedSite })
   } catch (error: any) {
@@ -392,6 +404,14 @@ export async function DELETE(request: Request) {
         where: { id: siteId },
       })
     )
+
+    // Clear admin cache (all admins need to see deletion) and user's cache
+    const adminCacheKey = `${CACHE_KEYS.HERITAGE_SITES}admin`
+    const userCacheKey = `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
+    await Promise.all([
+      deleteCached(adminCacheKey),
+      deleteCached(userCacheKey),
+    ])
 
     return NextResponse.json({ success: true, message: 'Heritage site deleted successfully' })
   } catch (error: any) {
