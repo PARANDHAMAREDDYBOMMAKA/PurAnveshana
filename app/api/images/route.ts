@@ -30,7 +30,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    const cacheKey = profile.role === 'admin'
+    // Make role comparison case-insensitive and robust
+    const isAdmin = profile.role?.toString().toLowerCase().trim() === 'admin'
+    console.log('[GET /api/images] Email:', profile.email, '| Role:', profile.role, '| IsAdmin:', isAdmin)
+
+    const cacheKey = isAdmin
       ? `${CACHE_KEYS.HERITAGE_SITES}admin`
       : `${CACHE_KEYS.HERITAGE_SITES}user:${profile.id}`
 
@@ -47,7 +51,7 @@ export async function GET(request: Request) {
     let sites: any[] = []
 
     try {
-      if (profile.role === 'admin') {
+      if (isAdmin) {
         sites = await withRetry(() =>
           prisma.heritageSite.findMany({
             include: {
