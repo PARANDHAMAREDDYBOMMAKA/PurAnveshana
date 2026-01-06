@@ -31,8 +31,6 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Trailing slashes for better URL consistency
   trailingSlash: false,
-  // Enable SWC minifier for faster builds (default in Next.js 16)
-  swcMinify: true,
   // Experimental features for better performance
   experimental: {
     // Optimize CSS loading
