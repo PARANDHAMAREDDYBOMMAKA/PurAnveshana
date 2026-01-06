@@ -47,6 +47,7 @@ export default function LoginPage() {
 
       toast.success('Login successful!')
 
+      // Redirect based on user role
       if (data.user?.role === 'admin') {
         router.push('/dashboard')
       } else {

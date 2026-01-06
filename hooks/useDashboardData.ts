@@ -1,52 +1,54 @@
-import useSWR from 'swr'
-import { fetcher } from '@/lib/swr-config'
+import { useState, useEffect } from 'react'
 
 export function useDashboardData() {
-  const { data: profileData, error: profileError, isLoading: profileLoading } = useSWR(
-    '/api/profile',
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 60000, // Cache for 1 minute
-    }
-  )
+  const [profileData, setProfileData] = useState<any>(null)
+  const [sitesData, setSitesData] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<any>(null)
 
-  const { data: sitesData, error: sitesError, isLoading: sitesLoading, mutate: mutateSites } = useSWR(
-    '/api/images',
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 30000, // Cache for 30 seconds
-    }
-  )
+  const fetchData = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
 
-  return {
-    profile: profileData?.profile,
-    sites: sitesData?.sites || [],
-    isLoading: profileLoading || sitesLoading,
-    error: profileError || sitesError,
-    refresh: mutateSites, // Function to manually refresh data
+      const [profileRes, sitesRes] = await Promise.all([
+        fetch('/api/profile', { cache: 'no-store' }),
+        fetch('/api/images', { cache: 'no-store' })
+      ])
+
+      if (!profileRes.ok) {
+        const error: any = new Error('Failed to fetch profile')
+        error.status = profileRes.status
+        throw error
+      }
+
+      if (!sitesRes.ok) {
+        const error: any = new Error('Failed to fetch sites')
+        error.status = sitesRes.status
+        throw error
+      }
+
+      const profileJson = await profileRes.json()
+      const sitesJson = await sitesRes.json()
+
+      setProfileData(profileJson.profile)
+      setSitesData(sitesJson.sites || [])
+    } catch (err: any) {
+      setError(err)
+    } finally {
+      setIsLoading(false)
+    }
   }
-}
 
-export function useYatraStories(heritageSiteId?: string) {
-  const url = heritageSiteId
-    ? `/api/yatra?heritageSiteId=${heritageSiteId}`
-    : '/api/yatra'
-
-  const { data, error, isLoading, mutate } = useSWR(
-    url,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 20000, // Cache for 20 seconds
-    }
-  )
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return {
-    stories: data?.stories || [],
+    profile: profileData,
+    sites: sitesData,
     isLoading,
     error,
-    refresh: mutate,
+    refresh: fetchData,
   }
 }

@@ -49,9 +49,6 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
         throw new Error('Logout failed')
       }
 
-      // Clear the yatra prompt flag so it shows again on next login
-      localStorage.removeItem('yatraPromptShown')
-
       toast.success('Logged out successfully')
       router.push('/')
     } catch (error) {

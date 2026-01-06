@@ -5,10 +5,8 @@ import { useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import DashboardClient from '@/components/DashboardClient'
 import { useDashboardData } from '@/hooks/useDashboardData'
-import { SWRConfig } from 'swr'
-import { swrConfig } from '@/lib/swr-config'
 
-function DashboardContent() {
+export default function DashboardPage() {
   const router = useRouter()
   const { profile, sites, isLoading, error, refresh } = useDashboardData()
 
@@ -43,13 +41,5 @@ function DashboardContent() {
         <DashboardClient images={sites} isAdmin={isAdmin} onUploadSuccess={refresh} />
       </div>
     </div>
-  )
-}
-
-export default function DashboardPage() {
-  return (
-    <SWRConfig value={swrConfig}>
-      <DashboardContent />
-    </SWRConfig>
   )
 }
