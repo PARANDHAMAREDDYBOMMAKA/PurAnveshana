@@ -23,7 +23,7 @@ export default async function PaymentHistoryPage() {
   const userEmail = profile?.email || ''
 
   const sites = await prisma.heritageSite.findMany({
-    where: { userId: session.userId },
+    where: isAdmin ? {} : { userId: session.userId },
     select: {
       paymentStatus: true,
     }

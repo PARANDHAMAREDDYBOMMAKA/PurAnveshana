@@ -22,9 +22,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
+    const isAdmin = profile.role === 'admin'
+
     const payments = await withRetry(() =>
       prisma.payment.findMany({
-        where: { userId: profile.id },
+        where: isAdmin ? {} : { userId: profile.id },
         orderBy: { createdAt: 'desc' },
       })
     )
