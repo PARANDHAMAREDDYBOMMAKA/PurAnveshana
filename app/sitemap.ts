@@ -3,66 +3,32 @@ import { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://puranveshana.com'
 
+  const lastModified = new Date('2026-01-06')
+
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+      lastModified,
+      changeFrequency: 'weekly',
       priority: 1,
     },
     {
-      url: `${baseUrl}/dashboard`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+      url: `${baseUrl}/maps`,
+      lastModified,
+      changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/dashboard/yatra`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/dashboard/notifications`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/dashboard/notifications/preferences`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/dashboard/payment-history`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/dashboard/support`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/maps`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
       url: `${baseUrl}/login`,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/signup`,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.6,
     },
   ]
 }
