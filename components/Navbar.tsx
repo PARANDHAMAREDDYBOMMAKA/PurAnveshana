@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import ProfileDropdown from './ProfileDropdown'
 import NotificationBell from './NotificationBell'
 import LanguageSelector from './LanguageSelector'
-import GuidedTour from './GuidedTour'
+// import GuidedTour from './GuidedTour'
 import { HelpCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -256,7 +256,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
           </div>
         </div>
       </div>
-      <GuidedTour runTour={runTour} onTourEnd={() => setRunTour(false)} />
+      {/* <GuidedTour runTour={runTour} onTourEnd={() => setRunTour(false)} /> */}
     </nav>
   )
 }
