@@ -26,6 +26,7 @@ export default function LanguageSelector() {
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const [isOpen, setIsOpen] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [progress, setProgress] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const textNodesRef = useRef<TextNode[]>([]);
 
@@ -99,10 +100,12 @@ export default function LanguageSelector() {
           node.textContent = originalText;
         }
       });
+      setProgress(0);
       return;
     }
 
     setIsTranslating(true);
+    setProgress(0);
 
     try {
       const body = document.body;
@@ -112,52 +115,69 @@ export default function LanguageSelector() {
         textNodesRef.current = getTextNodes(body);
       }
 
+      const totalNodes = textNodesRef.current.length;
       const textsToTranslate = textNodesRef.current.map(({ originalText }) => originalText.trim());
 
-      const batchSize = 5;
+      const batchSize = 20;
+      const batches: string[][] = [];
+
       for (let i = 0; i < textsToTranslate.length; i += batchSize) {
-        const batch = textsToTranslate.slice(i, i + batchSize);
-
-        const response = await fetch('/api/translate/batch', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            texts: batch,
-            source: 'en',
-            target: 'hi',
-          }),
-        });
-
-        if (!response.ok) {
-          console.error('Translation batch failed');
-          continue;
-        }
-
-        const data = await response.json();
-        const translations = data.translatedTexts;
-
-        translations.forEach((translatedText: string, index: number) => {
-          const nodeIndex = i + index;
-          if (textNodesRef.current[nodeIndex]) {
-            const { node, originalText } = textNodesRef.current[nodeIndex];
-            textNodesRef.current[nodeIndex].translatedText = translatedText;
-
-            if (node.textContent !== null) {
-              const leadingSpace = originalText.match(/^\s*/)?.[0] || '';
-              const trailingSpace = originalText.match(/\s*$/)?.[0] || '';
-              node.textContent = leadingSpace + translatedText + trailingSpace;
-            }
-          }
-        });
-
-        await new Promise(resolve => setTimeout(resolve, 200));
+        batches.push(textsToTranslate.slice(i, i + batchSize));
       }
+
+      let completedNodes = 0;
+
+      await Promise.all(
+        batches.map(async (batch, batchIndex) => {
+          const startIndex = batchIndex * batchSize;
+
+          const response = await fetch('/api/translate/batch', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              texts: batch,
+              source: 'en',
+              target: 'hi',
+            }),
+          });
+
+          if (!response.ok) {
+            console.error('Translation batch failed');
+            return;
+          }
+
+          const data = await response.json();
+          const translations = data.translatedTexts;
+
+          translations.forEach((translatedText: string, index: number) => {
+            const nodeIndex = startIndex + index;
+            if (textNodesRef.current[nodeIndex]) {
+              const { node, originalText } = textNodesRef.current[nodeIndex];
+              textNodesRef.current[nodeIndex].translatedText = translatedText;
+
+              if (node.textContent !== null) {
+                const leadingSpace = originalText.match(/^\s*/)?.[0] || '';
+                const trailingSpace = originalText.match(/\s*$/)?.[0] || '';
+                node.textContent = leadingSpace + translatedText + trailingSpace;
+              }
+
+              completedNodes++;
+              setProgress(Math.round((completedNodes / totalNodes) * 100));
+            }
+          });
+        })
+      );
+
+      setProgress(100);
     } catch (error) {
       console.error('Translation failed:', error);
     } finally {
-      setIsTranslating(false);
+      setTimeout(() => {
+        setIsTranslating(false);
+        setProgress(0);
+      }, 300);
     }
   };
 
@@ -211,8 +231,17 @@ export default function LanguageSelector() {
             </button>
           </div>
           {isTranslating && (
-            <div className="px-4 py-2 text-xs text-slate-500 border-t">
-              Translating...
+            <div className="px-4 py-2 border-t">
+              <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                <span>Translating...</span>
+                <span>{progress}%</span>
+              </div>
+              <div className="w-full bg-slate-200 rounded-full h-1.5">
+                <div
+                  className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
             </div>
           )}
         </div>
