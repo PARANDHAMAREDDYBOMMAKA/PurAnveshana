@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import ProfileDropdown from './ProfileDropdown'
 import NotificationBell from './NotificationBell'
+import LanguageSelector from './LanguageSelector'
 import toast from 'react-hot-toast'
 
 interface NavbarProps {
@@ -154,6 +155,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               </span>
             )}
 
+            <LanguageSelector />
             <NotificationBell />
             <ProfileDropdown userEmail={userEmail} />
           </div>
@@ -165,6 +167,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                 ADMIN
               </span>
             )}
+            <LanguageSelector />
             <NotificationBell />
             <div className="relative" ref={mobileMenuRef}>
               <button

@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link';
 import { MapPin, Award, Menu, X } from 'lucide-react';
+import LanguageSelector from './LanguageSelector';
 
 interface HomeNavigationProps {
   isMenuOpen: boolean;
@@ -27,13 +28,14 @@ export function HomeNavigation({ isMenuOpen, setIsMenuOpen, scrolled }: HomeNavi
             </div>
           </div>
 
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             <a href="#yatra" className="text-slate-700 hover:text-orange-600 transition">Yatra</a>
             <a href="#rewards" className="text-slate-700 hover:text-orange-600 transition flex items-center gap-1">
               <Award className="w-4 h-4" />
               Rewards
             </a>
             <a href="#why-join" className="text-slate-700 hover:text-orange-600 transition">Why Join Puranveshana</a>
+            <LanguageSelector />
             <Link href="/signup">
               <button className="px-6 py-2 bg-linear-to-r cursor-pointer from-orange-500 to-amber-600 text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                 Join Now
@@ -42,6 +44,7 @@ export function HomeNavigation({ isMenuOpen, setIsMenuOpen, scrolled }: HomeNavi
           </div>
 
           <div className="md:hidden flex items-center space-x-2">
+            <LanguageSelector />
             <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className="text-black" /> : <Menu className="text-black" />}
             </button>
