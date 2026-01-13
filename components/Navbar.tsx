@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import ProfileDropdown from './ProfileDropdown'
 import NotificationBell from './NotificationBell'
 import LanguageSelector from './LanguageSelector'
+import GuidedTour from './GuidedTour'
+import { HelpCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface NavbarProps {
@@ -15,6 +17,7 @@ interface NavbarProps {
 export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
   const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [runTour, setRunTour] = useState(false)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -32,6 +35,13 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isMobileMenuOpen])
+
+  useEffect(() => {
+    const tourCompleted = localStorage.getItem('tourCompleted')
+    if (!tourCompleted) {
+      setTimeout(() => setRunTour(true), 2000)
+    }
+  }, [])
 
   // Get initials from email
   const getInitials = (email?: string) => {
@@ -59,24 +69,23 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
 
   return (
     <nav className="bg-white shadow-md border-b border-slate-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        <div className="flex justify-between items-center h-16 sm:h-18 lg:h-20">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="flex justify-between items-center h-14 sm:h-16 lg:h-20">
           {/* Logo and Brand */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 lg:flex-none">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 max-w-xs sm:max-w-sm overflow-hidden" data-tour="logo">
             <div className="relative group shrink-0">
-              <div className="absolute inset-0 bg-linear-to-br from-orange-400 to-amber-500 rounded-xl blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-300 animate-pulse"></div>
-              <div className="absolute inset-0 bg-linear-to-br from-orange-300 to-amber-400 rounded-xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
-              <div className="relative bg-linear-to-br from-orange-500 to-amber-600 p-3 sm:p-4 rounded-xl shadow-2xl shadow-orange-500/50">
-                <svg className="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="absolute inset-0 bg-linear-to-br from-orange-400 to-amber-500 rounded-lg blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+              <div className="relative bg-linear-to-br from-orange-500 to-amber-600 p-2 sm:p-2.5 md:p-3 rounded-lg shadow-lg">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
               </div>
-           \ </div>
-            <div className="flex flex-col min-w-0">
-              <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
+            </div>
+            <div className="flex flex-col min-w-0 overflow-hidden leading-tight">
+              <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent truncate">
                 Puranveshana
               </h1>
-              <span className="text-lg sm:text-md lg:text-base text-orange-600 font-medium -mt-0.5 notranslate" translate="no">
+              <span className="text-[10px] sm:text-xs md:text-sm lg:text-base text-orange-600 font-medium notranslate truncate" translate="no">
                 पुरातन अन्वेषण
               </span>
             </div>
@@ -155,25 +164,47 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               </span>
             )}
 
-            <LanguageSelector />
-            <NotificationBell />
-            <ProfileDropdown userEmail={userEmail} />
+            <div data-tour="language-selector">
+              <LanguageSelector />
+            </div>
+            <button
+              onClick={() => setRunTour(true)}
+              className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+              title="Take a guided tour"
+            >
+              <HelpCircle className="w-4 h-4" />
+              <span className="hidden lg:inline">Tour</span>
+            </button>
+            <div data-tour="notifications">
+              <NotificationBell />
+            </div>
+            <div data-tour="profile">
+              <ProfileDropdown userEmail={userEmail} />
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex md:hidden items-center gap-1">
             {isAdmin && (
-              <span className="px-2 py-1 text-[9px] font-bold rounded-full bg-linear-to-r from-orange-500 to-amber-600 text-white shadow-md">
+              <span className="px-1.5 py-0.5 text-[8px] font-bold rounded-full bg-linear-to-r from-orange-500 to-amber-600 text-white">
                 ADMIN
               </span>
             )}
             <LanguageSelector />
+            <button
+              onClick={() => setRunTour(true)}
+              className="flex items-center justify-center w-7 h-7 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              title="Take a guided tour"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+            </button>
             <NotificationBell />
             <div className="relative" ref={mobileMenuRef}>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="flex items-center justify-center bg-linear-to-br from-orange-500 to-amber-600 rounded-full w-9 h-9 shadow-md hover:shadow-lg transition-shadow"
+                className="flex items-center justify-center bg-linear-to-br from-orange-500 to-amber-600 rounded-full w-7 h-7 shadow-md hover:shadow-lg transition-shadow"
                 aria-label="Toggle menu"
+                data-tour="profile"
               >
                 <span className="text-white text-sm font-bold">{getInitials(userEmail)}</span>
               </button>
@@ -225,6 +256,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
           </div>
         </div>
       </div>
+      <GuidedTour runTour={runTour} onTourEnd={() => setRunTour(false)} />
     </nav>
   )
 }
