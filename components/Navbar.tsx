@@ -167,14 +167,14 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
             <div data-tour="language-selector">
               <LanguageSelector />
             </div>
-            <button
+            {/* <button
               onClick={() => setRunTour(true)}
               className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
               title="Take a guided tour"
             >
               <HelpCircle className="w-4 h-4" />
               <span className="hidden lg:inline">Tour</span>
-            </button>
+            </button> */}
             <div data-tour="notifications">
               <NotificationBell />
             </div>
