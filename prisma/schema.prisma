@@ -114,6 +114,10 @@ model YatraStory {
 
   culturalInsights            String?      @map("cultural_insights") @db.Text
 
+  locationVerificationStatus  LocationVerificationStatus @default(PENDING) @map("location_verification_status")
+  locationVerificationResult  Json?        @map("location_verification_result")
+  locationVerifiedAt          DateTime?    @map("location_verified_at")
+
   createdAt                   DateTime     @default(now()) @map("created_at")
   updatedAt                   DateTime     @updatedAt @map("updated_at")
 
@@ -341,4 +345,11 @@ enum NotificationType {
   STORY_FEATURED
   STORY_REJECTED
   SYSTEM
+}
+
+enum LocationVerificationStatus {
+  PENDING
+  PASSED
+  FLAGGED
+  ERROR
 }

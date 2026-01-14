@@ -39,6 +39,13 @@ interface YatraComment {
   }
 }
 
+interface LocationVerificationResult {
+  containsLocation: boolean
+  confidence: string
+  detectedLocations: string[]
+  reason: string
+}
+
 interface YatraStory {
   id: string
   userId: string
@@ -75,6 +82,9 @@ interface YatraStory {
   commentCount: number
   isLikedByUser: boolean
   isSavedByUser: boolean
+  locationVerificationStatus?: 'PENDING' | 'PASSED' | 'FLAGGED' | 'ERROR'
+  locationVerificationResult?: LocationVerificationResult
+  locationVerifiedAt?: string
 }
 
 interface YatraGalleryProps {
@@ -111,6 +121,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
   const [loadingComments, setLoadingComments] = useState(false)
   const [approvingStory, setApprovingStory] = useState<string | null>(null)
   const [showFilters, setShowFilters] = useState(false)
+  const [verificationFilter, setVerificationFilter] = useState<string>('all')
   const [touchStart, setTouchStart] = useState<number>(0)
   const [touchEnd, setTouchEnd] = useState<number>(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -156,15 +167,12 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       if (response.ok) {
         const data = await response.json()
 
-        // Store all stories for filtering
         setAllStories(data.stories)
 
-        // Initially load only first 10 stories for performance
         const initialStories = data.stories.slice(0, 10)
         setStories(initialStories)
         setHasMore(data.stories.length > 10)
 
-        // Initialize like, save, and comment data from API response
         const newLikedStories: Record<string, boolean> = {}
         const newLikeCounts: Record<string, number> = {}
         const newCommentCounts: Record<string, number> = {}
@@ -461,9 +469,48 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     }
   }
 
+  const getLocationVerificationBadge = (story: YatraStory) => {
+    if (!story.locationVerificationStatus) return null
+
+    switch (story.locationVerificationStatus) {
+      case 'PASSED':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold" title="No location detected">
+            <CheckCircle className="h-3 w-3" />
+            Location Safe
+          </span>
+        )
+      case 'FLAGGED':
+        return (
+          <span
+            className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold cursor-pointer"
+            title={story.locationVerificationResult?.reason || 'Location information detected'}
+          >
+            <AlertCircle className="h-3 w-3" />
+            Location Flagged
+          </span>
+        )
+      case 'PENDING':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold">
+            <Loader2 className="h-3 w-3 animate-spin" />
+            Verifying...
+          </span>
+        )
+      case 'ERROR':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold">
+            <AlertCircle className="h-3 w-3" />
+            Verification Error
+          </span>
+        )
+      default:
+        return null
+    }
+  }
+
   const filteredStories = useMemo(() => {
-    // Use allStories for filtering if search/filter is active, otherwise use lazy-loaded stories
-    const sourceStories = searchQuery.trim() || (isAdmin && statusFilter !== 'all') ? allStories : stories
+    const sourceStories = searchQuery.trim() || (isAdmin && (statusFilter !== 'all' || verificationFilter !== 'all')) ? allStories : stories
     let filtered = [...sourceStories]
 
     if (searchQuery.trim()) {
@@ -482,8 +529,12 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       filtered = filtered.filter((story) => story.publishStatus === statusFilter)
     }
 
+    if (isAdmin && verificationFilter !== 'all') {
+      filtered = filtered.filter((story) => story.locationVerificationStatus === verificationFilter)
+    }
+
     return filtered
-  }, [stories, allStories, searchQuery, statusFilter, isAdmin])
+  }, [stories, allStories, searchQuery, statusFilter, verificationFilter, isAdmin])
 
   // Auto-load more stories when user approaches the end
   useEffect(() => {
@@ -493,10 +544,9 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     }
   }, [currentPage, stories.length, hasMore, loadingMore])
 
-  // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(0)
-  }, [searchQuery, statusFilter])
+  }, [searchQuery, statusFilter, verificationFilter])
 
   // Swipe handlers for mobile navigation with smooth animation
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -612,58 +662,107 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
           )}
         </div>
 
-        {/* Admin Filters */}
         {isAdmin && (
           <div className="mt-3">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-1 text-sm text-slate-900 hover:text-orange-600 font-medium"
             >
-              Filter by status
+              Filters
               <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
             </button>
             {showFilters && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                <button
-                  onClick={() => setStatusFilter('all')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                    statusFilter === 'all'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-                  }`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => setStatusFilter('PENDING_REVIEW')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                    statusFilter === 'PENDING_REVIEW'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-                  }`}
-                >
-                  Pending
-                </button>
-                <button
-                  onClick={() => setStatusFilter('APPROVED_PUBLIC')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                    statusFilter === 'APPROVED_PUBLIC'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-                  }`}
-                >
-                  Approved
-                </button>
-                <button
-                  onClick={() => setStatusFilter('FEATURED_YATRA')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                    statusFilter === 'FEATURED_YATRA'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-                  }`}
-                >
-                  Featured
-                </button>
+              <div className="space-y-3 mt-2">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 mb-1.5">Publish Status</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setStatusFilter('all')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        statusFilter === 'all'
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+                      }`}
+                    >
+                      All
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter('PENDING_REVIEW')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        statusFilter === 'PENDING_REVIEW'
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+                      }`}
+                    >
+                      Pending
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter('APPROVED_PUBLIC')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        statusFilter === 'APPROVED_PUBLIC'
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+                      }`}
+                    >
+                      Approved
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter('FEATURED_YATRA')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        statusFilter === 'FEATURED_YATRA'
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+                      }`}
+                    >
+                      Featured
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 mb-1.5">Location Verification</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setVerificationFilter('all')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        verificationFilter === 'all'
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+                      }`}
+                    >
+                      All
+                    </button>
+                    <button
+                      onClick={() => setVerificationFilter('FLAGGED')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        verificationFilter === 'FLAGGED'
+                          ? 'bg-red-500 text-white'
+                          : 'bg-red-100 text-red-700 hover:bg-red-200'
+                      }`}
+                    >
+                      Flagged
+                    </button>
+                    <button
+                      onClick={() => setVerificationFilter('PASSED')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        verificationFilter === 'PASSED'
+                          ? 'bg-green-500 text-white'
+                          : 'bg-green-100 text-green-700 hover:bg-green-200'
+                      }`}
+                    >
+                      Passed
+                    </button>
+                    <button
+                      onClick={() => setVerificationFilter('PENDING')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        verificationFilter === 'PENDING'
+                          ? 'bg-slate-500 text-white'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      Pending
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -1035,10 +1134,12 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                     </button>
                   </div>
 
-                  {/* Status Badge (for user's own stories or admin) */}
                   {(story.author.id === userId || isAdmin) && (
-                    <div className="mb-3 flex items-center justify-between">
-                      <div>{getStatusBadge(story.publishStatus)}</div>
+                    <div className="mb-3 flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {getStatusBadge(story.publishStatus)}
+                        {isAdmin && getLocationVerificationBadge(story)}
+                      </div>
 
                       {/* Admin Approval Actions */}
                       {isAdmin && story.publishStatus === 'PENDING_REVIEW' && (
@@ -1167,6 +1268,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
               onClick={() => {
                 setSearchQuery('')
                 setStatusFilter('all')
+                setVerificationFilter('all')
               }}
               className="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
             >

@@ -3,6 +3,133 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
 import { getCached, setCached, invalidatePattern, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
+import { LocationVerificationStatus } from '@prisma/client'
+
+async function verifyLocationContent(storyId: string, textFields: { title: string; discoveryContext: string; journeyNarrative: string }) {
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+
+  if (!GEMINI_API_KEY) {
+    console.warn('GEMINI_API_KEY not configured, skipping location verification')
+    return
+  }
+
+  try {
+    const combinedText = `
+Title: ${textFields.title}
+
+Discovery Context: ${textFields.discoveryContext}
+
+Journey Narrative: ${textFields.journeyNarrative}
+    `.trim()
+
+    const prompt = `You are a content moderator for a heritage site protection platform. Your task is to analyze text and detect if it contains specific location information that could reveal the exact location of a heritage site.
+
+Analyze the following yatra story submission:
+
+"""
+${combinedText}
+"""
+
+Check if the text contains any of the following location-revealing information:
+1. Exact GPS coordinates or latitude/longitude
+2. Specific village, town, or city names
+3. Specific district or state/region names combined with landmarks
+4. Exact addresses or road names
+5. Distance and direction from known landmarks (e.g., "5 km north of XYZ temple")
+6. Google Maps links or coordinates
+7. Specific landmarks that could pinpoint the location
+
+IMPORTANT: Generic descriptions like "in a forest", "near a river", "in the hills", "in South India" are ACCEPTABLE and should NOT be flagged.
+
+Respond in JSON format only:
+{
+  "containsLocation": true/false,
+  "confidence": "high"/"medium"/"low",
+  "detectedLocations": ["list of detected specific locations if any"],
+  "reason": "brief explanation"
+}
+
+Only set containsLocation to true if you find SPECIFIC location identifiers that could help someone pinpoint the exact heritage site location.`
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 500,
+          },
+        }),
+      }
+    )
+
+    if (!response.ok) {
+      console.error('Gemini API error:', await response.text())
+      await prisma.yatraStory.update({
+        where: { id: storyId },
+        data: {
+          locationVerificationStatus: LocationVerificationStatus.ERROR,
+          locationVerificationResult: { error: 'API request failed' },
+          locationVerifiedAt: new Date(),
+        },
+      })
+      return
+    }
+
+    const data = await response.json()
+    const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text
+
+    if (!responseText) {
+      await prisma.yatraStory.update({
+        where: { id: storyId },
+        data: {
+          locationVerificationStatus: LocationVerificationStatus.ERROR,
+          locationVerificationResult: { error: 'No response from API' },
+          locationVerifiedAt: new Date(),
+        },
+      })
+      return
+    }
+
+    let jsonStr = responseText
+    const jsonMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/)
+    if (jsonMatch) {
+      jsonStr = jsonMatch[1]
+    }
+
+    const result = JSON.parse(jsonStr.trim())
+
+    const status: LocationVerificationStatus = result.containsLocation
+      ? LocationVerificationStatus.FLAGGED
+      : LocationVerificationStatus.PASSED
+
+    await prisma.yatraStory.update({
+      where: { id: storyId },
+      data: {
+        locationVerificationStatus: status,
+        locationVerificationResult: result,
+        locationVerifiedAt: new Date(),
+      },
+    })
+
+    console.log(`Location verification completed for story ${storyId}: ${status}`)
+  } catch (error) {
+    console.error('Location verification error:', error)
+    await prisma.yatraStory.update({
+      where: { id: storyId },
+      data: {
+        locationVerificationStatus: LocationVerificationStatus.ERROR,
+        locationVerificationResult: { error: error instanceof Error ? error.message : 'Unknown error' },
+        locationVerifiedAt: new Date(),
+      },
+    })
+  }
+}
 
 export async function GET(request: Request) {
   try {
@@ -105,7 +232,7 @@ export async function GET(request: Request) {
     const userMap = new Map(users.map((u) => [u.id, u]))
 
     const storiesWithUsers = stories.map((story) => {
-      return {
+      const baseStory = {
         id: story.id,
         userId: story.userId,
         heritageSiteId: story.heritageSiteId,
@@ -129,6 +256,17 @@ export async function GET(request: Request) {
         isLikedByUser: likedStoryIds.has(story.id),
         isSavedByUser: savedStoryIds.has(story.id),
       }
+
+      if (session.role === 'admin') {
+        return {
+          ...baseStory,
+          locationVerificationStatus: story.locationVerificationStatus,
+          locationVerificationResult: story.locationVerificationResult,
+          locationVerifiedAt: story.locationVerifiedAt,
+        }
+      }
+
+      return baseStory
     })
 
     const response = { stories: storiesWithUsers }
@@ -271,6 +409,12 @@ export async function POST(request: Request) {
     )
 
     await invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`)
+
+    verifyLocationContent(yatraStory.id, {
+      title,
+      discoveryContext: discoveryContext || '',
+      journeyNarrative,
+    }).catch((err) => console.error('Background verification error:', err))
 
     return NextResponse.json({
       success: true,
