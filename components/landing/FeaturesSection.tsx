@@ -1,139 +1,287 @@
 "use client";
 
 import Link from 'next/link';
-import { Search, Camera, MapPin, BookOpen, Users, ChevronRight, AlertCircle, Check } from 'lucide-react';
+import { Search, Camera, MapPin, BookOpen, Users, Footprints, Compass } from 'lucide-react';
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-12 sm:py-16 lg:py-24 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10 sm:mb-14">
-          <span className="inline-block px-4 py-1.5 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold mb-4">
-            What You Can Do
-          </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3">
+    <section id="features" className="py-10 sm:py-16 lg:py-20 bg-linear-to-b from-white via-amber-50/30 to-white overflow-hidden">
+      <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="inline-flex items-center gap-2 mb-6">
+            <span className="w-12 h-px bg-amber-600/40"></span>
+            <Compass className="w-5 h-5 text-amber-700" />
+            <span className="w-12 h-px bg-amber-600/40"></span>
+          </div>
+          <h2
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-900 mb-4"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
             Two Ways to Contribute
           </h2>
-          <p className="text-base sm:text-lg text-slate-600 max-w-xl mx-auto">
-            Choose how you want to help preserve India's heritage
+          <p className="text-amber-700/80 text-base sm:text-lg max-w-md mx-auto" style={{ fontFamily: 'Georgia, serif' }}>
+            Document hidden sites or share your heritage journeys
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-8">
-          <div className="relative bg-linear-to-br from-orange-50 via-amber-50/50 to-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-orange-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-            <div className="hidden sm:block absolute top-0 right-0 w-24 h-24 bg-orange-100 rounded-full -translate-y-12 translate-x-12 opacity-50"></div>
+        <div className="md:hidden space-y-6">
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-linear-to-br from-orange-200/50 via-amber-100/30 to-orange-200/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-orange-500 to-amber-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20">
-                  <Search className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Anveshan</h3>
-                  <p className="text-orange-600 font-medium text-sm sm:text-base">Document Heritage</p>
-                </div>
+            <div className="relative overflow-hidden rounded-2xl"
+              style={{
+                background: 'linear-gradient(145deg, #fffaf5 0%, #fff7ed 50%, #fef3e2 100%)',
+                boxShadow: '0 4px 30px rgba(194, 120, 60, 0.12), 0 1px 4px rgba(194, 120, 60, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+              }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-orange-400 to-transparent"></div>
+
+              <div className="absolute top-2 left-2 w-8 h-8">
+                <div className="absolute top-0 left-0 w-full h-0.5 bg-linear-to-r from-orange-500/60 to-transparent rounded-full"></div>
+                <div className="absolute top-0 left-0 h-full w-0.5 bg-linear-to-b from-orange-500/60 to-transparent rounded-full"></div>
+              </div>
+              <div className="absolute top-2 right-2 w-8 h-8">
+                <div className="absolute top-0 right-0 w-full h-0.5 bg-linear-to-l from-orange-500/60 to-transparent rounded-full"></div>
+                <div className="absolute top-0 right-0 h-full w-0.5 bg-linear-to-b from-orange-500/60 to-transparent rounded-full"></div>
+              </div>
+              <div className="absolute bottom-2 left-2 w-8 h-8">
+                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-orange-500/60 to-transparent rounded-full"></div>
+                <div className="absolute bottom-0 left-0 h-full w-0.5 bg-linear-to-t from-orange-500/60 to-transparent rounded-full"></div>
+              </div>
+              <div className="absolute bottom-2 right-2 w-8 h-8">
+                <div className="absolute bottom-0 right-0 w-full h-0.5 bg-linear-to-l from-orange-500/60 to-transparent rounded-full"></div>
+                <div className="absolute bottom-0 right-0 h-full w-0.5 bg-linear-to-t from-orange-500/60 to-transparent rounded-full"></div>
               </div>
 
-              <p className="text-slate-600 mb-4 sm:mb-5 text-sm sm:text-base leading-relaxed">
-                Found an ancient site? Document it through Anveshan and help preserve it for future generations.
-              </p>
-
-              <div className="space-y-2.5 mb-4 sm:mb-5">
-                <div className="flex items-center gap-3 text-slate-700 text-sm sm:text-base">
-                  <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 shrink-0" />
-                  <span>Take photographs of the site</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-700 text-sm sm:text-base">
-                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 shrink-0" />
-                  <span>Share the location details</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-700 text-sm sm:text-base">
-                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 shrink-0" />
-                  <span>Add basic description</span>
-                </div>
-              </div>
-
-              <div className="bg-amber-50 rounded-xl p-3 sm:p-4 mb-4 sm:mb-5 border border-amber-200">
-                <div className="flex items-start gap-2.5">
-                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 mt-0.5 shrink-0" />
-                  <div className="text-xs sm:text-sm">
-                    <p className="font-semibold text-amber-800 mb-0.5">Important</p>
-                    <p className="text-amber-700">No digging or excavation. Only photograph what's visible.</p>
+              <div className="relative px-5 py-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-linear-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/25">
+                    <Search className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>
+                      Anveshan
+                    </h3>
+                    <p className="text-orange-600 font-medium text-sm italic">The Art of Discovery</p>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-2 text-green-600 text-xs sm:text-sm font-medium">
-                  <Check className="w-4 h-4" />
-                  <span>Eligible for rewards</span>
+                <p className="text-amber-800/80 text-sm mb-4 leading-relaxed">
+                  Found an ancient site? Through Anveshan, you become a guardian of history — documenting what time might otherwise forget.
+                </p>
+
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-linear-to-r from-orange-100 to-amber-50 text-orange-700 rounded-full text-xs font-medium border border-orange-200/50">
+                    <Camera className="w-3 h-3" />
+                    Photograph
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-linear-to-r from-orange-100 to-amber-50 text-orange-700 rounded-full text-xs font-medium border border-orange-200/50">
+                    <MapPin className="w-3 h-3" />
+                    Locate
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-linear-to-r from-orange-100 to-amber-50 text-orange-700 rounded-full text-xs font-medium border border-orange-200/50">
+                    <BookOpen className="w-3 h-3" />
+                    Document
+                  </span>
                 </div>
-                <Link href="/signup">
-                  <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-orange-500 text-white rounded-full font-semibold text-sm hover:bg-orange-600 transition-colors">
-                    Start Anveshan
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+
+                <div className="p-3 rounded-xl bg-linear-to-r from-amber-50/80 to-orange-50/50 border-l-3 border-orange-400 mb-4">
+                  <p className="text-amber-800 text-xs italic" style={{ fontFamily: 'Georgia, serif' }}>
+                    "Only photograph what is visible. Never disturb, never remove."
+                  </p>
+                </div>
+
+                <Link href="/signup" className="inline-block">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-orange-500 to-amber-500 text-white font-semibold text-sm rounded-full shadow-lg shadow-orange-500/25">
+                    Begin your Anveshan
+                    <Footprints className="w-4 h-4" />
+                  </span>
                 </Link>
               </div>
             </div>
           </div>
 
-          <div className="relative bg-linear-to-br from-slate-50 via-slate-50/50 to-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-            <div className="hidden sm:block absolute top-0 right-0 w-24 h-24 bg-slate-100 rounded-full -translate-y-12 translate-x-12 opacity-50"></div>
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-linear-to-br from-slate-200/50 via-slate-100/30 to-slate-200/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-slate-600 to-slate-700 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-slate-500/20">
-                  <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Yatra</h3>
-                  <p className="text-slate-600 font-medium text-sm sm:text-base">Share Your Journey</p>
-                </div>
+            <div className="relative overflow-hidden rounded-2xl"
+              style={{
+                background: 'linear-gradient(145deg, #fafafa 0%, #f5f5f5 50%, #f0f0f0 100%)',
+                boxShadow: '0 4px 30px rgba(71, 85, 105, 0.12), 0 1px 4px rgba(71, 85, 105, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
+              }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-slate-500 to-transparent"></div>
+
+              <div className="absolute top-2 left-2 w-8 h-8">
+                <div className="absolute top-0 left-0 w-full h-0.5 bg-linear-to-r from-slate-500/60 to-transparent rounded-full"></div>
+                <div className="absolute top-0 left-0 h-full w-0.5 bg-linear-to-b from-slate-500/60 to-transparent rounded-full"></div>
+              </div>
+              <div className="absolute top-2 right-2 w-8 h-8">
+                <div className="absolute top-0 right-0 w-full h-0.5 bg-linear-to-l from-slate-500/60 to-transparent rounded-full"></div>
+                <div className="absolute top-0 right-0 h-full w-0.5 bg-linear-to-b from-slate-500/60 to-transparent rounded-full"></div>
+              </div>
+              <div className="absolute bottom-2 left-2 w-8 h-8">
+                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-slate-500/60 to-transparent rounded-full"></div>
+                <div className="absolute bottom-0 left-0 h-full w-0.5 bg-linear-to-t from-slate-500/60 to-transparent rounded-full"></div>
+              </div>
+              <div className="absolute bottom-2 right-2 w-8 h-8">
+                <div className="absolute bottom-0 right-0 w-full h-0.5 bg-linear-to-l from-slate-500/60 to-transparent rounded-full"></div>
+                <div className="absolute bottom-0 right-0 h-full w-0.5 bg-linear-to-t from-slate-500/60 to-transparent rounded-full"></div>
               </div>
 
-              <p className="text-slate-600 mb-4 sm:mb-5 text-sm sm:text-base leading-relaxed">
-                Been on a heritage journey? Share your experience and inspire others to explore our past.
-              </p>
-
-              <div className="space-y-2.5 mb-4 sm:mb-5">
-                <div className="flex items-center gap-3 text-slate-700 text-sm sm:text-base">
-                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500 shrink-0" />
-                  <span>Share your travel route</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-700 text-sm sm:text-base">
-                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500 shrink-0" />
-                  <span>Describe your experience</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-700 text-sm sm:text-base">
-                  <Users className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500 shrink-0" />
-                  <span>Inspire the community</span>
-                </div>
-              </div>
-
-              <div className="bg-slate-100 rounded-xl p-3 sm:p-4 mb-4 sm:mb-5">
-                <div className="flex items-start gap-2.5">
-                  <Users className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 mt-0.5 shrink-0" />
-                  <div className="text-xs sm:text-sm">
-                    <p className="font-semibold text-slate-800 mb-0.5">Community Feature</p>
-                    <p className="text-slate-600">Public stories to inspire awareness and connection.</p>
+              <div className="relative px-5 py-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-linear-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-lg shadow-slate-500/25">
+                    <BookOpen className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Georgia, serif' }}>
+                      Yatra
+                    </h3>
+                    <p className="text-slate-500 font-medium text-sm italic">The Journey Shared</p>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-2 text-slate-500 text-xs sm:text-sm font-medium">
-                  <span>Free to share</span>
+                <p className="text-slate-600 text-sm mb-4 leading-relaxed">
+                  Been on a heritage journey? Through Yatra, your experiences become bridges — connecting others to places they've never seen.
+                </p>
+
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-linear-to-r from-slate-100 to-slate-50 text-slate-600 rounded-full text-xs font-medium border border-slate-200/50">
+                    <MapPin className="w-3 h-3" />
+                    Routes
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-linear-to-r from-slate-100 to-slate-50 text-slate-600 rounded-full text-xs font-medium border border-slate-200/50">
+                    <BookOpen className="w-3 h-3" />
+                    Stories
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-linear-to-r from-slate-100 to-slate-50 text-slate-600 rounded-full text-xs font-medium border border-slate-200/50">
+                    <Users className="w-3 h-3" />
+                    Community
+                  </span>
                 </div>
-                <Link href="/signup">
-                  <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-slate-700 text-white rounded-full font-semibold text-sm hover:bg-slate-800 transition-colors">
-                    Share Yatra
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+
+                <div className="p-3 rounded-xl bg-linear-to-r from-slate-100/80 to-slate-50/50 border-l-3 border-slate-400 mb-4">
+                  <p className="text-slate-600 text-xs italic" style={{ fontFamily: 'Georgia, serif' }}>
+                    "Every journey told is a seed planted for the next traveler."
+                  </p>
+                </div>
+
+                <Link href="/signup" className="inline-block">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-slate-600 to-slate-700 text-white font-semibold text-sm rounded-full shadow-lg shadow-slate-500/25">
+                    Share your Yatra
+                    <Footprints className="w-4 h-4" />
+                  </span>
                 </Link>
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="hidden md:block relative">
+          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-amber-300 to-transparent"></div>
+
+          <div className="space-y-0">
+            <div className="grid grid-cols-2 gap-16 items-center">
+              <div className="relative text-right pr-12">
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-12 h-12 bg-linear-to-br from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30 z-10">
+                  <Search className="w-5 h-5 text-white" />
+                </div>
+
+                <h3 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+                  Anveshan
+                </h3>
+                <p className="text-orange-600 font-medium mb-4 text-sm sm:text-base italic">The Art of Discovery</p>
+
+                <p className="text-amber-800/80 mb-6 leading-relaxed">
+                  Found an ancient site? Through Anveshan, you become a guardian of history — documenting what time might otherwise forget.
+                </p>
+
+                <div className="flex flex-wrap gap-3 justify-end mb-6">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-100/80 text-orange-700 rounded-full text-sm">
+                    <Camera className="w-3.5 h-3.5" />
+                    Photograph
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-100/80 text-orange-700 rounded-full text-sm">
+                    <MapPin className="w-3.5 h-3.5" />
+                    Locate
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-100/80 text-orange-700 rounded-full text-sm">
+                    <BookOpen className="w-3.5 h-3.5" />
+                    Document
+                  </span>
+                </div>
+
+                <div className="relative p-4 rounded-xl border-l-2 border-amber-400 bg-amber-50/50 mb-6 ml-auto max-w-sm">
+                  <p className="text-amber-800 text-sm italic" style={{ fontFamily: 'Georgia, serif' }}>
+                    "Only photograph what is visible. Never disturb, never remove."
+                  </p>
+                </div>
+
+                <Link href="/signup" className="inline-block">
+                  <span className="inline-flex items-center gap-2 text-orange-600 font-semibold hover:text-orange-700 transition-colors group">
+                    Begin your Anveshan
+                    <Footprints className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+              </div>
+
+              <div></div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-16 items-center mt-16">
+              <div></div>
+
+              <div className="relative pl-12">
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-12 bg-linear-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center shadow-lg shadow-slate-500/30 z-10">
+                  <BookOpen className="w-5 h-5 text-white" />
+                </div>
+
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+                  Yatra
+                </h3>
+                <p className="text-slate-600 font-medium mb-4 text-sm sm:text-base italic">The Journey Shared</p>
+
+                <p className="text-slate-600 mb-6 leading-relaxed">
+                  Been on a heritage journey? Through Yatra, your experiences become bridges — connecting others to places they've never seen.
+                </p>
+
+                <div className="flex flex-wrap gap-3 mb-6">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-sm">
+                    <MapPin className="w-3.5 h-3.5" />
+                    Routes
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-sm">
+                    <BookOpen className="w-3.5 h-3.5" />
+                    Stories
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-sm">
+                    <Users className="w-3.5 h-3.5" />
+                    Community
+                  </span>
+                </div>
+
+                <div className="relative p-4 rounded-xl border-l-2 border-slate-300 bg-slate-50/50 mb-6 max-w-sm">
+                  <p className="text-slate-600 text-sm italic" style={{ fontFamily: 'Georgia, serif' }}>
+                    "Every journey told is a seed planted for the next traveler."
+                  </p>
+                </div>
+
+                <Link href="/signup" className="inline-block">
+                  <span className="inline-flex items-center gap-2 text-slate-700 font-semibold hover:text-slate-800 transition-colors group">
+                    Share your Yatra
+                    <Footprints className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 sm:mt-16 flex items-center justify-center gap-3">
+          <span className="w-16 sm:w-24 h-px bg-linear-to-r from-transparent via-amber-400 to-transparent"></span>
+          <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+          <span className="w-16 sm:w-24 h-px bg-linear-to-r from-transparent via-amber-400 to-transparent"></span>
         </div>
       </div>
     </section>

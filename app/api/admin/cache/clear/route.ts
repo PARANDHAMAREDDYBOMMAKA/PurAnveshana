@@ -22,7 +22,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
-    // Clear all heritage site caches (both old and new formats)
     const oldAdminPattern = `${CACHE_KEYS.HERITAGE_SITES}admin:*`
     const oldUserPattern = `${CACHE_KEYS.HERITAGE_SITES}user:*`
     const newAdminKey = `${CACHE_KEYS.HERITAGE_SITES}admin`
