@@ -1,14 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { HomeNavigation } from '@/components/HomeNavigation';
-import { HeroSection } from '@/components/HeroSection';
-import { RewardsSection } from '@/components/RewardsSection';
-import { YatraSection } from '@/components/YatraSection';
-import { AppDemoSection } from '@/components/AppDemoSection';
-import WhyJoinSection from '@/components/WhyJoinSection';
-import VerificationSection from '@/components/VerificationSection';
-import FAQSection from '@/components/FAQSection';
-import FinalCTASection from '@/components/FinalCTASection';
+import { NewHeroSection, ScrollMessage, FeaturesSection, TrustSection, SimpleCTASection } from '@/components/landing';
 import HomeFooter from '@/components/HomeFooter';
 import PrivacyPolicyModal from '@/components/modals/PrivacyPolicyModal';
 import TermsOfServiceModal from '@/components/modals/TermsOfServiceModal';
@@ -25,7 +18,6 @@ import SuccessStoriesModal from '@/components/modals/SuccessStoriesModal';
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showContact, setShowContact] = useState(false);
@@ -68,14 +60,11 @@ export default function Home() {
         scrolled={scrolled}
       />
 
-      <HeroSection />
-      <RewardsSection />
-      <YatraSection />
-      <AppDemoSection />
-      <WhyJoinSection />
-      <VerificationSection />
-      <FAQSection openFaq={openFaq} setOpenFaq={setOpenFaq} />
-      <FinalCTASection />
+      <NewHeroSection />
+      <ScrollMessage />
+      <FeaturesSection />
+      <TrustSection />
+      <SimpleCTASection />
 
       <HomeFooter
         setShowPrivacy={setShowPrivacy}
