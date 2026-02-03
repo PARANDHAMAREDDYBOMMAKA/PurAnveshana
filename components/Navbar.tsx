@@ -74,8 +74,8 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
     <div className="sticky top-0 z-50 px-2 sm:px-3 lg:px-4 pt-2 sm:pt-3">
       <nav className={`max-w-7xl mx-auto transition-all duration-500 rounded-2xl ${
         scrolled
-          ? 'bg-white/80 backdrop-blur-xl shadow-lg shadow-black/5 border border-slate-200/50'
-          : 'bg-white/60 backdrop-blur-lg border border-slate-100/50'
+          ? 'bg-amber-50/80 backdrop-blur-xl shadow-lg shadow-amber-900/5 border border-amber-200/50'
+          : 'bg-white/60 backdrop-blur-lg border border-amber-100/50'
       }`}>
         <div className="px-3 sm:px-4 lg:px-6">
           <div className="flex justify-between items-center h-14 sm:h-16">
@@ -126,7 +126,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                 </span>
               )}
 
-              <div className="w-px h-6 bg-slate-200 mx-1"></div>
+              <div className="w-px h-6 bg-amber-200 mx-1"></div>
 
               <LanguageSelector />
               <NotificationBell />

@@ -161,13 +161,13 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-4 sm:py-8">
+    <div className="min-h-screen bg-linear-to-b from-amber-50 via-orange-50 to-white py-4 sm:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 text-orange-600 hover:text-orange-700 mb-4 w-fit"
+            className="flex items-center gap-2 text-amber-700 hover:text-amber-800 mb-4 w-fit"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -175,16 +175,36 @@ export default function NotificationsPage() {
             <span className="text-sm sm:text-base font-medium">Back to Dashboard</span>
           </Link>
 
-          <h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent mb-2">
+          <h1
+            className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
             Notifications
           </h1>
-          <p className="text-sm sm:text-base text-slate-600">
+          <p className="text-sm sm:text-base text-amber-800/70">
             Manage your notifications and preferences
           </p>
+
+          {/* Ornamental Divider */}
+          <div className="flex items-center gap-3 mt-4">
+            <div className="flex-1 h-px bg-amber-300/60"></div>
+            <div className="flex items-center gap-1.5">
+              <div className="h-1 w-1 rounded-full bg-amber-400"></div>
+              <div className="h-1.5 w-1.5 rounded-full bg-amber-500"></div>
+              <div className="h-1 w-1 rounded-full bg-amber-400"></div>
+            </div>
+            <div className="flex-1 h-px bg-amber-300/60"></div>
+          </div>
         </div>
 
         {/* Actions Bar */}
-        <div className="bg-white rounded-lg shadow-sm border border-orange-200 p-4 mb-6">
+        <div
+          className="rounded-lg border border-amber-200/60 p-4 mb-6"
+          style={{
+            background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)',
+            boxShadow: '0 4px 24px rgba(139, 90, 43, 0.1)',
+          }}
+        >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             {/* Filters */}
             <div className="flex gap-2">
@@ -192,8 +212,8 @@ export default function NotificationsPage() {
                 onClick={() => setFilter('all')}
                 className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   filter === 'all'
-                    ? 'bg-linear-to-r from-orange-500 to-amber-600 text-white shadow-md'
-                    : 'bg-slate-100 text-slate-700 hover:bg-orange-50'
+                    ? 'bg-amber-800 text-amber-50 shadow-md'
+                    : 'bg-amber-100/60 text-amber-800 hover:bg-amber-100'
                 }`}
               >
                 All
@@ -202,8 +222,8 @@ export default function NotificationsPage() {
                 onClick={() => setFilter('unread')}
                 className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   filter === 'unread'
-                    ? 'bg-linear-to-r from-orange-500 to-amber-600 text-white shadow-md'
-                    : 'bg-slate-100 text-slate-700 hover:bg-orange-50'
+                    ? 'bg-amber-800 text-amber-50 shadow-md'
+                    : 'bg-amber-100/60 text-amber-800 hover:bg-amber-100'
                 }`}
               >
                 Unread
@@ -214,7 +234,7 @@ export default function NotificationsPage() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={markAllAsRead}
-                className="px-3 sm:px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-50 rounded-md transition-colors"
+                className="px-3 sm:px-4 py-2 text-sm font-medium text-amber-700 hover:bg-amber-100/60 rounded-md transition-colors"
               >
                 Mark all read
               </button>
@@ -228,7 +248,7 @@ export default function NotificationsPage() {
               </button>
               <Link
                 href="/dashboard/notifications/preferences"
-                className="px-3 sm:px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-md transition-colors flex items-center gap-1"
+                className="px-3 sm:px-4 py-2 text-sm font-medium text-amber-800 hover:bg-amber-100/60 rounded-md transition-colors flex items-center gap-1"
               >
                 <Cog6ToothIcon className="h-4 w-4" />
                 Preferences
@@ -240,15 +260,30 @@ export default function NotificationsPage() {
         {/* Notifications List */}
         {loading ? (
           <div className="flex justify-center items-center p-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-700"></div>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-orange-200 p-12 text-center">
-            <BellIcon className="h-16 w-16 mx-auto mb-4 text-slate-400" />
-            <h3 className="text-lg font-medium text-slate-900 mb-2">
+          <div
+            className="relative rounded-lg border border-amber-200/60 p-12 text-center overflow-hidden"
+            style={{
+              background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)',
+              boxShadow: '0 4px 24px rgba(139, 90, 43, 0.1)',
+            }}
+          >
+            {/* Decorative corner elements */}
+            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-amber-300/60 rounded-tl-sm"></div>
+            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-amber-300/60 rounded-tr-sm"></div>
+            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-amber-300/60 rounded-bl-sm"></div>
+            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-amber-300/60 rounded-br-sm"></div>
+
+            <BellIcon className="h-16 w-16 mx-auto mb-4 text-amber-300" />
+            <h3
+              className="text-lg font-medium text-amber-900 mb-2"
+              style={{ fontFamily: 'Georgia, serif' }}
+            >
               No notifications
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-amber-800/70">
               {filter === 'unread' ? "You're all caught up!" : 'Notifications will appear here'}
             </p>
           </div>
@@ -257,11 +292,17 @@ export default function NotificationsPage() {
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`bg-white rounded-lg shadow-sm border transition-colors ${
+                className={`rounded-lg border transition-colors ${
                   notification.isRead
-                    ? 'border-orange-200'
-                    : 'border-orange-300 bg-orange-50/50'
+                    ? 'border-amber-200/60'
+                    : 'border-amber-300 bg-amber-50/50'
                 }`}
+                style={{
+                  background: notification.isRead
+                    ? 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)'
+                    : undefined,
+                  boxShadow: '0 2px 12px rgba(139, 90, 43, 0.06)',
+                }}
               >
                 <div className="p-4 sm:p-6">
                   <div className="flex gap-3 sm:gap-4">
@@ -273,20 +314,20 @@ export default function NotificationsPage() {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="text-sm sm:text-base font-semibold text-slate-900">
+                        <h3 className="text-sm sm:text-base font-semibold text-amber-900">
                           {notification.title}
                         </h3>
                         {!notification.isRead && (
-                          <div className="h-2 w-2 bg-orange-500 rounded-full shrink-0 mt-1"></div>
+                          <div className="h-2 w-2 bg-amber-600 rounded-full shrink-0 mt-1"></div>
                         )}
                       </div>
 
-                      <p className="text-sm text-slate-700 mb-3">
+                      <p className="text-sm text-amber-900/70 mb-3">
                         {notification.message}
                       </p>
 
                       <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
-                        <span className="text-slate-500">
+                        <span className="text-amber-700/60">
                           {formatDate(notification.createdAt)}
                         </span>
 
@@ -294,7 +335,7 @@ export default function NotificationsPage() {
                           {!notification.isRead && (
                             <button
                               onClick={() => markAsRead(notification.id)}
-                              className="text-orange-600 hover:underline"
+                              className="text-amber-700 hover:underline"
                             >
                               Mark as read
                             </button>
@@ -303,7 +344,7 @@ export default function NotificationsPage() {
                             <Link
                               href={notification.link}
                               onClick={() => markAsRead(notification.id)}
-                              className="text-orange-600 hover:underline"
+                              className="text-amber-700 hover:underline"
                             >
                               View
                             </Link>

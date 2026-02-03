@@ -185,11 +185,11 @@ export default function TicketDetailPage() {
       <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white">
         <Navbar userEmail={userEmail} isAdmin={userRole === 'admin'} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-xl shadow-md border border-slate-200 p-12 text-center">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Ticket not found</h2>
+          <div className="rounded-xl border border-amber-200/60 p-12 text-center" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.12)' }}>
+            <h2 className="text-2xl font-bold text-slate-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>Ticket not found</h2>
             <button
               onClick={() => router.push('/dashboard/support')}
-              className="px-6 py-3 bg-linear-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
+              className="px-6 py-3 bg-amber-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:bg-amber-900 transition-all"
             >
               Back to Support
             </button>
@@ -210,7 +210,7 @@ export default function TicketDetailPage() {
         <div className="mb-6">
           <button
             onClick={() => router.push('/dashboard/support')}
-            className="flex items-center gap-2 text-slate-600 hover:text-orange-600 transition-colors mb-4"
+            className="flex items-center gap-2 text-amber-700 hover:text-amber-800 transition-colors mb-4"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -218,10 +218,10 @@ export default function TicketDetailPage() {
             <span>Back to Support</span>
           </button>
 
-          <div className="bg-white rounded-xl shadow-lg border border-orange-200 p-6">
+          <div className="rounded-xl border border-amber-200/60 p-6" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.12)' }}>
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
               <div className="flex-1">
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">{ticket.subject}</h1>
+                <h1 className="text-2xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>{ticket.subject}</h1>
                 <p className="text-sm text-slate-500">
                   Ticket #{ticket.id.slice(0, 8)} • Created {new Date(ticket.createdAt).toLocaleDateString()}
                 </p>
@@ -248,7 +248,7 @@ export default function TicketDetailPage() {
             )}
 
             {isAdmin && ticket.profile && (
-              <div className="mt-4 pt-4 border-t border-slate-200">
+              <div className="mt-4 pt-4 border-t border-amber-200/40">
                 <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -257,8 +257,8 @@ export default function TicketDetailPage() {
                   <span>{ticket.profile.name || ticket.profile.email}</span>
                 </div>
 
-                <div className="bg-slate-50 rounded-lg p-4 space-y-3">
-                  <h3 className="text-sm font-bold text-slate-900 mb-3">Admin Controls</h3>
+                <div className="bg-amber-50/50 rounded-lg p-4 space-y-3">
+                  <h3 className="text-sm font-bold text-slate-900 mb-3" style={{ fontFamily: 'Georgia, serif' }}>Admin Controls</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -266,7 +266,7 @@ export default function TicketDetailPage() {
                       <select
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
+                        className="w-full px-3 py-2 text-sm border border-amber-200/80 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-black"
                       >
                         <option value="OPEN">Open</option>
                         <option value="IN_PROGRESS">In Progress</option>
@@ -281,7 +281,7 @@ export default function TicketDetailPage() {
                       <select
                         value={selectedPriority}
                         onChange={(e) => setSelectedPriority(e.target.value)}
-                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
+                        className="w-full px-3 py-2 text-sm border border-amber-200/80 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-black"
                       >
                         <option value="LOW">Low</option>
                         <option value="MEDIUM">Medium</option>
@@ -305,9 +305,9 @@ export default function TicketDetailPage() {
         </div>
 
         {/* Messages */}
-        <div className="bg-white rounded-xl shadow-lg border border-slate-200 mb-6">
-          <div className="p-6 border-b border-slate-200">
-            <h2 className="text-xl font-bold text-slate-900">Conversation</h2>
+        <div className="rounded-xl border border-amber-200/60 mb-6" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.1)' }}>
+          <div className="p-6 border-b border-amber-200/40">
+            <h2 className="text-xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>Conversation</h2>
           </div>
 
           <div className="p-6 space-y-4 max-h-[500px] overflow-y-auto">
@@ -357,20 +357,20 @@ export default function TicketDetailPage() {
 
           {/* Message Input */}
           {ticket.status !== 'CLOSED' && (
-            <div className="p-6 border-t border-slate-200">
+            <div className="p-6 border-t border-amber-200/40">
               <form onSubmit={handleSendMessage} className="flex gap-3">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type your message..."
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black placeholder:text-slate-500"
+                  className="flex-1 px-4 py-2 border border-amber-200/80 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-black placeholder:text-slate-500"
                   disabled={sending}
                 />
                 <button
                   type="submit"
                   disabled={sending || !newMessage.trim()}
-                  className="px-6 py-2 bg-linear-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-linear-to-r from-amber-600 to-amber-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {sending ? 'Sending...' : 'Send'}
                 </button>
@@ -379,7 +379,7 @@ export default function TicketDetailPage() {
           )}
 
           {ticket.status === 'CLOSED' && (
-            <div className="p-6 border-t border-slate-200 bg-slate-50">
+            <div className="p-6 border-t border-amber-200/40 bg-amber-50/50">
               <div className="flex items-center gap-2 text-slate-600">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

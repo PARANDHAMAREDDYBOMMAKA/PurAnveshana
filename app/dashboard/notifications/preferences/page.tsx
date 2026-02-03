@@ -93,35 +93,40 @@ export default function NotificationPreferencesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+      <div className="min-h-screen bg-linear-to-b from-amber-50 via-orange-50 to-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-700"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-4 sm:py-8">
+    <div className="min-h-screen bg-linear-to-b from-amber-50 via-orange-50 to-white py-4 sm:py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6 sm:mb-8">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-orange-600 hover:underline mb-4"
+            className="flex items-center gap-2 text-amber-700 hover:text-amber-800 mb-4"
           >
             <ArrowLeftIcon className="h-4 w-4" />
             <span className="text-sm sm:text-base">Back</span>
           </button>
 
-          <h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
             Notification Preferences
           </h1>
-          <p className="text-sm sm:text-base text-slate-600">
+          <p className="text-sm sm:text-base text-amber-800/70">
             Choose how you want to be notified about activity
           </p>
+          <div className="flex items-center gap-2 mt-3">
+            <span className="w-8 h-px bg-amber-400/50"></span>
+            <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
+            <span className="w-8 h-px bg-amber-400/50"></span>
+          </div>
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow-sm border border-orange-200 p-4 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">
+          <div className="border border-amber-200/60 rounded-xl p-4 sm:p-6" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.1)' }}>
+            <h2 className="text-lg sm:text-xl font-semibold text-amber-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
               Email Notifications
             </h2>
 
@@ -156,8 +161,8 @@ export default function NotificationPreferencesPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-orange-200 p-4 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">
+          <div className="border border-amber-200/60 rounded-xl p-4 sm:p-6" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.1)' }}>
+            <h2 className="text-lg sm:text-xl font-semibold text-amber-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
               Push Notifications
             </h2>
 
@@ -196,7 +201,7 @@ export default function NotificationPreferencesPage() {
             <button
               onClick={savePreferences}
               disabled={saving}
-              className="px-6 py-2.5 bg-linear-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-medium rounded-md transition-all shadow-md disabled:opacity-50 text-sm sm:text-base"
+              className="px-6 py-2.5 bg-amber-800 hover:bg-amber-900 text-amber-50 font-medium rounded-full transition-all shadow-lg shadow-amber-900/20 disabled:opacity-50 text-sm sm:text-base"
             >
               {saving ? 'Saving...' : 'Save Preferences'}
             </button>
@@ -231,8 +236,8 @@ function PreferenceToggle({
 
       <button
         onClick={onChange}
-        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
-          enabled ? 'bg-linear-to-r from-orange-500 to-amber-600' : 'bg-slate-200'
+        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 ${
+          enabled ? 'bg-amber-700' : 'bg-slate-200'
         }`}
         role="switch"
         aria-checked={enabled}
