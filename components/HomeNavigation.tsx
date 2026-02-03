@@ -13,9 +13,13 @@ export function HomeNavigation({ isMenuOpen, setIsMenuOpen, scrolled }: HomeNavi
   return (
     <div className="fixed w-full z-50 px-3 sm:px-4 lg:px-6 pt-2 sm:pt-3">
       <nav className={`max-w-4xl mx-auto transition-all duration-300 ${
+        isMenuOpen
+          ? 'rounded-2xl'
+          : 'rounded-full'
+      } ${
         scrolled
-          ? 'bg-amber-50/90 backdrop-blur-xl shadow-md shadow-amber-900/5 rounded-full border border-amber-200/50'
-          : 'bg-amber-50/60 backdrop-blur-md rounded-full border border-amber-100/50'
+          ? 'bg-amber-50/90 backdrop-blur-xl shadow-md shadow-amber-900/5 border border-amber-200/50'
+          : 'bg-amber-50/60 backdrop-blur-md border border-amber-100/50'
       }`}>
         <div className="px-3 sm:px-5">
           <div className="flex justify-between items-center h-12 sm:h-14">
@@ -67,18 +71,13 @@ export function HomeNavigation({ isMenuOpen, setIsMenuOpen, scrolled }: HomeNavi
         </div>
 
         {isMenuOpen && (
-          <div className="sm:hidden border-t border-amber-200/50 mx-3">
+          <div className="sm:hidden border-t border-amber-200/50 mx-3 pb-3">
             <div className="py-3 space-y-2">
               <Link href="/login" className="block" onClick={() => setIsMenuOpen(false)}>
-                <button className="w-full px-4 py-2.5 text-amber-800 font-medium text-sm hover:bg-amber-100/50 rounded-lg transition-colors text-center">
+                <button className="w-full px-4 py-2.5 bg-amber-800 text-amber-50 rounded-lg font-medium text-sm hover:bg-amber-900 transition-colors text-center">
                   Login
                 </button>
               </Link>
-              {/* <Link href="/signup" className="block" onClick={() => setIsMenuOpen(false)}>
-                <button className="w-full px-4 py-2.5 bg-amber-800 text-amber-50 rounded-lg font-medium text-sm hover:bg-amber-900 transition-colors">
-                  Get Started
-                </button>
-              </Link> */}
             </div>
           </div>
         )}
