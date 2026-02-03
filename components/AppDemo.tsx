@@ -115,7 +115,7 @@ export default function AppDemo() {
                     <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-base sm:text-lg font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Puranveshana</span>
+                    <span className="text-base sm:text-lg font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent notranslate" translate="no">Puranveshana</span>
                     <span className="text-[8px] sm:text-[10px] text-orange-500 -mt-0.5 notranslate" translate="no">पुरातन अन्वेषण</span>
                   </div>
                 </div>
@@ -167,7 +167,7 @@ export default function AppDemo() {
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                   <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <span className="font-bold text-orange-600 text-xs sm:text-sm">Puranveshana</span>
+                <span className="font-bold text-orange-600 text-xs sm:text-sm notranslate" translate="no">Puranveshana</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="text-[10px] sm:text-xs text-slate-600 hidden sm:block">explorer@gmail.com</span>
@@ -219,7 +219,7 @@ export default function AppDemo() {
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                   <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <span className="font-bold text-orange-600 text-xs sm:text-sm">Puranveshana</span>
+                <span className="font-bold text-orange-600 text-xs sm:text-sm notranslate" translate="no">Puranveshana</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="text-[10px] sm:text-xs text-slate-600 hidden sm:block">explorer@gmail.com</span>
@@ -268,7 +268,7 @@ export default function AppDemo() {
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                   <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <span className="font-bold text-orange-600 text-xs sm:text-sm">Puranveshana</span>
+                <span className="font-bold text-orange-600 text-xs sm:text-sm notranslate" translate="no">Puranveshana</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="text-[10px] sm:text-xs text-slate-600 hidden sm:block">explorer@gmail.com</span>

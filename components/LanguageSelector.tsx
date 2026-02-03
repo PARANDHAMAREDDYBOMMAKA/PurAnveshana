@@ -22,6 +22,13 @@ interface TextNode {
   translatedText?: string;
 }
 
+const LANGUAGES = [
+  { code: 'en', label: 'English' },
+  { code: 'hi', label: 'हिन्दी (Hindi)' },
+  { code: 'te', label: 'తెలుగు (Telugu)' },
+  { code: 'or', label: 'ଓଡ଼ିଆ (Odia)' },
+];
+
 export default function LanguageSelector() {
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const [isOpen, setIsOpen] = useState(false);
@@ -34,8 +41,8 @@ export default function LanguageSelector() {
     const savedLanguage = localStorage.getItem('preferredLanguage') || 'en';
     setCurrentLanguage(savedLanguage);
 
-    if (savedLanguage === 'hi') {
-      setTimeout(() => translatePageContent('hi'), 500);
+    if (savedLanguage !== 'en') {
+      setTimeout(() => translatePageContent(savedLanguage), 500);
     }
   }, []);
 
@@ -65,7 +72,7 @@ export default function LanguageSelector() {
           const parent = node.parentElement;
           if (!parent) return NodeFilter.FILTER_REJECT;
 
-          if (parent.matches(EXCLUDE_SELECTORS)) {
+          if (parent.closest(EXCLUDE_SELECTORS)) {
             return NodeFilter.FILTER_REJECT;
           }
 
@@ -139,7 +146,7 @@ export default function LanguageSelector() {
             body: JSON.stringify({
               texts: batch,
               source: 'en',
-              target: 'hi',
+              target: targetLanguage,
             }),
           });
 
@@ -187,6 +194,14 @@ export default function LanguageSelector() {
       return;
     }
 
+    // Restore original text first if switching from a non-English language
+    if (currentLanguage !== 'en') {
+      textNodesRef.current.forEach(({ node, originalText }) => {
+        if (node.textContent !== null) node.textContent = originalText;
+      });
+      textNodesRef.current = [];
+    }
+
     setCurrentLanguage(lang);
     localStorage.setItem('preferredLanguage', lang);
     setIsOpen(false);
@@ -204,31 +219,25 @@ export default function LanguageSelector() {
       >
         <Globe className="w-4 h-4 text-black" />
         <span className="text-sm font-medium text-black">
-          {currentLanguage === 'hi' ? 'हिन्दी' : 'English'}
+          {LANGUAGES.find(l => l.code === currentLanguage)?.label.split(' ')[0] || 'English'}
         </span>
       </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-50">
           <div className="py-1">
-            <button
-              onClick={() => changeLanguage('en')}
-              disabled={isTranslating}
-              className={`w-full text-left px-4 py-2 text-sm text-black hover:bg-slate-50 transition-colors disabled:opacity-50 ${
-                currentLanguage === 'en' ? 'bg-slate-100 font-medium' : ''
-              }`}
-            >
-              English
-            </button>
-            <button
-              onClick={() => changeLanguage('hi')}
-              disabled={isTranslating}
-              className={`w-full text-left px-4 py-2 text-sm text-black hover:bg-slate-50 transition-colors disabled:opacity-50 ${
-                currentLanguage === 'hi' ? 'bg-slate-100 font-medium' : ''
-              }`}
-            >
-              हिन्दी (Hindi)
-            </button>
+            {LANGUAGES.map(({ code, label }) => (
+              <button
+                key={code}
+                onClick={() => changeLanguage(code)}
+                disabled={isTranslating}
+                className={`w-full text-left px-4 py-2 text-sm text-black hover:bg-slate-50 transition-colors disabled:opacity-50 ${
+                  currentLanguage === code ? 'bg-slate-100 font-medium' : ''
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
           {isTranslating && (
             <div className="px-4 py-2 border-t">

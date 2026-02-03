@@ -131,7 +131,7 @@ export function ScrollMessage() {
                 </p>
 
                 <p>
-                  We created <strong className="text-amber-800">Puranveshana</strong> — a platform where people can document and preserve ancient heritage, without disturbing it.
+                  We created <strong className="text-amber-800 notranslate" translate="no">Puranveshana</strong> — a platform where people can document and preserve ancient heritage, without disturbing it.
                 </p>
 
                 <div className="py-3 sm:py-4">

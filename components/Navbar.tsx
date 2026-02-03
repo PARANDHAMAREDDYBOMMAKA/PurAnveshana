@@ -84,7 +84,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-base sm:text-lg font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight truncate">
+                <span className="text-base sm:text-lg font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight truncate notranslate" translate="no">
                   Puranveshana
                 </span>
                 <span className="text-[8px] sm:text-[9px] text-orange-600/70 font-medium -mt-0.5 notranslate truncate" translate="no">

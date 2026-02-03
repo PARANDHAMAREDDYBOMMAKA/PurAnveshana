@@ -28,8 +28,9 @@ export function HomeNavigation({ isMenuOpen, setIsMenuOpen, scrolled }: HomeNavi
                 <MapPin className="w-4 h-4 text-amber-50" />
               </div>
               <span
-                className="text-base sm:text-lg font-bold text-amber-900 group-hover:text-amber-700 transition-colors"
+                className="text-base sm:text-lg font-bold text-amber-900 group-hover:text-amber-700 transition-colors notranslate"
                 style={{ fontFamily: 'Georgia, serif' }}
+                translate="no"
               >
                 Puranveshana <br /> पुरातन अन्वेषण
               </span>

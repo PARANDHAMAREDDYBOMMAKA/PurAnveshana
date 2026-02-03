@@ -630,7 +630,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
 
             <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
               <p className="text-sm text-orange-900">
-                <strong>Note:</strong> Detailed evidence has been submitted privately to Puranveshana for expert review.
+                <strong>Note:</strong> Detailed evidence has been submitted privately to <span className="notranslate" translate="no">Puranveshana</span> for expert review.
               </p>
             </div>
           </div>
@@ -735,7 +735,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 <li>✓ Maximum 3 images</li>
                 <li>✓ Images must have valid camera EXIF data (Make/Model)</li>
                 <li>✓ Images should not reveal exact location</li>
-                <li>✓ Puranveshana may crop, blur, or watermark images for safety</li>
+                <li>✓ <span className="notranslate" translate="no">Puranveshana</span> may crop, blur, or watermark images for safety</li>
               </ul>
             </div>
 

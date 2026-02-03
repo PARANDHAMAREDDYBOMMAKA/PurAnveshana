@@ -120,7 +120,7 @@ export default function SignupPage() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">Puranveshana</h1>
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold notranslate" translate="no">Puranveshana</h1>
                 <p className="text-white/80 text-xs md:text-sm font-medium notranslate" translate="no">पुरातन अन्वेषण</p>
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function SignupPage() {
               </svg>
             </div>
             <div className="flex flex-col">
-              <span className="text-xl sm:text-2xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+              <span className="text-xl sm:text-2xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent notranslate" translate="no">
                 Puranveshana
               </span>
               <span className="text-xs text-orange-600 font-semibold -mt-1 notranslate" translate="no">

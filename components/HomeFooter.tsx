@@ -47,7 +47,7 @@ export default function HomeFooter({
                 <MapPin className="w-4 h-4 text-white" />
               </div>
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-amber-50" style={{ fontFamily: 'Georgia, serif' }}>
+            <h3 className="text-base sm:text-lg font-bold text-amber-50 notranslate" style={{ fontFamily: 'Georgia, serif' }} translate="no">
               Puranveshana
             </h3>
             <p className="text-amber-300/80 text-xs sm:text-sm max-w-md mx-auto">
@@ -107,7 +107,7 @@ export default function HomeFooter({
               Made with <Heart className="w-2.5 h-2.5 text-amber-500 fill-amber-500" /> for heritage preservation
             </p>
             <p className="text-amber-400/50 text-[10px] sm:text-xs">
-              &copy; {year || '2026'} Puranveshana. All rights reserved.
+              &copy; {year || '2026'} <span className="notranslate" translate="no">Puranveshana</span>. All rights reserved.
             </p>
           </div>
         </div>
