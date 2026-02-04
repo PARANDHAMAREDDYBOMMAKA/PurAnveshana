@@ -80,14 +80,14 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
         <div className="px-3 sm:px-4 lg:px-6">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-linear-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/20">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-linear-to-br from-amber-700 to-amber-800 rounded-xl flex items-center justify-center shrink-0 shadow-md shadow-amber-900/20">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-base sm:text-lg font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight truncate notranslate" translate="no">
+                <span className="text-base sm:text-lg font-bold text-amber-900 leading-tight truncate notranslate" translate="no" style={{ fontFamily: 'Georgia, serif' }}>
                   Puranveshana
                 </span>
-                <span className="text-[8px] sm:text-[9px] text-orange-600/70 font-medium -mt-0.5 notranslate truncate" translate="no">
+                <span className="text-[8px] sm:text-[9px] text-amber-700/60 font-medium -mt-0.5 notranslate truncate" translate="no">
                   पुरातन अन्वेषण
                 </span>
               </div>
@@ -103,19 +103,9 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                 <button
                   key={item.label}
                   onClick={() => router.push(item.path)}
-                  className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
-                    item.color === 'orange' ? 'text-slate-600 hover:bg-orange-50 hover:text-orange-600' :
-                    item.color === 'blue' ? 'text-slate-600 hover:bg-blue-50 hover:text-blue-600' :
-                    item.color === 'emerald' ? 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-600' :
-                    'text-slate-600 hover:bg-purple-50 hover:text-purple-600'
-                  }`}
+                  className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-amber-900/70 hover:bg-amber-100/60 hover:text-amber-900"
                 >
-                  <item.icon className={`w-4 h-4 ${
-                    item.color === 'orange' ? 'text-orange-500' :
-                    item.color === 'blue' ? 'text-blue-500' :
-                    item.color === 'emerald' ? 'text-emerald-500' :
-                    'text-purple-500'
-                  }`} />
+                  <item.icon className="w-4 h-4 text-amber-700/70 group-hover:text-amber-800" />
                   <span>{item.label}</span>
                 </button>
               ))}
@@ -126,7 +116,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                 </span>
               )}
 
-              <div className="w-px h-6 bg-amber-200 mx-1"></div>
+              <div className="w-px h-6 bg-amber-300/50 mx-1"></div>
 
               <LanguageSelector />
               <NotificationBell />
@@ -144,7 +134,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
               <div className="relative" ref={mobileMenuRef}>
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="flex items-center justify-center bg-linear-to-br from-orange-500 to-amber-600 rounded-xl w-8 h-8 shadow-md hover:shadow-lg transition-all"
+                  className="flex items-center justify-center bg-linear-to-br from-amber-700 to-amber-800 rounded-xl w-8 h-8 shadow-md shadow-amber-900/20 hover:shadow-lg transition-all"
                   aria-label="Toggle menu"
                 >
                   {isMobileMenuOpen ? (
@@ -155,15 +145,24 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                 </button>
 
                 {isMobileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl py-2 z-50 border border-slate-200/50">
-                    <div className="px-4 py-3 border-b border-slate-100">
+                  <div className="absolute right-0 mt-2 w-72 rounded-2xl py-2 z-50 border border-amber-200/60 overflow-hidden" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.15)' }}>
+                    <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none">
+                      <div className="absolute top-3 left-3 w-5 h-px bg-amber-300/60"></div>
+                      <div className="absolute top-3 left-3 w-px h-5 bg-amber-300/60"></div>
+                    </div>
+                    <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none">
+                      <div className="absolute top-3 right-3 w-5 h-px bg-amber-300/60"></div>
+                      <div className="absolute top-3 right-3 w-px h-5 bg-amber-300/60"></div>
+                    </div>
+
+                    <div className="px-4 py-3 border-b border-amber-200/50">
                       <div className="flex items-center gap-3">
-                        <div className="bg-linear-to-br from-orange-500 to-amber-600 rounded-xl w-10 h-10 flex items-center justify-center shrink-0 shadow-md">
-                          <span className="text-white text-base font-bold">{getInitials(userEmail)}</span>
+                        <div className="bg-linear-to-br from-amber-700 to-amber-800 rounded-xl w-10 h-10 flex items-center justify-center shrink-0 shadow-md shadow-amber-900/20">
+                          <span className="text-amber-50 text-base font-bold">{getInitials(userEmail)}</span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-slate-500 mb-0.5">Signed in as</p>
-                          <p className="text-sm font-semibold text-slate-900 truncate">{userEmail}</p>
+                          <p className="text-xs text-amber-700/60 mb-0.5">Signed in as</p>
+                          <p className="text-sm font-semibold text-amber-900 truncate">{userEmail}</p>
                         </div>
                       </div>
                     </div>
@@ -174,18 +173,27 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                           setIsMobileMenuOpen(false)
                           router.push('/profile')
                         }}
-                        className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-xl transition-colors"
+                        className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-amber-900 hover:bg-amber-100/60 rounded-lg transition-colors"
                       >
-                        <Settings className="w-5 h-5 mr-3 text-slate-500" />
+                        <Settings className="w-5 h-5 mr-3 text-amber-700" />
                         Profile Settings
                       </button>
                       <button
                         onClick={handleLogout}
-                        className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                        className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <LogOut className="w-5 h-5 mr-3" />
                         Logout
                       </button>
+                    </div>
+
+                    <div className="absolute bottom-0 left-0 w-16 h-16 pointer-events-none">
+                      <div className="absolute bottom-3 left-3 w-5 h-px bg-amber-300/60"></div>
+                      <div className="absolute bottom-3 left-3 w-px h-5 bg-amber-300/60"></div>
+                    </div>
+                    <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none">
+                      <div className="absolute bottom-3 right-3 w-5 h-px bg-amber-300/60"></div>
+                      <div className="absolute bottom-3 right-3 w-px h-5 bg-amber-300/60"></div>
                     </div>
                   </div>
                 )}

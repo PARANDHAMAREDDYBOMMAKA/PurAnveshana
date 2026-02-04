@@ -400,8 +400,8 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                   onClick={() => setFormData({ ...formData, heritageSiteId: site.id })}
                   className={`w-full p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all ${
                     formData.heritageSiteId === site.id
-                      ? 'border-orange-500 bg-orange-50'
-                      : 'border-gray-200 hover:border-orange-300'
+                      ? 'border-amber-700 bg-amber-50/50'
+                      : 'border-gray-200 hover:border-amber-400'
                   }`}
                 >
                   <div className="flex items-center gap-3 sm:gap-4">
@@ -417,7 +417,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                       <p className="text-xs sm:text-sm text-gray-900 truncate">{site.type}</p>
                     </div>
                     {formData.heritageSiteId === site.id && (
-                      <Check className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500 shrink-0" />
+                      <Check className="h-5 w-5 sm:h-6 sm:w-6 text-amber-700 shrink-0" />
                     )}
                   </div>
                 </button>
@@ -445,7 +445,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="E.g., Ancient temple ruins in..."
                 maxLength={80}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none"
               />
               <div className="mt-2 text-right text-xs sm:text-sm text-gray-900">
                 {formData.title.length}/80 characters
@@ -482,10 +482,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, discoveryContext: e.target.value })}
                 placeholder="Was it through local people, elders, family stories? During travel, farming, trekking? Through old maps or texts?"
                 rows={8}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none resize-none"
               />
               <div className="mt-2 flex flex-col sm:flex-row justify-between gap-1 sm:gap-0 text-xs sm:text-sm">
-                <span className={`${wordCount < 50 ? 'text-red-600' : wordCount > 300 ? 'text-orange-600' : 'text-green-600'}`}>
+                <span className={`${wordCount < 50 ? 'text-red-600' : wordCount > 300 ? 'text-amber-800' : 'text-green-600'}`}>
                   {wordCount} words {wordCount < 50 && '(minimum 50)'}
                 </span>
                 <span className="text-gray-900">
@@ -514,7 +514,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, journeyNarrative: e.target.value })}
                 placeholder="Describe your journey: distance traveled, terrain crossed (forest, hill, farmland, ruins), weather conditions, lack of paths, or safety risks..."
                 rows={8}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none resize-none"
               />
               <div className="mt-2 text-right text-xs sm:text-sm">
                 <span className={formData.journeyNarrative.length >= 100 ? 'text-green-600' : 'text-gray-900'}>
@@ -541,7 +541,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               {HISTORICAL_INDICATORS.map((indicator) => (
                 <label
                   key={indicator}
-                  className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-orange-300 cursor-pointer transition-all"
+                  className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-amber-400 cursor-pointer transition-all"
                 >
                   <input
                     type="checkbox"
@@ -561,7 +561,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                         })
                       }
                     }}
-                    className="w-5 h-5 text-orange-500 rounded focus:ring-orange-500"
+                    className="w-5 h-5 text-amber-700 rounded focus:ring-amber-500"
                   />
                   <span className="text-gray-900 font-medium">{indicator}</span>
                 </label>
@@ -580,7 +580,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                   }
                   placeholder="Describe the indicators in more detail..."
                   rows={4}
-                  className="w-full px-4 py-3 text-gray-900 placeholder:text-gray-900 rounded-xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none"
+                  className="w-full px-4 py-3 text-gray-900 placeholder:text-gray-900 rounded-xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none"
                 />
               </div>
             )}
@@ -603,7 +603,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               {EVIDENCE_TYPES.map((evidence) => (
                 <label
                   key={evidence}
-                  className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-orange-300 cursor-pointer transition-all"
+                  className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-amber-400 cursor-pointer transition-all"
                 >
                   <input
                     type="checkbox"
@@ -621,15 +621,15 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                         })
                       }
                     }}
-                    className="w-5 h-5 text-orange-500 rounded focus:ring-orange-500"
+                    className="w-5 h-5 text-amber-700 rounded focus:ring-amber-500"
                   />
                   <span className="text-gray-900 font-medium">{evidence}</span>
                 </label>
               ))}
             </div>
 
-            <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-              <p className="text-sm text-orange-900">
+            <div className="bg-amber-50/80 border border-amber-200/60 rounded-xl p-4">
+              <p className="text-sm text-amber-900">
                 <strong>Note:</strong> Detailed evidence has been submitted privately to <span className="notranslate" translate="no">Puranveshana</span> for expert review.
               </p>
             </div>
@@ -654,10 +654,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-4 px-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-orange-400 hover:bg-orange-50 transition-all flex items-center justify-center gap-3 group"
+                  className="w-full py-4 px-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-amber-400 hover:bg-amber-50/50 transition-all flex items-center justify-center gap-3 group"
                 >
-                  <Upload className="h-6 w-6 text-gray-900 group-hover:text-orange-600" />
-                  <span className="text-gray-900 group-hover:text-orange-600 font-medium">
+                  <Upload className="h-6 w-6 text-gray-900 group-hover:text-amber-800" />
+                  <span className="text-gray-900 group-hover:text-amber-800 font-medium">
                     {uploadedImages.length > 0 ? 'Add More Images' : 'Upload Images'}
                   </span>
                 </button>
@@ -742,7 +742,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
             <div className="text-center">
               <button
                 onClick={handleNext}
-                className="text-orange-600 hover:text-orange-700 font-medium"
+                className="text-amber-800 hover:text-amber-900 font-medium"
               >
                 Skip this step →
               </button>
@@ -768,14 +768,14 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, personalReflection: e.target.value })}
                 placeholder="Why is this discovery important? Is there a risk of damage or neglect? What personal emotions or sense of responsibility do you feel?"
                 rows={6}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-orange-500 focus:outline-none resize-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none resize-none"
               />
             </div>
 
             <div className="text-center">
               <button
                 onClick={handleNext}
-                className="text-orange-600 hover:text-orange-700 font-medium"
+                className="text-amber-800 hover:text-amber-900 font-medium"
               >
                 Skip this step →
               </button>
@@ -844,7 +844,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               )}
             </div>
 
-            <div className="bg-orange-50 border-2 border-orange-300 rounded-xl p-6">
+            <div className="bg-amber-50/80 border-2 border-amber-300/60 rounded-xl p-6">
               <label className="flex items-start gap-4 cursor-pointer">
                 <input
                   type="checkbox"
@@ -852,7 +852,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                   onChange={(e) =>
                     setFormData({ ...formData, submissionConfirmed: e.target.checked })
                   }
-                  className="mt-1 w-5 h-5 text-orange-500 rounded focus:ring-orange-500"
+                  className="mt-1 w-5 h-5 text-amber-700 rounded focus:ring-amber-500"
                 />
                 <div>
                   <p className="text-gray-900 font-semibold mb-1">Declaration</p>
@@ -873,7 +873,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-orange-50 via-amber-50 to-white">
+    <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Back Button */}
         <button
@@ -896,7 +896,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
           </div>
           <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-linear-to-r from-orange-500 to-amber-500 transition-all duration-500"
+              className="h-full bg-linear-to-r from-amber-600 to-amber-700 transition-all duration-500"
               style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
             />
           </div>
@@ -915,7 +915,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                       isCompleted
                         ? 'bg-green-500 text-white'
                         : isCurrent
-                        ? 'bg-orange-500 text-white'
+                        ? 'bg-amber-700 text-white'
                         : 'bg-gray-200 text-gray-900'
                     }`}
                   >
@@ -950,7 +950,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
           {currentStep < steps.length - 1 ? (
             <button
               onClick={handleNext}
-              className="flex items-center gap-1.5 sm:gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-linear-to-r from-orange-500 to-amber-500 text-white font-semibold text-sm sm:text-base hover:shadow-lg transition-all"
+              className="flex items-center gap-1.5 sm:gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-amber-800 hover:bg-amber-900 text-amber-50 font-semibold text-sm sm:text-base shadow-lg shadow-amber-900/20 transition-all"
             >
               Next
               <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />

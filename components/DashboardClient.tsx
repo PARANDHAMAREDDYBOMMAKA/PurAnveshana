@@ -129,37 +129,66 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
 
       {!isAdmin && (
         <div className="space-y-6 sm:space-y-8">
-          <div className="w-full bg-linear-to-r from-orange-500 to-orange-600 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
-                <MapPin className="h-6 w-6 sm:h-7 sm:w-7" />
+          <div className="relative w-full rounded-2xl p-5 sm:p-6 shadow-lg mb-2 overflow-hidden"
+            style={{
+              background: 'linear-gradient(145deg, #f8f0e3 0%, #f0e4d0 25%, #e8d5b8 50%, #f5edd8 75%, #ebe0c9 100%)',
+              boxShadow: '0 8px 40px rgba(180, 100, 40, 0.12), 0 2px 8px rgba(180, 100, 40, 0.08)',
+            }}
+          >
+            <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #8B4513 0, #8B4513 1px, transparent 0, transparent 8px)' }}></div>
+            <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-amber-300 via-orange-400 to-amber-300"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-transparent via-amber-400 to-transparent"></div>
+            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-amber-700/30"></div>
+            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-amber-700/30"></div>
+            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-amber-700/30"></div>
+            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-amber-700/30"></div>
+            <div className="relative flex items-center gap-3 sm:gap-4">
+              <div className="bg-amber-800 p-3 rounded-xl shadow-lg shadow-amber-900/30">
+                <MapPin className="h-6 w-6 sm:h-7 sm:w-7 text-amber-50" />
               </div>
               <div className="flex flex-col">
-                <h2 className="text-2xl sm:text-3xl font-bold">Anveshan</h2>
-                <p className="text-sm sm:text-base text-white/90 mt-0.5">Discover ancient sites. Get rewarded.</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>Anveshan</h2>
+                <p className="text-sm sm:text-base text-amber-800/70 mt-0.5" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>Discover ancient sites. Get rewarded.</p>
               </div>
             </div>
           </div>
 
           <button
             onClick={() => setShowUploadModal(true)}
-            className="relative w-full bg-white border-2 border-orange-500 rounded-xl sm:rounded-2xl p-5 sm:p-6 hover:shadow-xl hover:shadow-orange-500/30 hover:border-orange-600 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] group overflow-hidden"
+            className="relative w-full rounded-xl border border-amber-200/60 p-5 sm:p-6 hover:border-amber-300 transition-all duration-300 group overflow-hidden"
+            style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.12)' }}
           >
+            <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none">
+              <div className="absolute top-3 left-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute top-3 left-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
+            <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none">
+              <div className="absolute top-3 right-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute top-3 right-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
             <div className="flex items-center gap-4 sm:gap-5">
-              <div className="p-3 sm:p-4 bg-orange-100 rounded-xl group-hover:bg-orange-200 transition-colors">
-                <Upload className="h-7 w-7 sm:h-8 sm:w-8 text-orange-600" />
+              <div className="p-3 sm:p-4 bg-amber-100 rounded-xl group-hover:bg-amber-200/80 transition-colors">
+                <Upload className="h-7 w-7 sm:h-8 sm:w-8 text-amber-700" />
               </div>
               <div className="flex-1 text-left">
-                <h3 className="font-bold text-gray-900 text-xl sm:text-2xl mb-1">
+                <h3 className="font-bold text-amber-900 text-xl sm:text-2xl mb-1" style={{ fontFamily: 'Georgia, serif' }}>
                   Upload Heritage Site
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 font-medium">
+                <p className="text-sm sm:text-base text-amber-800/70 font-medium">
                   Document ancient discoveries and earn rewards
                 </p>
               </div>
-              <svg className="hidden sm:block w-7 h-7 text-orange-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="hidden sm:block w-7 h-7 text-amber-700 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
+            </div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 pointer-events-none">
+              <div className="absolute bottom-3 left-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute bottom-3 left-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
+            <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none">
+              <div className="absolute bottom-3 right-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute bottom-3 right-3 w-px h-6 bg-amber-300/60"></div>
             </div>
           </button>
 
@@ -180,54 +209,44 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
           </Link>
 
           <div className="grid grid-cols-3 gap-3 sm:gap-4">
-            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-blue-500">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="bg-blue-100 p-1.5 sm:p-3 rounded-lg">
-                  <MapPin className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
+            {[
+              { icon: MapPin, value: isShowingDefaults ? 0 : (sites?.length || 0), label: 'Sites' },
+              { icon: Camera, value: isShowingDefaults ? 0 : totalImages, label: 'Images' },
+              { icon: Award, value: isShowingDefaults ? 0 : completedPayments, label: 'Rewarded' },
+            ].map((stat) => (
+              <div key={stat.label} className="rounded-lg sm:rounded-xl p-3 sm:p-6 border border-amber-200/60" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 2px 12px rgba(139, 90, 43, 0.08)' }}>
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="bg-amber-100 p-1.5 sm:p-3 rounded-lg">
+                    <stat.icon className="h-4 w-4 sm:h-6 sm:w-6 text-amber-700" />
+                  </div>
                 </div>
+                <p className="text-2xl sm:text-3xl font-bold text-amber-900">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-amber-800/70 mt-1">{stat.label}</p>
               </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{isShowingDefaults ? 0 : (sites?.length || 0)}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Sites</p>
-            </div>
-
-            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-green-500">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="bg-green-100 p-1.5 sm:p-3 rounded-lg">
-                  <Camera className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
-                </div>
-              </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{isShowingDefaults ? 0 : totalImages}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Images</p>
-            </div>
-
-            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-orange-500">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="bg-orange-100 p-1.5 sm:p-3 rounded-lg">
-                  <Award className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
-                </div>
-              </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{isShowingDefaults ? 0 : completedPayments}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Rewarded</p>
-            </div>
+            ))}
           </div>
 
-          <div className="relative bg-linear-to-br from-white via-orange-50/30 to-white rounded-2xl sm:rounded-3xl shadow-xl p-5 sm:p-6 lg:p-8 border border-slate-200/50 overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-orange-100 via-amber-100 to-orange-100 rounded-full blur-3xl opacity-30 -mr-32 -mt-32 animate-pulse" />
+          <div className="relative rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 border border-amber-200/60 overflow-hidden" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.12)' }}>
+            <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none">
+              <div className="absolute top-3 left-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute top-3 left-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
+            <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none">
+              <div className="absolute top-3 right-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute top-3 right-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
 
             <div className="relative">
               <div className="flex items-center justify-between mb-5 sm:mb-6">
                 <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-linear-to-br from-orange-500 to-amber-600 rounded-xl sm:rounded-2xl blur opacity-30" />
-                    <div className="relative p-2 sm:p-3 bg-linear-to-br from-orange-500 via-amber-500 to-orange-600 rounded-xl sm:rounded-2xl shadow-lg">
-                      <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                    </div>
+                  <div className="p-2 sm:p-3 bg-amber-100 rounded-xl">
+                    <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-amber-700" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-linear-to-r from-slate-900 via-orange-900 to-amber-900 bg-clip-text text-transparent">
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>
                       {isShowingDefaults ? 'Example Heritage Sites' : 'Your Heritage Sites'}
                     </h2>
-                    <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
+                    <p className="text-xs sm:text-sm text-amber-800/70 mt-0.5">
                       {isShowingDefaults ? 'Discover & Get Inspired' : `${sites?.length || 0} sites documented`}
                     </p>
                   </div>
@@ -264,14 +283,9 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
                 </div>
               ) : (
                 <div className="text-center py-16 sm:py-20">
-                  <div className="relative inline-block">
-                    <div className="absolute inset-0 bg-linear-to-br from-orange-400 to-amber-500 rounded-full blur-2xl opacity-20" />
-                    <div className="relative bg-linear-to-br from-orange-100 to-amber-100 p-6 rounded-full">
-                      <MapPin className="h-16 w-16 sm:h-20 sm:w-20 text-orange-500" />
-                    </div>
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-6">No heritage sites yet</h3>
-                  <p className="text-sm sm:text-base text-slate-600 mt-2 max-w-md mx-auto">Start your journey by uploading your first discovery!</p>
+                  <MapPin className="h-16 w-16 text-amber-300 mx-auto mb-4" />
+                  <h3 className="text-lg sm:text-xl font-bold text-amber-900 mt-2" style={{ fontFamily: 'Georgia, serif' }}>No heritage sites yet</h3>
+                  <p className="text-sm sm:text-base text-amber-800/70 mt-2 max-w-md mx-auto">Start your journey by uploading your first discovery!</p>
                 </div>
               )}
             </div>
@@ -280,30 +294,25 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
           {showUploadModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
               <div
-                className="fixed inset-0 bg-linear-to-br from-black/80 via-slate-900/60 to-black/80 backdrop-blur-md"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm"
                 onClick={() => setShowUploadModal(false)}
               />
 
               <div className="relative w-full max-w-4xl my-8 z-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                <div className="absolute inset-0 bg-linear-to-r from-orange-500 via-amber-500 to-orange-600 rounded-3xl blur-2xl opacity-30 animate-pulse" />
-
-                <div className="relative bg-linear-to-br from-white via-orange-50/20 to-white rounded-3xl shadow-2xl overflow-hidden max-h-[calc(100vh-4rem)] border border-slate-200/50">
-                  <div className="sticky top-0 bg-linear-to-r from-orange-500 via-amber-500 to-orange-600 px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between z-20 shadow-xl border-b border-white/20">
+                <div className="relative rounded-3xl shadow-2xl overflow-hidden max-h-[calc(100vh-4rem)] border border-amber-200/60" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)' }}>
+                  <div className="sticky top-0 z-20 px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-amber-200/60" style={{ background: 'linear-gradient(145deg, #f8f0e3 0%, #f0e4d0 50%, #e8d5b8 100%)' }}>
                     <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-white/30 rounded-xl blur" />
-                        <div className="relative bg-white/20 backdrop-blur-xl p-2 sm:p-2.5 rounded-xl border border-white/30">
-                          <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                        </div>
+                      <div className="bg-amber-800 p-2.5 rounded-xl shadow-md shadow-amber-900/20">
+                        <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-amber-50" />
                       </div>
                       <div>
-                        <h2 className="text-lg sm:text-xl font-bold text-white">Upload Heritage Site</h2>
-                        <p className="text-xs sm:text-sm text-white/90 font-medium">Share your discovery with the world</p>
+                        <h2 className="text-lg sm:text-xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>Upload Heritage Site</h2>
+                        <p className="text-xs sm:text-sm text-amber-800/70 font-medium">Share your discovery with the world</p>
                       </div>
                     </div>
                     <button
                       onClick={() => setShowUploadModal(false)}
-                      className="text-white hover:bg-white/20 p-2 rounded-xl transition-all hover:scale-110 active:scale-95 shrink-0 backdrop-blur-sm"
+                      className="text-amber-700 hover:bg-amber-100/60 p-2 rounded-xl transition-all"
                       aria-label="Close modal"
                     >
                       <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -312,7 +321,7 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
                     </button>
                   </div>
 
-                  <div className="overflow-y-auto max-h-[calc(100vh-12rem)] p-5 sm:p-6 lg:p-8 bg-linear-to-br from-white via-orange-50/20 to-white">
+                  <div className="overflow-y-auto max-h-[calc(100vh-12rem)] p-5 sm:p-6 lg:p-8">
                     <ImageUploadForm onUploadComplete={handleUploadComplete} />
                   </div>
                 </div>
@@ -324,113 +333,100 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
 
       {isAdmin && (
         <div className="space-y-6">
-          <div className="bg-linear-to-r from-slate-800 via-slate-700 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
-            <div className="flex items-center justify-between">
+          <div className="relative w-full rounded-2xl p-6 sm:p-8 shadow-lg overflow-hidden"
+            style={{
+              background: 'linear-gradient(145deg, #f8f0e3 0%, #f0e4d0 25%, #e8d5b8 50%, #f5edd8 75%, #ebe0c9 100%)',
+              boxShadow: '0 8px 40px rgba(180, 100, 40, 0.12), 0 2px 8px rgba(180, 100, 40, 0.08)',
+            }}
+          >
+            <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #8B4513 0, #8B4513 1px, transparent 0, transparent 8px)' }}></div>
+            <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-amber-300 via-orange-400 to-amber-300"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-transparent via-amber-400 to-transparent"></div>
+            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-amber-700/30"></div>
+            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-amber-700/30"></div>
+            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-amber-700/30"></div>
+            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-amber-700/30"></div>
+            <div className="relative flex items-center gap-3">
+              <div className="bg-amber-800 p-3 rounded-xl shadow-lg shadow-amber-900/30">
+                <BarChart3 className="h-7 w-7 text-amber-50" />
+              </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center gap-3">
-                  <BarChart3 className="h-8 w-8" />
-                  Admin Dashboard
-                </h1>
-                <p className="text-slate-300 text-sm sm:text-base">
-                  Manage heritage sites, payments, and user submissions
-                </p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>Admin Dashboard</h1>
+                <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>Manage heritage sites, payments, and user submissions</p>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-blue-500">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="bg-blue-100 p-1.5 sm:p-3 rounded-lg">
-                  <MapPin className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
+            {[
+              { icon: MapPin, value: sites?.length || 0, label: 'Sites' },
+              { icon: Users, value: totalUsers, label: 'Users' },
+              { icon: Sparkles, value: yatraStats.total, label: 'Yatra Stories' },
+              { icon: AlertCircle, value: yatraStats.pendingReview, label: 'Needs Review' },
+            ].map((stat) => (
+              <div key={stat.label} className="rounded-lg sm:rounded-xl p-3 sm:p-6 border border-amber-200/60" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 2px 12px rgba(139, 90, 43, 0.08)' }}>
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="bg-amber-100 p-1.5 sm:p-3 rounded-lg">
+                    <stat.icon className="h-4 w-4 sm:h-6 sm:w-6 text-amber-700" />
+                  </div>
                 </div>
+                <p className="text-2xl sm:text-3xl font-bold text-amber-900">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-amber-800/70 mt-1">{stat.label}</p>
               </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{sites?.length || 0}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Sites</p>
-            </div>
-
-            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-purple-500">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="bg-purple-100 p-1.5 sm:p-3 rounded-lg">
-                  <Users className="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" />
-                </div>
-              </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{totalUsers}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Users</p>
-            </div>
-
-            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-orange-500">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="bg-orange-100 p-1.5 sm:p-3 rounded-lg">
-                  <Sparkles className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
-                </div>
-              </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{yatraStats.total}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Yatra Stories</p>
-            </div>
-
-            <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-lg border-l-4 border-amber-500">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="bg-amber-100 p-1.5 sm:p-3 rounded-lg">
-                  <AlertCircle className="h-4 w-4 sm:h-6 sm:w-6 text-amber-600" />
-                </div>
-              </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{yatraStats.pendingReview}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Needs Review</p>
-            </div>
+            ))}
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <DollarSign className="h-6 w-6 text-slate-700" />
+          <div className="rounded-xl p-6 border border-amber-200/60" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 2px 12px rgba(139, 90, 43, 0.08)' }}>
+            <h2 className="text-xl font-bold text-amber-900 mb-4 flex items-center gap-2" style={{ fontFamily: 'Georgia, serif' }}>
+              <DollarSign className="h-6 w-6 text-amber-700" />
               Payment Status Overview
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-              <div className="bg-orange-50 rounded-lg p-4 border-2 border-orange-200">
+              <div className="bg-amber-50/80 rounded-lg p-4 border border-amber-200/60">
                 <div className="flex items-center justify-between mb-2">
-                  <XCircle className="h-5 w-5 text-orange-600" />
-                  <span className="text-2xl font-bold text-orange-900">{pendingPayments}</span>
+                  <XCircle className="h-5 w-5 text-amber-700" />
+                  <span className="text-2xl font-bold text-amber-900">{pendingPayments}</span>
                 </div>
-                <p className="text-sm font-semibold text-orange-700">Not Started</p>
+                <p className="text-sm font-semibold text-amber-800/70">Not Started</p>
               </div>
 
-              <div className="bg-yellow-50 rounded-lg p-4 border-2 border-yellow-200">
+              <div className="bg-amber-50/80 rounded-lg p-4 border border-amber-200/60">
                 <div className="flex items-center justify-between mb-2">
-                  <Clock className="h-5 w-5 text-yellow-600" />
-                  <span className="text-2xl font-bold text-yellow-900">{inProgressPayments}</span>
+                  <Clock className="h-5 w-5 text-amber-700" />
+                  <span className="text-2xl font-bold text-amber-900">{inProgressPayments}</span>
                 </div>
-                <p className="text-sm font-semibold text-yellow-700">In Progress</p>
+                <p className="text-sm font-semibold text-amber-800/70">In Progress</p>
               </div>
 
-              <div className="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+              <div className="bg-amber-50/80 rounded-lg p-4 border border-amber-200/60">
                 <div className="flex items-center justify-between mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="text-2xl font-bold text-green-900">{completedPayments}</span>
+                  <CheckCircle className="h-5 w-5 text-amber-700" />
+                  <span className="text-2xl font-bold text-amber-900">{completedPayments}</span>
                 </div>
-                <p className="text-sm font-semibold text-green-700">Completed</p>
+                <p className="text-sm font-semibold text-amber-800/70">Completed</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
+          <div className="rounded-xl p-6 border border-amber-200/60" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 2px 12px rgba(139, 90, 43, 0.08)' }}>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-amber-600/50" />
                   <input
                     type="text"
                     placeholder="Search sites by title, type, or description..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm text-gray-900 placeholder:text-gray-500"
+                    className="w-full pl-10 pr-4 py-3 border-2 border-amber-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm text-amber-900 placeholder:text-amber-600/40 bg-white/60"
                   />
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <Filter className="h-5 w-5 text-gray-600" />
+                <Filter className="h-5 w-5 text-amber-700" />
                 <select
-                  className="px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-medium bg-white text-gray-900"
+                  className="px-4 py-3 border-2 border-amber-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm font-medium bg-white/60 text-amber-900"
                   value={paymentFilter}
                   onChange={(e) => setPaymentFilter(e.target.value)}
                 >
@@ -445,7 +441,7 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
                       setPaymentFilter('')
                       setSearchQuery('')
                     }}
-                    className="px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold transition-all"
+                    className="px-4 py-3 bg-amber-800 hover:bg-amber-900 text-amber-50 rounded-full text-sm font-semibold transition-all"
                   >
                     Clear All
                   </button>
@@ -454,16 +450,16 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
             </div>
 
             {(paymentFilter || searchQuery) && (
-              <div className="mt-4 text-sm text-gray-600">
-                Showing <span className="font-bold text-gray-900">{filteredSites.length}</span> of{' '}
-                <span className="font-bold text-gray-900">{sites?.length || 0}</span> sites
+              <div className="mt-4 text-sm text-amber-800/70">
+                Showing <span className="font-bold text-amber-900">{filteredSites.length}</span> of{' '}
+                <span className="font-bold text-amber-900">{sites?.length || 0}</span> sites
               </div>
             )}
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-slate-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <MapPin className="h-6 w-6 text-slate-700" />
+          <div className="rounded-xl p-6 border border-amber-200/60" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 2px 12px rgba(139, 90, 43, 0.08)' }}>
+            <h2 className="text-xl font-bold text-amber-900 mb-6 flex items-center gap-2" style={{ fontFamily: 'Georgia, serif' }}>
+              <MapPin className="h-6 w-6 text-amber-700" />
               All Heritage Sites
             </h2>
 
@@ -482,9 +478,9 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
               </div>
             ) : (
               <div className="text-center py-12">
-                <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-gray-900">No sites found</h3>
-                <p className="text-sm text-gray-600 mt-2">
+                <Search className="h-16 w-16 text-amber-300 mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>No sites found</h3>
+                <p className="text-sm text-amber-800/70 mt-2">
                   {searchQuery || paymentFilter
                     ? 'Try adjusting your filters or search query'
                     : 'No heritage sites have been uploaded yet'}

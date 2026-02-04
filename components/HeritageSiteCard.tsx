@@ -230,7 +230,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
 
   if (!site.images || site.images.length === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-orange-100 p-6">
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-amber-200/60 p-6">
         <h3 className="text-2xl font-bold text-slate-900 mb-2">{site.title}</h3>
         <p className="text-slate-600 mb-4">{site.description}</p>
         <div className="text-center py-8 bg-slate-50 rounded-lg">
@@ -260,7 +260,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
     'BURIAL_SITE': 'bg-gray-100 text-gray-700 border-gray-200',
     'WATER_STRUCTURE': 'bg-cyan-100 text-cyan-700 border-cyan-200',
     'ANCIENT_SETTLEMENT': 'bg-lime-100 text-lime-700 border-lime-200',
-    'ARTIFACT_FOUND': 'bg-orange-100 text-orange-700 border-orange-200',
+    'ARTIFACT_FOUND': 'bg-amber-100 text-amber-700 border-amber-200',
   }
 
   const typeColor = site.type ? (typeColors[site.type] || 'bg-gray-100 text-gray-700 border-gray-200') : 'bg-gray-100 text-gray-700 border-gray-200'
@@ -268,7 +268,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
 
   return (
     <>
-      <div className="group relative bg-linear-to-br from-white via-orange-50/20 to-white rounded-3xl shadow-lg hover:shadow-2xl overflow-hidden border border-slate-200/50 transition-all duration-500 flex flex-col h-full hover:-translate-y-2">
+      <div className="group relative rounded-2xl overflow-hidden border border-amber-200/60 transition-all duration-500 flex flex-col h-full hover:-translate-y-1" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.1)' }}>
         <div className="relative h-52 overflow-hidden bg-linear-to-br from-slate-100 via-slate-50 to-blue-50">
           {isVideo(currentImageUrl) ? (
             <video
@@ -286,7 +286,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
           )}
 
           <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-linear-to-br from-orange-500/10 via-transparent to-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-linear-to-br from-amber-500/10 via-transparent to-amber-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {site.type && (
             <div className="absolute top-3 left-3 z-10">
@@ -332,18 +332,18 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
         </div>
 
         <div className="p-6 flex-1 flex flex-col">
-          <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors leading-tight">
+          <h3 className="text-lg sm:text-xl font-bold text-amber-900 mb-3 line-clamp-2 transition-colors leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
             {site.title}
           </h3>
 
-          <p className="text-sm text-slate-600 mb-4 line-clamp-3 flex-1 leading-relaxed">
+          <p className="text-sm text-amber-800/70 mb-4 line-clamp-3 flex-1 leading-relaxed">
             {site.description}
           </p>
 
           <div className="space-y-2.5 mb-4">
             <div className="flex items-center gap-2.5 text-sm text-slate-700">
-              <div className="p-1.5 bg-orange-100 rounded-lg">
-                <MapPin className="h-3.5 w-3.5 text-orange-600 shrink-0" />
+              <div className="p-1.5 bg-amber-100 rounded-lg">
+                <MapPin className="h-3.5 w-3.5 text-amber-700 shrink-0" />
               </div>
               <span className="truncate font-medium">{currentImage.location}</span>
             </div>
@@ -367,14 +367,12 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
             )}
           </div>
 
-          <div className="flex items-center gap-2 mt-auto pt-4 border-t border-slate-200">
+          <div className="flex items-center gap-2 mt-auto pt-4 border-t border-amber-200/50">
             <button
               onClick={() => setShowDetailsModal(true)}
-              className="relative flex-1 overflow-hidden group/btn rounded-xl shadow-md hover:shadow-lg transition-shadow"
+              className="flex-1 bg-amber-800 hover:bg-amber-900 rounded-full shadow-md shadow-amber-900/20 hover:shadow-lg transition-all"
             >
-              <div className="absolute inset-0 bg-linear-to-r from-orange-500 to-amber-600 opacity-100 transition-opacity" />
-              <div className="absolute inset-0 bg-linear-to-r from-orange-600 to-amber-700 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
-              <div className="relative text-white font-semibold py-3 px-4 flex items-center justify-center gap-2">
+              <div className="text-amber-50 font-semibold py-3 px-4 flex items-center justify-center gap-2">
                 <Eye className="h-4 w-4" />
                 <span className="text-sm">View Details</span>
               </div>
@@ -508,7 +506,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <div className="bg-slate-50 rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <MapPin className="h-5 w-5 text-orange-500" />
+                      <MapPin className="h-5 w-5 text-amber-700" />
                       <span className="font-semibold text-gray-900">Location</span>
                     </div>
                     <p className="text-sm text-gray-600">{currentImage.location}</p>
@@ -613,7 +611,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
                   type="number"
                   value={paymentAmount}
                   onChange={(e) => setPaymentAmount(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                   placeholder="Enter amount"
                   required
                 />
@@ -626,7 +624,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 >
                   <option>Bank Transfer</option>
                   <option>UPI</option>
@@ -644,7 +642,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
                   type="text"
                   value={transactionId}
                   onChange={(e) => setTransactionId(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                   placeholder="Enter transaction ID"
                 />
               </div>
@@ -656,7 +654,7 @@ const HeritageSiteCard = memo(function HeritageSiteCard({
                 <textarea
                   value={paymentNotes}
                   onChange={(e) => setPaymentNotes(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                   rows={3}
                   placeholder="Add any notes..."
                 />

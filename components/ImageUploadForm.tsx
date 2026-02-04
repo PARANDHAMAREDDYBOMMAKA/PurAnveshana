@@ -472,18 +472,13 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 border border-slate-200">
-      <div className="mb-4 pb-4 border-b border-slate-200">
-        <h2 className="text-xl font-semibold text-slate-900">Upload Heritage Site</h2>
-        <p className="text-sm text-slate-600 mt-1">Share your discovery with the world</p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="rounded-xl p-4 sm:p-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <button
             type="button"
             onClick={() => setShowUploadOptions(true)}
-            className="w-full py-3 px-4 border-2 border-dashed border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:text-orange-600 hover:border-orange-400 hover:bg-orange-50 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 border-2 border-dashed border-amber-300/80 rounded-xl text-sm font-medium text-amber-800 hover:border-amber-400 hover:bg-amber-50/50 transition-all flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -493,15 +488,15 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         </div>
 
         {selectedFiles.length > 0 && (
-          <div className="bg-slate-50 rounded-lg p-3 space-y-3 border border-slate-200">
+          <div className="bg-amber-50/50 rounded-xl p-3 space-y-3 border border-amber-200/60">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-amber-900">
                 {selectedFiles.length} {selectedFiles.length === 1 ? 'file' : 'files'} selected
               </span>
               <button
                 type="button"
                 onClick={() => setSelectedFiles([])}
-                className="text-xs text-red-600 hover:text-red-700 font-medium"
+                className="text-xs text-red-700 hover:text-red-800 font-medium"
               >
                 Clear all
               </button>
@@ -509,7 +504,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
             <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-2">
               {selectedFiles.map((fileData, index) => (
-                <div key={index} className="relative bg-white rounded-lg border border-slate-200 overflow-hidden group hover:border-orange-400 transition-all">
+                <div key={index} className="relative bg-white rounded-lg border border-amber-200/60 overflow-hidden group hover:border-amber-400 transition-all">
                   <div className="relative aspect-square">
                     {fileData.isVideo ? (
                       <video
@@ -575,14 +570,14 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
           </div>
         )}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-2">
+          <label htmlFor="title" className="block text-sm font-medium text-amber-900 mb-2">
             Site Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             id="title"
             required
-            className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+            className="w-full px-3 py-2.5 text-sm border-2 border-amber-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-amber-900 placeholder:text-amber-600/40 bg-white/60"
             placeholder="e.g., Ancient Temple at Hampi"
             value={sharedTitle}
             onChange={(e) => setSharedTitle(e.target.value)}
@@ -590,13 +585,13 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         </div>
 
         <div>
-          <label htmlFor="type" className="block text-sm font-medium text-slate-700 mb-2">
+          <label htmlFor="type" className="block text-sm font-medium text-amber-900 mb-2">
             Site Type
           </label>
           <div className="flex flex-col sm:flex-row gap-2">
             <select
               id="type"
-              className="flex-1 px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900"
+              className="flex-1 px-3 py-2.5 text-sm border-2 border-amber-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-amber-900 bg-white/60"
               value={siteType}
               onChange={(e) => {
                 setSiteType(e.target.value)
@@ -622,7 +617,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             {siteType === 'OTHER' && (
               <input
                 type="text"
-                className="flex-1 px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+                className="flex-1 px-3 py-2.5 text-sm border-2 border-amber-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-amber-900 placeholder:text-amber-600/40 bg-white/60"
                 placeholder="Specify type"
                 value={customType}
                 onChange={(e) => setCustomType(e.target.value)}
@@ -633,7 +628,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         </div>
 
         <div>
-          <label htmlFor="location" className="block text-sm font-medium text-slate-700 mb-2">
+          <label htmlFor="location" className="block text-sm font-medium text-amber-900 mb-2">
             Location {!selectedFiles.some(f => f.autoDetectedLocation) && <span className="text-red-500">*</span>}
             {selectedFiles.some(f => f.autoDetectedLocation) && (
               <span className="ml-2 text-xs text-green-600 font-normal">GPS detected</span>
@@ -643,7 +638,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             type="text"
             id="location"
             required={!selectedFiles.some(f => f.autoDetectedLocation)}
-            className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+            className="w-full px-3 py-2.5 text-sm border-2 border-amber-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-amber-900 placeholder:text-amber-600/40 bg-white/60"
             placeholder="Place, District, State, Pincode"
             value={sharedLocation}
             onChange={(e) => setSharedLocation(e.target.value)}
@@ -652,10 +647,10 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
         <div>
           <div className="flex items-baseline justify-between mb-2">
-            <label htmlFor="description" className="block text-sm font-medium text-slate-700">
+            <label htmlFor="description" className="block text-sm font-medium text-amber-900">
               Description <span className="text-red-500">*</span>
             </label>
-            <span className={`text-xs px-2 py-0.5 rounded ${sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length >= 20 ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+            <span className={`text-xs px-2 py-0.5 rounded-full ${sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length >= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100/60 text-amber-700'}`}>
               {sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length} / 20 words
             </span>
           </div>
@@ -663,23 +658,23 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             id="description"
             required
             rows={4}
-            className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400 resize-none"
+            className="w-full px-3 py-2.5 text-sm border-2 border-amber-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-amber-900 placeholder:text-amber-600/40 bg-white/60 resize-none"
             placeholder="Describe the heritage site, its historical significance, architecture..."
             value={sharedDescription}
             onChange={(e) => setSharedDescription(e.target.value)}
           />
         </div>
 
-        <div className="pt-4 border-t border-slate-200">
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Reference Links <span className="text-slate-400 text-xs font-normal">(Optional)</span>
+        <div className="pt-4 border-t border-amber-200/50">
+          <label className="block text-sm font-medium text-amber-900 mb-2">
+            Reference Links <span className="text-amber-600/50 text-xs font-normal">(Optional)</span>
           </label>
           <div className="space-y-2">
             {referenceLinks.map((link, index) => (
               <div key={index} className="flex gap-2">
                 <input
                   type="url"
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm text-slate-900 placeholder-slate-400"
+                  className="flex-1 px-3 py-2 border-2 border-amber-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm text-amber-900 placeholder:text-amber-600/40 bg-white/60"
                   placeholder="https://en.wikipedia.org/wiki/..."
                   value={link}
                   onChange={(e) => updateReferenceLink(index, e.target.value)}
@@ -700,7 +695,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             <button
               type="button"
               onClick={addReferenceLink}
-              className="text-sm text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1"
+              className="text-sm text-amber-800 hover:text-amber-900 font-medium flex items-center gap-1"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -722,7 +717,7 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
         <button
           type="submit"
           disabled={loading || selectedFiles.length === 0 || !sharedTitle || !sharedDescription || (!sharedLocation && !selectedFiles.some(f => f.autoDetectedLocation))}
-          className="w-full py-3 px-6 rounded-lg text-sm font-semibold text-white bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all"
+          className="w-full py-3 px-6 rounded-full text-sm font-semibold text-amber-50 bg-amber-800 hover:bg-amber-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:bg-amber-300 disabled:cursor-not-allowed transition-all shadow-lg shadow-amber-900/20"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -751,12 +746,12 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
 
       {showUploadOptions && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
+          <div className="rounded-2xl shadow-xl max-w-sm w-full p-6 border border-amber-200/60" style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.15)' }}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Add Files</h3>
+              <h3 className="text-lg font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>Add Files</h3>
               <button
                 onClick={() => setShowUploadOptions(false)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-amber-700 hover:text-amber-900"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -770,28 +765,28 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
                   fileInputRef.current?.click()
                   setShowUploadOptions(false)
                 }}
-                className="w-full p-3 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg transition-all flex items-center gap-3 shadow-md hover:shadow-lg transform hover:scale-[1.02]"
+                className="w-full p-3.5 bg-amber-800 hover:bg-amber-900 text-amber-50 rounded-xl transition-all flex items-center gap-3 shadow-md shadow-amber-900/20"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <div className="flex-1 text-left">
-                  <div className="font-medium">From Gallery</div>
-                  <div className="text-xs text-blue-100">Choose from device</div>
+                  <div className="font-semibold">From Gallery</div>
+                  <div className="text-xs text-amber-200">Choose from device</div>
                 </div>
               </button>
 
               <button
                 onClick={openCamera}
-                className="w-full p-3 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg transition-all flex items-center gap-3 shadow-md hover:shadow-lg transform hover:scale-[1.02]"
+                className="w-full p-3.5 bg-amber-100/80 hover:bg-amber-200/80 text-amber-900 rounded-xl transition-all flex items-center gap-3 border border-amber-200/60"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <div className="flex-1 text-left">
-                  <div className="font-medium">Camera</div>
-                  <div className="text-xs text-orange-100">Capture with GPS</div>
+                  <div className="font-semibold">Camera</div>
+                  <div className="text-xs text-amber-700">Capture with GPS</div>
                 </div>
               </button>
             </div>
@@ -831,9 +826,9 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
               <button
                 onClick={capturePhoto}
-                className="w-20 h-20 rounded-full bg-white border-4 border-orange-500 shadow-2xl hover:scale-110 transition-transform active:scale-95 flex items-center justify-center"
+                className="w-20 h-20 rounded-full bg-white border-4 border-amber-700 shadow-2xl hover:scale-110 transition-transform active:scale-95 flex items-center justify-center"
               >
-                <div className="w-16 h-16 rounded-full bg-orange-500"></div>
+                <div className="w-16 h-16 rounded-full bg-amber-700"></div>
               </button>
             </div>
 
