@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { HomeNavigation } from '@/components/HomeNavigation';
-import { NewHeroSection, ScrollMessage, FeaturesSection, TrustSection, SimpleCTASection } from '@/components/landing';
+import { NewHeroSection, ScrollMessage, HeritageGallery, FeaturesSection, TrustSection, SimpleCTASection } from '@/components/landing';
 import HomeFooter from '@/components/HomeFooter';
 import PrivacyPolicyModal from '@/components/modals/PrivacyPolicyModal';
 import TermsOfServiceModal from '@/components/modals/TermsOfServiceModal';
@@ -60,8 +60,9 @@ export default function Home() {
         scrolled={scrolled}
       />
 
-      {/* <NewHeroSection /> */}
+      <NewHeroSection />
       <ScrollMessage />
+      <HeritageGallery />
       <FeaturesSection />
       <TrustSection />
       <SimpleCTASection />
