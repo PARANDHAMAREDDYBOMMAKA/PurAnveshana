@@ -160,10 +160,12 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     return () => document.removeEventListener('click', handleClickOutside)
   }, [showMenuForStory, showShareMenu])
 
-  const fetchStories = async () => {
+  const fetchStories = async (bypassCache = false) => {
     setLoading(true)
     try {
-      const response = await fetch('/api/yatra', { cache: 'no-store' })
+      const headers: Record<string, string> = {}
+      if (bypassCache) headers['x-bypass-cache'] = '1'
+      const response = await fetch('/api/yatra', { cache: 'no-store', headers })
       if (response.ok) {
         const data = await response.json()
 
@@ -256,7 +258,8 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
       if (response.ok) {
         const data = await response.json()
         toast.success(data.message)
-        fetchStories()
+        // bypass Redis/CDN cached response to get the fresh status
+        fetchStories(true)
       } else {
         const data = await response.json()
         toast.error(data.error || 'Failed to update story')

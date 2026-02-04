@@ -138,11 +138,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Allow callers to bypass Redis cache (useful after an update)
+    const bypassCache = request.headers.get('x-bypass-cache') === '1'
+
     const { searchParams } = new URL(request.url)
     const heritageSiteId = searchParams.get('heritageSiteId')
 
     const cacheKey = `${CACHE_KEYS.YATRA_STORIES}${session.role}:${session.userId}:${heritageSiteId || 'all'}`
-    const cached = await getCached<any>(cacheKey)
+    let cached = null
+    if (!bypassCache) {
+      cached = await getCached<any>(cacheKey)
+    }
     if (cached) {
       return NextResponse.json(cached, {
         headers: {
