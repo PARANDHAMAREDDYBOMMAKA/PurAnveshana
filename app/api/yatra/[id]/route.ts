@@ -215,6 +215,13 @@ export async function DELETE(
       })
     )
 
+    try {
+      await invalidatePattern(`${CACHE_KEYS.YATRA_STORY}${id}*`)
+      await invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`)
+    } catch (err) {
+      console.error('Error invalidating Yatra cache after delete:', err)
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Yatra story deleted successfully',

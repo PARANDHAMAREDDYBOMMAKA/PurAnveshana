@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
+import { invalidatePattern, CACHE_KEYS } from '@/lib/redis'
 import { PublishStatus } from '@prisma/client'
 import { notifyStoryApproved, notifyStoryFeatured, notifyStoryRejected } from '@/lib/notifications'
 
@@ -64,6 +65,13 @@ export async function POST(
       await notifyStoryFeatured(id, story.userId, story.title)
     } else if (action === 'reject') {
       await notifyStoryRejected(id, story.userId, story.title)
+    }
+
+    try {
+      await invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`)
+      await invalidatePattern(`${CACHE_KEYS.YATRA_STORY}${id}*`)
+    } catch (err) {
+      console.error('Error invalidating Yatra cache:', err)
     }
 
     return NextResponse.json({
