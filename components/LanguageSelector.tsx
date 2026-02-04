@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Globe } from 'lucide-react';
+import { Globe, Check } from 'lucide-react';
 
 const EXCLUDE_SELECTORS = [
   'script',
@@ -23,10 +23,10 @@ interface TextNode {
 }
 
 const LANGUAGES = [
-  { code: 'en', label: 'English' },
-  { code: 'hi', label: 'हिन्दी (Hindi)' },
-  { code: 'te', label: 'తెలుగు (Telugu)' },
-  { code: 'or', label: 'ଓଡ଼ିଆ (Odia)' },
+  { code: 'en', label: 'English', native: 'EN' },
+  { code: 'hi', label: 'हिन्दी', native: 'HI' },
+  { code: 'te', label: 'తెలుగు', native: 'TE' },
+  { code: 'or', label: 'ଓଡ଼ିଆ', native: 'OR' },
 ];
 
 export default function LanguageSelector() {
@@ -209,47 +209,78 @@ export default function LanguageSelector() {
     await translatePageContent(lang);
   };
 
+  const currentLang = LANGUAGES.find(l => l.code === currentLanguage);
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
+        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-all duration-200 ${
+          isOpen
+            ? 'bg-amber-100/60 text-amber-900'
+            : 'text-amber-800/60 hover:bg-amber-100/40 hover:text-amber-900'
+        } ${isTranslating ? 'opacity-70' : ''}`}
         aria-label="Select Language"
         disabled={isTranslating}
       >
-        <Globe className="w-4 h-4 text-black" />
-        <span className="text-sm font-medium text-black">
-          {LANGUAGES.find(l => l.code === currentLanguage)?.label.split(' ')[0] || 'English'}
+        <Globe className="w-4 h-4" />
+        <span className="text-sm font-medium notranslate" translate="no">
+          {currentLang?.native || 'EN'}
         </span>
+        {isTranslating && (
+          <div className="w-3 h-3 border-2 border-amber-700/30 border-t-amber-700 rounded-full animate-spin" />
+        )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-50">
-          <div className="py-1">
-            {LANGUAGES.map(({ code, label }) => (
+        <div
+          className="absolute right-0 mt-2 w-52 rounded-xl z-50 border border-amber-200/60 overflow-hidden"
+          style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 8px 32px rgba(139, 90, 43, 0.15)' }}
+        >
+          {/* Header */}
+          <div className="px-3.5 py-2.5 border-b border-amber-200/40">
+            <p className="text-[11px] font-semibold text-amber-700/50 uppercase tracking-wider notranslate" translate="no" style={{ fontFamily: 'Georgia, serif' }}>
+              Language
+            </p>
+          </div>
+
+          {/* Language Options */}
+          <div className="py-1 px-1.5">
+            {LANGUAGES.map(({ code, label, native }) => (
               <button
                 key={code}
                 onClick={() => changeLanguage(code)}
                 disabled={isTranslating}
-                className={`w-full text-left px-4 py-2 text-sm text-black hover:bg-slate-50 transition-colors disabled:opacity-50 ${
-                  currentLanguage === code ? 'bg-slate-100 font-medium' : ''
+                className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all disabled:opacity-50 ${
+                  currentLanguage === code
+                    ? 'text-amber-900 font-semibold'
+                    : 'text-amber-800/70 hover:bg-amber-100/40 hover:text-amber-900'
                 }`}
+                style={currentLanguage === code ? { background: 'linear-gradient(145deg, rgba(217, 119, 6, 0.08) 0%, rgba(245, 158, 11, 0.05) 100%)' } : undefined}
               >
-                {label}
+                <span className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-amber-100/60 text-amber-800/70 notranslate" translate="no">
+                  {native}
+                </span>
+                <span className="flex-1 text-left notranslate" translate="no" style={{ fontFamily: 'Georgia, serif' }}>{label}</span>
+                {currentLanguage === code && (
+                  <Check className="w-4 h-4 text-amber-700" />
+                )}
               </button>
             ))}
           </div>
+
+          {/* Translation Progress */}
           {isTranslating && (
-            <div className="px-4 py-2 border-t">
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
-                <span>Translating...</span>
-                <span>{progress}%</span>
+            <div className="px-3.5 py-2.5 border-t border-amber-200/40">
+              <div className="flex items-center justify-between text-[11px] text-amber-800/60 mb-1.5">
+                <span className="font-medium" style={{ fontFamily: 'Georgia, serif' }}>Translating...</span>
+                <span className="font-semibold text-amber-900">{progress}%</span>
               </div>
-              <div className="w-full bg-slate-200 rounded-full h-1.5">
+              <div className="w-full bg-amber-100 rounded-full h-1.5 overflow-hidden">
                 <div
-                  className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                  className="h-full rounded-full transition-all duration-300 bg-linear-to-r from-amber-600 to-amber-700"
                   style={{ width: `${progress}%` }}
-                ></div>
+                />
               </div>
             </div>
           )}

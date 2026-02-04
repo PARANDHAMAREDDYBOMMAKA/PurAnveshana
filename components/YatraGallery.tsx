@@ -462,7 +462,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
         )
       case 'PENDING_REVIEW':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold">
             <AlertCircle className="h-3 w-3" />
             Pending Review
           </span>
@@ -502,7 +502,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
         )
       case 'ERROR':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold">
             <AlertCircle className="h-3 w-3" />
             Verification Error
           </span>
@@ -915,7 +915,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                             }}
                             className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-2 text-slate-900 font-medium"
                           >
-                            <Edit2 className="h-4 w-4 text-orange-600" />
+                            <Edit2 className="h-4 w-4 text-amber-700" />
                             Edit
                           </button>
                           <button
@@ -1028,7 +1028,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                         </h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                           {story.safeVisuals.map((imageUrl, index) => (
-                            <div key={index} className="aspect-square bg-slate-100 relative rounded-xl overflow-hidden border-2 border-slate-200 hover:border-orange-300 transition-colors">
+                            <div key={index} className="aspect-square bg-slate-100 relative rounded-xl overflow-hidden border-2 border-slate-200 hover:border-amber-300 transition-colors">
                               <Image
                                 src={imageUrl}
                                 alt={`Image ${index + 1}`}

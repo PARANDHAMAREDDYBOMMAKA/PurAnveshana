@@ -74,6 +74,15 @@ interface ImageWithPreview {
   uploadedUrl?: string
 }
 
+const cardStyle = {
+  background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)',
+  boxShadow: '0 4px 24px rgba(139, 90, 43, 0.12)',
+}
+
+const infoBoxStyle = {
+  background: 'linear-gradient(145deg, #fef9f0 0%, #fdf5e6 100%)',
+}
+
 export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = false, initialData }: YatraWizardProps) {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
@@ -112,54 +121,17 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
   })
 
   const selectedSite = paidSites.find((site) => site.id === formData.heritageSiteId)
-  const imageUrl = selectedSite?.images[0]?.r2Url || selectedSite?.images[0]?.cloudinaryUrl
 
   const steps = [
-    {
-      title: 'Select Site',
-      icon: MapPin,
-      required: true,
-    },
-    {
-      title: 'Yatra Title',
-      icon: Compass,
-      required: true,
-    },
-    {
-      title: 'Discovery Context',
-      icon: Footprints,
-      required: true,
-    },
-    {
-      title: 'Journey & Effort',
-      icon: Footprints,
-      required: true,
-    },
-    {
-      title: 'Historical Indicators',
-      icon: Landmark,
-      required: true,
-    },
-    {
-      title: 'Evidence Summary',
-      icon: FileText,
-      required: true,
-    },
-    {
-      title: 'Safe Visuals',
-      icon: ImageIcon,
-      required: false,
-    },
-    {
-      title: 'Personal Reflection',
-      icon: Heart,
-      required: false,
-    },
-    {
-      title: 'Review & Submit',
-      icon: CheckCircle2,
-      required: true,
-    },
+    { title: 'Select Site', icon: MapPin, required: true },
+    { title: 'Yatra Title', icon: Compass, required: true },
+    { title: 'Discovery Context', icon: Footprints, required: true },
+    { title: 'Journey & Effort', icon: Footprints, required: true },
+    { title: 'Historical Indicators', icon: Landmark, required: true },
+    { title: 'Evidence Summary', icon: FileText, required: true },
+    { title: 'Safe Visuals', icon: ImageIcon, required: false },
+    { title: 'Personal Reflection', icon: Heart, required: false },
+    { title: 'Review & Submit', icon: CheckCircle2, required: true },
   ]
 
   const validateStep = () => {
@@ -224,11 +196,9 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return true
 
       case 6:
-        // Optional step
         return true
 
       case 7:
-        // Optional step
         return true
 
       case 8:
@@ -257,7 +227,6 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
     const files = e.target.files
     if (!files || files.length === 0) return
 
-    // Check if adding these files would exceed the limit
     if (uploadedImages.length + files.length > 3) {
       toast.error('You can upload a maximum of 3 images')
       return
@@ -268,20 +237,17 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
 
-      // Check if it's an image
       if (!file.type.startsWith('image/')) {
         toast.error(`${file.name} is not an image file`)
         continue
       }
 
-      // Create preview
       const reader = new FileReader()
       const preview = await new Promise<string>((resolve) => {
         reader.onloadend = () => resolve(reader.result as string)
         reader.readAsDataURL(file)
       })
 
-      // Extract EXIF data
       try {
         const exifData = await extractExifData(file)
 
@@ -297,7 +263,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
           cameraModel: exifData.cameraModel,
         })
 
-        toast.success(`${file.name} verified ✓`)
+        toast.success(`${file.name} verified`)
       } catch (error) {
         toast.error(`${file.name}: Failed to extract EXIF data`)
         continue
@@ -310,7 +276,6 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
       toast.success(`${newImages.length} image${newImages.length > 1 ? 's' : ''} added`)
     }
 
-    // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -326,7 +291,6 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
 
     setLoading(true)
     try {
-      // Upload images first if any
       const uploadedUrls: string[] = []
 
       if (uploadedImages.length > 0) {
@@ -350,7 +314,6 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         }
       }
 
-      // Submit form with uploaded image URLs
       const url = isEditMode ? `/api/yatra/${initialData?.id}` : '/api/yatra'
       const method = isEditMode ? 'PUT' : 'POST'
 
@@ -385,11 +348,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 Which heritage site is this about?
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
-                Select the site you'd like to share your discovery journey about
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
+                Select the site you&apos;d like to share your discovery journey about
               </p>
             </div>
 
@@ -398,23 +361,24 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 <button
                   key={site.id}
                   onClick={() => setFormData({ ...formData, heritageSiteId: site.id })}
-                  className={`w-full p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all ${
+                  className={`w-full p-4 sm:p-6 rounded-xl sm:rounded-2xl border transition-all ${
                     formData.heritageSiteId === site.id
-                      ? 'border-amber-700 bg-amber-50/50'
-                      : 'border-gray-200 hover:border-amber-400'
+                      ? 'border-amber-700 ring-1 ring-amber-700/30'
+                      : 'border-amber-200/60 hover:border-amber-400'
                   }`}
+                  style={cardStyle}
                 >
                   <div className="flex items-center gap-3 sm:gap-4">
                     {(site.images[0]?.r2Url || site.images[0]?.cloudinaryUrl) && (
                       <img
                         src={site.images[0]?.r2Url || site.images[0]?.cloudinaryUrl || ''}
                         alt={site.title}
-                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shrink-0"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shrink-0 ring-2 ring-amber-200/60"
                       />
                     )}
                     <div className="flex-1 text-left min-w-0">
-                      <h3 className="font-bold text-gray-900 text-base sm:text-lg truncate">{site.title}</h3>
-                      <p className="text-xs sm:text-sm text-gray-900 truncate">{site.type}</p>
+                      <h3 className="font-bold text-amber-900 text-base sm:text-lg truncate" style={{ fontFamily: 'Georgia, serif' }}>{site.title}</h3>
+                      <p className="text-xs sm:text-sm text-amber-800/70 truncate">{site.type}</p>
                     </div>
                     {formData.heritageSiteId === site.id && (
                       <Check className="h-5 w-5 sm:h-6 sm:w-6 text-amber-700 shrink-0" />
@@ -430,10 +394,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 What is the title of your Yatra?
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
                 Keep it within 80 characters, descriptive but not sensational
               </p>
             </div>
@@ -445,19 +409,20 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="E.g., Ancient temple ruins in..."
                 maxLength={80}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-amber-900 placeholder:text-amber-800/40 rounded-xl sm:rounded-2xl border border-amber-200/60 focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30 focus:outline-none"
+                style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)' }}
               />
-              <div className="mt-2 text-right text-xs sm:text-sm text-gray-900">
+              <div className="mt-2 text-right text-xs sm:text-sm text-amber-800/70">
                 {formData.title.length}/80 characters
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <h4 className="font-semibold text-blue-900 mb-2">Guidelines:</h4>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>✓ Make it descriptive and informative</li>
-                <li>✗ Avoid exact location names for safety</li>
-                <li>✗ Don't use sensational language</li>
+            <div className="rounded-xl border border-amber-200/60 p-4" style={infoBoxStyle}>
+              <h4 className="font-semibold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>Guidelines:</h4>
+              <ul className="text-sm text-amber-800/80 space-y-1">
+                <li>&#10003; Make it descriptive and informative</li>
+                <li>&#10007; Avoid exact location names for safety</li>
+                <li>&#10007; Don&apos;t use sensational language</li>
               </ul>
             </div>
           </div>
@@ -468,10 +433,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 How did you come across this site?
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
                 Share the story of your discovery (150-300 words recommended)
               </p>
             </div>
@@ -482,14 +447,15 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, discoveryContext: e.target.value })}
                 placeholder="Was it through local people, elders, family stories? During travel, farming, trekking? Through old maps or texts?"
                 rows={8}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none resize-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-amber-900 placeholder:text-amber-800/40 rounded-xl sm:rounded-2xl border border-amber-200/60 focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30 focus:outline-none resize-none"
+                style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)' }}
               />
               <div className="mt-2 flex flex-col sm:flex-row justify-between gap-1 sm:gap-0 text-xs sm:text-sm">
-                <span className={`${wordCount < 50 ? 'text-red-600' : wordCount > 300 ? 'text-amber-800' : 'text-green-600'}`}>
+                <span className={`${wordCount < 50 ? 'text-red-600' : wordCount > 300 ? 'text-amber-800' : 'text-green-700'}`}>
                   {wordCount} words {wordCount < 50 && '(minimum 50)'}
                 </span>
-                <span className="text-gray-900">
-                  {wordCount >= 150 && wordCount <= 300 ? '✓ Perfect length' : '150-300 recommended'}
+                <span className="text-amber-800/70">
+                  {wordCount >= 150 && wordCount <= 300 ? '&#10003; Perfect length' : '150-300 recommended'}
                 </span>
               </div>
             </div>
@@ -500,10 +466,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 Describe your journey to reach this place
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
                 How far did you travel? What terrain? Any difficulties?
               </p>
             </div>
@@ -514,10 +480,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, journeyNarrative: e.target.value })}
                 placeholder="Describe your journey: distance traveled, terrain crossed (forest, hill, farmland, ruins), weather conditions, lack of paths, or safety risks..."
                 rows={8}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none resize-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-amber-900 placeholder:text-amber-800/40 rounded-xl sm:rounded-2xl border border-amber-200/60 focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30 focus:outline-none resize-none"
+                style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)' }}
               />
               <div className="mt-2 text-right text-xs sm:text-sm">
-                <span className={formData.journeyNarrative.length >= 100 ? 'text-green-600' : 'text-gray-900'}>
+                <span className={formData.journeyNarrative.length >= 100 ? 'text-green-700' : 'text-amber-800/70'}>
                   {formData.journeyNarrative.length} characters (minimum 100)
                 </span>
               </div>
@@ -529,10 +496,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 What historical indicators did you observe?
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
                 Select all that apply from what you personally witnessed
               </p>
             </div>
@@ -541,7 +508,12 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               {HISTORICAL_INDICATORS.map((indicator) => (
                 <label
                   key={indicator}
-                  className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-amber-400 cursor-pointer transition-all"
+                  className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+                    formData.historicalIndicators.includes(indicator)
+                      ? 'border-amber-700 ring-1 ring-amber-700/30'
+                      : 'border-amber-200/60 hover:border-amber-400'
+                  }`}
+                  style={cardStyle}
                 >
                   <input
                     type="checkbox"
@@ -561,16 +533,16 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                         })
                       }
                     }}
-                    className="w-5 h-5 text-amber-700 rounded focus:ring-amber-500"
+                    className="w-5 h-5 text-amber-700 rounded focus:ring-amber-500 border-amber-300"
                   />
-                  <span className="text-gray-900 font-medium">{indicator}</span>
+                  <span className="text-amber-900 font-medium">{indicator}</span>
                 </label>
               ))}
             </div>
 
             {formData.historicalIndicators.length > 0 && (
               <div className="mt-6">
-                <label className="block text-gray-900 font-semibold mb-2">
+                <label className="block text-amber-900 font-semibold mb-2" style={{ fontFamily: 'Georgia, serif' }}>
                   Briefly explain what you noticed (Optional)
                 </label>
                 <textarea
@@ -580,7 +552,8 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                   }
                   placeholder="Describe the indicators in more detail..."
                   rows={4}
-                  className="w-full px-4 py-3 text-gray-900 placeholder:text-gray-900 rounded-xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none"
+                  className="w-full px-4 py-3 text-amber-900 placeholder:text-amber-800/40 rounded-xl border border-amber-200/60 focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30 focus:outline-none"
+                  style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)' }}
                 />
               </div>
             )}
@@ -591,11 +564,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 What evidence did you submit privately?
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
-                Select the types of evidence you've provided for verification
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
+                Select the types of evidence you&apos;ve provided for verification
               </p>
             </div>
 
@@ -603,7 +576,12 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               {EVIDENCE_TYPES.map((evidence) => (
                 <label
                   key={evidence}
-                  className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-amber-400 cursor-pointer transition-all"
+                  className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+                    formData.evidenceTypes.includes(evidence)
+                      ? 'border-amber-700 ring-1 ring-amber-700/30'
+                      : 'border-amber-200/60 hover:border-amber-400'
+                  }`}
+                  style={cardStyle}
                 >
                   <input
                     type="checkbox"
@@ -621,16 +599,16 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                         })
                       }
                     }}
-                    className="w-5 h-5 text-amber-700 rounded focus:ring-amber-500"
+                    className="w-5 h-5 text-amber-700 rounded focus:ring-amber-500 border-amber-300"
                   />
-                  <span className="text-gray-900 font-medium">{evidence}</span>
+                  <span className="text-amber-900 font-medium">{evidence}</span>
                 </label>
               ))}
             </div>
 
-            <div className="bg-amber-50/80 border border-amber-200/60 rounded-xl p-4">
-              <p className="text-sm text-amber-900">
-                <strong>Note:</strong> Detailed evidence has been submitted privately to <span className="notranslate" translate="no">Puranveshana</span> for expert review.
+            <div className="rounded-xl border border-amber-200/60 p-4" style={infoBoxStyle}>
+              <p className="text-sm text-amber-800/80">
+                <strong className="text-amber-900">Note:</strong> Detailed evidence has been submitted privately to <span className="notranslate" translate="no">Puranveshana</span> for expert review.
               </p>
             </div>
           </div>
@@ -640,10 +618,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 Add safe visuals for public viewing (Optional)
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
                 Maximum 3 images - only verified images with camera EXIF data accepted
               </p>
             </div>
@@ -654,10 +632,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-4 px-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-amber-400 hover:bg-amber-50/50 transition-all flex items-center justify-center gap-3 group"
+                  className="w-full py-4 px-6 border border-dashed border-amber-300 rounded-xl hover:border-amber-500 transition-all flex items-center justify-center gap-3 group"
+                  style={infoBoxStyle}
                 >
-                  <Upload className="h-6 w-6 text-gray-900 group-hover:text-amber-800" />
-                  <span className="text-gray-900 group-hover:text-amber-800 font-medium">
+                  <Upload className="h-6 w-6 text-amber-700 group-hover:text-amber-800" />
+                  <span className="text-amber-800 group-hover:text-amber-900 font-medium">
                     {uploadedImages.length > 0 ? 'Add More Images' : 'Upload Images'}
                   </span>
                 </button>
@@ -674,9 +653,9 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
 
             {/* Uploaded Images Preview */}
             {uploadedImages.length > 0 && (
-              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+              <div className="rounded-xl border border-amber-200/60 p-4 space-y-3" style={infoBoxStyle}>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-900">
+                  <span className="text-sm font-semibold text-amber-900">
                     {uploadedImages.length} / 3 images
                   </span>
                   <button
@@ -692,7 +671,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                   {uploadedImages.map((imageData, index) => (
                     <div
                       key={index}
-                      className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 group"
+                      className="relative aspect-square rounded-lg overflow-hidden border border-amber-200/60 group"
                     >
                       <img
                         src={imageData.preview}
@@ -700,7 +679,6 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                         className="w-full h-full object-cover"
                       />
 
-                      {/* Remove button */}
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
@@ -709,15 +687,13 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                         <X className="h-3 w-3" />
                       </button>
 
-                      {/* Verified badge */}
                       {imageData.isVerified && (
-                        <div className="absolute top-1 left-1 bg-green-500 text-white p-1 rounded flex items-center gap-1">
+                        <div className="absolute top-1 left-1 bg-green-600 text-white p-1 rounded flex items-center gap-1">
                           <Check className="h-3 w-3" />
                           <span className="text-[10px] font-semibold">Verified</span>
                         </div>
                       )}
 
-                      {/* Camera info */}
                       {imageData.cameraModel && (
                         <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-1 text-[10px] truncate">
                           {imageData.cameraModel}
@@ -729,13 +705,13 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               </div>
             )}
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-              <h4 className="font-semibold text-yellow-900 mb-2">Requirements:</h4>
-              <ul className="text-sm text-yellow-800 space-y-1">
-                <li>✓ Maximum 3 images</li>
-                <li>✓ Images must have valid camera EXIF data (Make/Model)</li>
-                <li>✓ Images should not reveal exact location</li>
-                <li>✓ <span className="notranslate" translate="no">Puranveshana</span> may crop, blur, or watermark images for safety</li>
+            <div className="rounded-xl border border-amber-200/60 p-4" style={infoBoxStyle}>
+              <h4 className="font-semibold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>Requirements:</h4>
+              <ul className="text-sm text-amber-800/80 space-y-1">
+                <li>&#10003; Maximum 3 images</li>
+                <li>&#10003; Images must have valid camera EXIF data (Make/Model)</li>
+                <li>&#10003; Images should not reveal exact location</li>
+                <li>&#10003; <span className="notranslate" translate="no">Puranveshana</span> may crop, blur, or watermark images for safety</li>
               </ul>
             </div>
 
@@ -743,8 +719,9 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               <button
                 onClick={handleNext}
                 className="text-amber-800 hover:text-amber-900 font-medium"
+                style={{ fontFamily: 'Georgia, serif' }}
               >
-                Skip this step →
+                Skip this step &rarr;
               </button>
             </div>
           </div>
@@ -754,10 +731,10 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 Why does this discovery matter? (Optional)
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
                 Share your personal thoughts on its cultural or historical importance
               </p>
             </div>
@@ -768,7 +745,8 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 onChange={(e) => setFormData({ ...formData, personalReflection: e.target.value })}
                 placeholder="Why is this discovery important? Is there a risk of damage or neglect? What personal emotions or sense of responsibility do you feel?"
                 rows={6}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 sm:placeholder:text-gray-900 rounded-xl sm:rounded-2xl border-2 border-gray-300 focus:border-amber-500 focus:outline-none resize-none"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-amber-900 placeholder:text-amber-800/40 rounded-xl sm:rounded-2xl border border-amber-200/60 focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30 focus:outline-none resize-none"
+                style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)' }}
               />
             </div>
 
@@ -776,8 +754,9 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               <button
                 onClick={handleNext}
                 className="text-amber-800 hover:text-amber-900 font-medium"
+                style={{ fontFamily: 'Georgia, serif' }}
               >
-                Skip this step →
+                Skip this step &rarr;
               </button>
             </div>
           </div>
@@ -787,43 +766,43 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
                 Review Your Submission
               </h2>
-              <p className="text-sm sm:text-base text-gray-700">
+              <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
                 Please review all information before submitting
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border-2 border-gray-200 p-6 space-y-4">
+            <div className="rounded-2xl border border-amber-200/60 p-6 space-y-4" style={cardStyle}>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Heritage Site</h3>
-                <p className="text-gray-700">{selectedSite?.title}</p>
+                <h3 className="font-semibold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>Heritage Site</h3>
+                <p className="text-amber-800/80">{selectedSite?.title}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Yatra Title</h3>
-                <p className="text-gray-700">{formData.title}</p>
+                <h3 className="font-semibold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>Yatra Title</h3>
+                <p className="text-amber-800/80">{formData.title}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Discovery Context</h3>
-                <p className="text-gray-700 line-clamp-3">{formData.discoveryContext}</p>
+                <h3 className="font-semibold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>Discovery Context</h3>
+                <p className="text-amber-800/80 line-clamp-3">{formData.discoveryContext}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Historical Indicators</h3>
-                <p className="text-gray-700">{formData.historicalIndicators.join(', ')}</p>
+                <h3 className="font-semibold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>Historical Indicators</h3>
+                <p className="text-amber-800/80">{formData.historicalIndicators.join(', ')}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Evidence Types</h3>
-                <p className="text-gray-700">{formData.evidenceTypes.join(', ')}</p>
+                <h3 className="font-semibold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>Evidence Types</h3>
+                <p className="text-amber-800/80">{formData.evidenceTypes.join(', ')}</p>
               </div>
 
               {uploadedImages.length > 0 && (
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Safe Visuals</h3>
+                  <h3 className="font-semibold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>Safe Visuals</h3>
                   <div className="grid grid-cols-3 gap-2">
                     {uploadedImages.map((img, index) => (
                       <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
@@ -833,7 +812,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                           className="w-full h-full object-cover"
                         />
                         {img.isVerified && (
-                          <div className="absolute top-1 left-1 bg-green-500 text-white p-1 rounded">
+                          <div className="absolute top-1 left-1 bg-green-600 text-white p-1 rounded">
                             <Check className="h-3 w-3" />
                           </div>
                         )}
@@ -844,7 +823,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
               )}
             </div>
 
-            <div className="bg-amber-50/80 border-2 border-amber-300/60 rounded-xl p-6">
+            <div className="rounded-xl border border-amber-600/30 p-6" style={{ background: 'linear-gradient(145deg, #fef9f0 0%, #fdf5e6 100%)' }}>
               <label className="flex items-start gap-4 cursor-pointer">
                 <input
                   type="checkbox"
@@ -852,11 +831,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                   onChange={(e) =>
                     setFormData({ ...formData, submissionConfirmed: e.target.checked })
                   }
-                  className="mt-1 w-5 h-5 text-amber-700 rounded focus:ring-amber-500"
+                  className="mt-1 w-5 h-5 text-amber-700 rounded focus:ring-amber-500 border-amber-300"
                 />
                 <div>
-                  <p className="text-gray-900 font-semibold mb-1">Declaration</p>
-                  <p className="text-gray-700 text-sm">
+                  <p className="text-amber-900 font-semibold mb-1" style={{ fontFamily: 'Georgia, serif' }}>Declaration</p>
+                  <p className="text-amber-800/80 text-sm">
                     I confirm that the information shared is true to my knowledge and that sensitive
                     details (exact locations, GPS coordinates) have been intentionally excluded to
                     protect the heritage site.
@@ -878,61 +857,85 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         {/* Back Button */}
         <button
           onClick={() => router.push('/dashboard/yatra')}
-          className="flex items-center gap-2 text-gray-700 hover:text-gray-900 mb-6 group transition-colors"
+          className="flex items-center gap-2 text-amber-800 hover:text-amber-900 mb-6 group transition-colors"
         >
           <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium">Back to Yatra Gallery</span>
+          <span className="font-medium" style={{ fontFamily: 'Georgia, serif' }}>Back to Yatra Gallery</span>
         </button>
 
         {/* Progress Bar */}
-        <div className="mb-8 sm:mb-12">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-semibold text-gray-900">
-              Step {currentStep + 1} of {steps.length}
-            </span>
-            <span className="text-sm text-gray-900">
-              {Math.round(((currentStep + 1) / steps.length) * 100)}% Complete
-            </span>
-          </div>
-          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-linear-to-r from-amber-600 to-amber-700 transition-all duration-500"
-              style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-            />
-          </div>
+        <div
+          className="relative mb-8 sm:mb-12 rounded-2xl p-5 sm:p-6 border border-amber-200/60 overflow-hidden"
+          style={cardStyle}
+        >
+          <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-amber-300 via-orange-400 to-amber-300"></div>
+          <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-amber-700/30"></div>
+          <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-amber-700/30"></div>
+          <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-amber-700/30"></div>
+          <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-amber-700/30"></div>
 
-          {/* Step Indicators */}
-          <div className="hidden md:flex items-center justify-between mt-6">
-            {steps.map((step, index) => {
-              const StepIcon = step.icon
-              const isCompleted = index < currentStep
-              const isCurrent = index === currentStep
+          <div className="relative">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-semibold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>
+                Step {currentStep + 1} of {steps.length}
+              </span>
+              <span className="text-sm text-amber-800/70">
+                {Math.round(((currentStep + 1) / steps.length) * 100)}% Complete
+              </span>
+            </div>
+            <div className="h-3 bg-amber-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-linear-to-r from-amber-600 to-amber-700 transition-all duration-500 rounded-full"
+                style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+              />
+            </div>
 
-              return (
-                <div key={index} className="flex flex-col items-center gap-2">
-                  <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                      isCompleted
-                        ? 'bg-green-500 text-white'
-                        : isCurrent
-                        ? 'bg-amber-700 text-white'
-                        : 'bg-gray-200 text-gray-900'
-                    }`}
-                  >
-                    {isCompleted ? <Check className="h-6 w-6" /> : <StepIcon className="h-6 w-6" />}
+            {/* Step Indicators */}
+            <div className="hidden md:flex items-center justify-between mt-6">
+              {steps.map((step, index) => {
+                const StepIcon = step.icon
+                const isCompleted = index < currentStep
+                const isCurrent = index === currentStep
+
+                return (
+                  <div key={index} className="flex flex-col items-center gap-2">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                        isCompleted
+                          ? 'bg-green-600 text-white'
+                          : isCurrent
+                          ? 'bg-amber-800 text-amber-50 shadow-lg shadow-amber-900/20'
+                          : 'bg-amber-100 text-amber-700'
+                      }`}
+                    >
+                      {isCompleted ? <Check className="h-6 w-6" /> : <StepIcon className="h-6 w-6" />}
+                    </div>
+                    <span className={`text-xs text-center ${isCurrent ? 'text-amber-900 font-semibold' : 'text-amber-800/70'}`}>
+                      {step.title}
+                    </span>
                   </div>
-                  <span className={`text-xs text-center ${isCurrent ? 'text-gray-900 font-semibold' : 'text-gray-900'}`}>
-                    {step.title}
-                  </span>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
         </div>
 
         {/* Step Content */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 md:p-12 mb-6 sm:mb-8">
-          {renderStepContent()}
+        <div
+          className="relative rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mb-6 sm:mb-8 border border-amber-200/60 overflow-hidden"
+          style={{ ...cardStyle, boxShadow: '0 8px 40px rgba(139, 90, 43, 0.12)' }}
+        >
+          <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none">
+            <div className="absolute top-3 left-3 w-6 h-px bg-amber-300/60"></div>
+            <div className="absolute top-3 left-3 w-px h-6 bg-amber-300/60"></div>
+          </div>
+          <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none">
+            <div className="absolute top-3 right-3 w-6 h-px bg-amber-300/60"></div>
+            <div className="absolute top-3 right-3 w-px h-6 bg-amber-300/60"></div>
+          </div>
+          <div className="relative">
+            {renderStepContent()}
+          </div>
         </div>
 
         {/* Navigation Buttons */}
@@ -940,7 +943,8 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
           <button
             onClick={handlePrevious}
             disabled={currentStep === 0}
-            className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl border-2 border-gray-300 font-semibold text-sm sm:text-base text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl border border-amber-200/60 font-semibold text-sm sm:text-base text-amber-800 hover:bg-amber-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            style={{ fontFamily: 'Georgia, serif' }}
           >
             <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="hidden sm:inline">Previous</span>
@@ -951,6 +955,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
             <button
               onClick={handleNext}
               className="flex items-center gap-1.5 sm:gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-amber-800 hover:bg-amber-900 text-amber-50 font-semibold text-sm sm:text-base shadow-lg shadow-amber-900/20 transition-all"
+              style={{ fontFamily: 'Georgia, serif' }}
             >
               Next
               <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -959,7 +964,8 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
             <button
               onClick={handleSubmit}
               disabled={loading || !formData.submissionConfirmed}
-              className="flex items-center gap-1.5 sm:gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-linear-to-r from-green-500 to-emerald-600 text-white font-semibold text-sm sm:text-base hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-1.5 sm:gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-linear-to-r from-green-600 to-emerald-700 text-white font-semibold text-sm sm:text-base hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              style={{ fontFamily: 'Georgia, serif' }}
             >
               <span className="hidden sm:inline">{loading ? 'Submitting...' : 'Submit Yatra'}</span>
               <span className="sm:hidden">{loading ? 'Submitting...' : 'Submit'}</span>

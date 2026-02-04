@@ -132,15 +132,15 @@ export async function middleware(request: NextRequest) {
 function applySecurityHeaders(response: NextResponse) {
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://cdn.jsdelivr.net https://www.googletagmanager.com https://*.posthog.com https://us-assets.i.posthog.com https://*.hs-scripts.com https://*.hs-analytics.net https://*.hs-banner.com https://*.usemessages.com https://forms.hsforms.com",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://*.posthog.com https://us-assets.i.posthog.com https://*.hs-scripts.com https://*.hs-analytics.net https://*.hs-banner.com https://*.usemessages.com https://forms.hsforms.com https://js-na2.hscollectedforms.net",
     "style-src 'self' 'unsafe-inline' https://unpkg.com https://www.gstatic.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
     "media-src 'self' blob: https://res.cloudinary.com https://*.r2.dev https://*.r2.cloudflarestorage.com",
-    "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com https://nominatim.openstreetmap.org https://res.cloudinary.com https://api.cloudinary.com https://www.googletagmanager.com https://*.posthog.com https://*.hubspot.com https://*.hubspotusercontent.com https://*.hsforms.com https://*.hs-analytics.net",
+    "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com https://nominatim.openstreetmap.org https://res.cloudinary.com https://api.cloudinary.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://googleads.g.doubleclick.net https://*.posthog.com https://*.hubspot.com https://*.hubspotusercontent.com https://*.hsforms.com https://*.hscollectedforms.net https://*.hs-analytics.net",
     "worker-src 'self' blob:",
     "child-src 'self' blob:",
-    "frame-src 'self' https://challenges.cloudflare.com https://maps.google.com https://www.google.com/maps",
+    "frame-src 'self' https://challenges.cloudflare.com https://maps.google.com https://www.google.com/maps https://www.googletagmanager.com https://googleads.g.doubleclick.net",
     "frame-ancestors 'self'",
     "base-uri 'self'",
     "form-action 'self'",
