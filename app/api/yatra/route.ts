@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
-import { getCached, setCached, invalidatePattern, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
 import { LocationVerificationStatus } from '@prisma/client'
 
 async function verifyLocationContent(storyId: string, textFields: { title: string; discoveryContext: string; journeyNarrative: string }) {
@@ -137,26 +136,8 @@ export async function GET(request: Request) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
-    // Allow callers to bypass Redis cache (useful after an update)
-    const bypassCache = request.headers.get('x-bypass-cache') === '1'
-
     const { searchParams } = new URL(request.url)
     const heritageSiteId = searchParams.get('heritageSiteId')
-
-    const cacheKey = `${CACHE_KEYS.YATRA_STORIES}${session.role}:${session.userId}:${heritageSiteId || 'all'}`
-    let cached = null
-    if (!bypassCache) {
-      cached = await getCached<any>(cacheKey)
-    }
-    if (cached) {
-      return NextResponse.json(cached, {
-        headers: {
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
-          'X-Cache-Status': 'HIT',
-        },
-      })
-    }
 
     const where: any = {}
 
@@ -276,14 +257,7 @@ export async function GET(request: Request) {
     })
 
     const response = { stories: storiesWithUsers }
-
-    await setCached(cacheKey, response, CACHE_TTL.SHORT)
-
-    return NextResponse.json(response, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
-      },
-    })
+    return NextResponse.json(response)
   } catch (error: any) {
     console.error('Error fetching Yatra stories:', error)
     return NextResponse.json(
@@ -414,7 +388,7 @@ export async function POST(request: Request) {
       })
     )
 
-    await invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`)
+    // No server-side cache to invalidate for yatra stories
 
     verifyLocationContent(yatraStory.id, {
       title,
