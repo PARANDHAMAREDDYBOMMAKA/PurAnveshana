@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
 import { LocationVerificationStatus } from '@prisma/client'
+import { purgePaths } from '@/lib/cloudflare/cdn'
 
 async function verifyLocationContent(storyId: string, textFields: { title: string; discoveryContext: string; journeyNarrative: string }) {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY
@@ -388,7 +389,10 @@ export async function POST(request: Request) {
       })
     )
 
-    // No server-side cache to invalidate for yatra stories
+    // Purge CDN cache for yatra listing pages
+    purgePaths(['/dashboard/yatra', '/']).catch((err) =>
+      console.error('CDN purge error:', err)
+    )
 
     verifyLocationContent(yatraStory.id, {
       title,
