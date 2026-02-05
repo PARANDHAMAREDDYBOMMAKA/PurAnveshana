@@ -4,10 +4,31 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const location = searchParams.get('location')
+    const lat = searchParams.get('lat')
+    const lon = searchParams.get('lon')
+
+    if (lat && lon) {
+      const geocodeResponse = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+        {
+          headers: {
+            'User-Agent': 'PurAnveshana-Heritage-App/1.0',
+            'Referer': request.headers.get('referer') || 'https://puranveshana.com',
+          },
+        }
+      )
+
+      if (!geocodeResponse.ok) {
+        throw new Error('Reverse geocoding service unavailable')
+      }
+
+      const data = await geocodeResponse.json()
+      return NextResponse.json(data)
+    }
 
     if (!location) {
       return NextResponse.json(
-        { error: 'Location parameter is required' },
+        { error: 'Location or coordinates (lat/lon) required' },
         { status: 400 }
       )
     }

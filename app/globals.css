@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Google Translate Fixes - Hide Google Translate UI elements */
 .goog-te-banner-frame,
 .skiptranslate,
 #goog-gt-tt,
@@ -22,7 +21,6 @@ body {
   padding-top: 0 !important;
 }
 
-/* Prevent font tags from breaking layout */
 font {
   display: contents !important;
 }
@@ -52,12 +50,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Leaflet Map Overrides */
 .leaflet-container {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Route Instructions Panel */
 .leaflet-routing-container {
   background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
   border-radius: 1rem;
@@ -117,14 +113,12 @@ body {
   color: #1f2937 !important;
 }
 
-/* Selected route highlight */
 .leaflet-routing-alt.leaflet-routing-alt-selected {
   background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
   border: 2px solid #f97316;
   box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
 }
 
-/* Route summary */
 .leaflet-routing-alt h3 {
   background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
   color: white;
@@ -134,7 +128,6 @@ body {
   font-size: 0.875rem;
 }
 
-/* Control buttons */
 .leaflet-bar a {
   border-radius: 0.5rem;
   border: 2px solid #fed7aa;
@@ -159,12 +152,10 @@ body {
   border-bottom-right-radius: 0.5rem;
 }
 
-/* Hide geocoder inputs */
 .leaflet-routing-geocoders {
   display: none;
 }
 
-/* Custom marker popup */
 .leaflet-popup-content-wrapper {
   border-radius: 0.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -174,13 +165,11 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Custom markers - remove default background */
 .custom-marker {
   background: transparent !important;
   border: none !important;
 }
 
-/* Google Translate - Hide Default Banner and Elements */
 .goog-te-banner-frame {
   display: none !important;
 }
@@ -218,7 +207,6 @@ body {
   display: none;
 }
 
-/* Hide the "Powered by Google" text */
 .goog-te-gadget span {
   display: none !important;
 }
@@ -227,22 +215,18 @@ body {
   display: none !important;
 }
 
-/* Remove top padding added by Google Translate */
 body > .skiptranslate {
   display: none !important;
 }
 
-/* Ensure the iframe doesn't show */
 iframe.goog-te-banner-frame {
   display: none !important;
 }
 
-/* Fix positioning issues */
 body.translated-ltr {
   top: 0 !important;
 }
 
-/* Hide Google Translate toolbar completely */
 .goog-te-ftab {
   display: none !important;
 }
@@ -255,7 +239,6 @@ body.translated-ltr {
   display: none !important;
 }
 
-/* Hide all Google Translate branding and messages during translation */
 .goog-te-spinner-pos {
   display: none !important;
 }
@@ -264,12 +247,10 @@ body.translated-ltr {
   display: none !important;
 }
 
-/* Hide translation progress message */
 div#goog-gt- {
   display: none !important;
 }
 
-/* Hide any Google Translate notification */
 .goog-te-menu-value span {
   display: none !important;
 }
@@ -278,39 +259,32 @@ div#goog-gt- {
   display: none !important;
 }
 
-/* Hide Google Translate menu frame */
 .goog-te-menu-frame {
   display: none !important;
 }
 
-/* Additional banner hiding for all states */
 #goog-gt-tt,
 #goog-gt-vt {
   display: none !important;
 }
 
-/* Hide the "Show original" button and all toolbars */
 .goog-text-highlight {
   background: none !important;
   box-shadow: none !important;
 }
 
-/* Ensure no Google branding appears anywhere */
 [id^="goog-gt-"] {
   display: none !important;
 }
 
-/* Hide any translation tooltips */
 .goog-tooltip {
   display: none !important;
 }
 
-/* Force hide all skiptranslate elements except the one with select */
 body > .skiptranslate:not(:has(.goog-te-combo)) {
   display: none !important;
 }
 
-/* Hide the skiptranslate div that contains the select, but keep the select functional */
 body > .skiptranslate:has(.goog-te-combo) {
   position: fixed !important;
   top: -1000px !important;
@@ -323,19 +297,16 @@ body > .skiptranslate:has(.goog-te-combo) {
   overflow: hidden !important;
 }
 
-/* Override any inline styles from Google */
 body[style*="top"],
 body[style*="position"] {
   top: 0 !important;
   position: static !important;
 }
 
-/* Hide notification bar during switching */
 body > .skiptranslate:first-child {
   display: none !important;
 }
 
-/* Ensure translated state doesn't show banners */
 body.translated-ltr,
 body.translated-rtl {
   top: 0 !important;
@@ -343,7 +314,6 @@ body.translated-rtl {
   position: static !important;
 }
 
-/* Hide Google Translate select element - but allow programmatic override */
 select.goog-te-combo {
   display: none;
   position: fixed;
@@ -353,7 +323,6 @@ select.goog-te-combo {
   pointer-events: none;
 }
 
-/* Additional specificity for hiding everything */
 html body .skiptranslate,
 html body iframe.skiptranslate,
 html body .goog-te-banner-frame {
@@ -366,13 +335,11 @@ html body .goog-te-banner-frame {
   top: -9999px !important;
 }
 
-/* Aggressively hide loading notification */
 body > div[style*="position: absolute"],
 body > div[style*="position:absolute"] {
   display: none !important;
 }
 
-/* Hide the notification bar at the top */
 body > .skiptranslate[style],
 body > div.skiptranslate[style] {
   display: none !important;
@@ -380,17 +347,14 @@ body > div.skiptranslate[style] {
   opacity: 0 !important;
 }
 
-/* Target the specific loading bar that appears */
 body > div[style*="background-color"][style*="z-index"] {
   display: none !important;
 }
 
-/* Hide any absolutely positioned divs from Google Translate */
 div[style*="border: none"][style*="box-sizing"][style*="z-index"] {
   display: none !important;
 }
 
-/* More specific targeting for the top notification */
 body > div:first-child.skiptranslate,
 body > div:nth-child(1).skiptranslate,
 body > div:nth-child(2).skiptranslate {

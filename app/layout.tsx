@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast'
 import TranslateErrorBoundary from '@/components/TranslateErrorBoundary';
+import { PostHogProvider, PostHogPageView } from '@/providers/posthog-provider';
+import { Suspense } from 'react';
+import Script from 'next/script'
 import "./globals.css";
 
 const geistSans = Geist({
@@ -97,7 +100,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'google3eea601a87f2daa0',
+    google: 'O5f_j1LPjwJxX_Xz-4Ye-koZNLD9386Rufzrpf4Hc08',
   },
   alternates: {
     canonical: 'https://puranveshana.com',
@@ -152,38 +155,39 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17767521164"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'AW-17767521164');
-            `
-          }}
+        
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-DPXXGQBXS9"
+          strategy="afterInteractive"
         />
-        {/* Suppress Google Translate DOM manipulation errors */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (typeof window !== 'undefined') {
-                const originalError = window.onerror;
-                window.onerror = function(message, source, lineno, colno, error) {
-                  if (error && error.message && (
-                    error.message.includes('removeChild') ||
-                    error.message.includes('insertBefore') ||
-                    error.message.includes('The node to be removed is not a child')
-                  )) {
-                    return true;
-                  }
-                  if (originalError) return originalError(message, source, lineno, colno, error);
-                  return false;
-                };
-              }
-            `
-          }}
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);} 
+            gtag('js', new Date());
+            gtag('config', 'G-DPXXGQBXS9');
+            gtag('config', 'AW-17767521164');`}
+        </Script>
+        <Script id="error-handler" strategy="afterInteractive">
+          {`if (typeof window !== 'undefined') {
+              const originalError = window.onerror;
+              window.onerror = function(message, source, lineno, colno, error) {
+                if (error && error.message && (
+                  error.message.includes('removeChild') ||
+                  error.message.includes('insertBefore') ||
+                  error.message.includes('The node to be removed is not a child')
+                )) {
+                  return true;
+                }
+                if (originalError) return originalError(message, source, lineno, colno, error);
+                return false;
+              };
+            }`}
+        </Script>
+        <Script
+          id="hs-script-loader"
+          src="https://js-na2.hs-scripts.com/244814581.js"
+          strategy="afterInteractive"
+          defer
         />
       </head>
       <body
@@ -191,10 +195,15 @@ export default function RootLayout({
         suppressHydrationWarning
         style={{position: 'static', top: 0, marginTop: 0, paddingTop: 0}}
       >
-        <TranslateErrorBoundary>
-          <Toaster position="top-right" />
-          {children}
-        </TranslateErrorBoundary>
+        <PostHogProvider>
+          <TranslateErrorBoundary>
+            <Suspense fallback={null}>
+              <PostHogPageView />
+            </Suspense>
+            <Toaster position="top-right" />
+            {children}
+          </TranslateErrorBoundary>
+        </PostHogProvider>
       </body>
     </html>
   );

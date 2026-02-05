@@ -12,7 +12,6 @@ interface RouteMapProps {
   destinationName: string
 }
 
-// Bengaluru coordinates
 const BENGALURU_LAT = 12.9716
 const BENGALURU_LNG = 77.5946
 
@@ -25,32 +24,26 @@ export default function RouteMap({ destinationLat, destinationLng, destinationNa
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
 
-    // Initialize map with mobile-friendly options
     const map = L.map(mapRef.current, {
-      // Mobile-optimized settings
-      touchZoom: true, // Enable pinch zoom on mobile
+      touchZoom: true,
       scrollWheelZoom: true,
       doubleClickZoom: true,
       boxZoom: true,
       keyboard: true,
-      zoomControl: true, // Show zoom controls (helpful on mobile)
+      zoomControl: true,
       attributionControl: true,
     }).setView([BENGALURU_LAT, BENGALURU_LNG], 7)
 
-    // Add tile layer - Using OpenStreetMap with mobile-friendly configuration
-    // Using OSM France HOT tiles which are more permissive and work on mobile
     L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 20,
       subdomains: ['a', 'b', 'c'],
-      // Mobile optimization settings
       detectRetina: true,
       updateWhenIdle: false,
       updateWhenZooming: false,
       keepBuffer: 2,
     }).addTo(map)
 
-    // Custom marker icons
     const startIcon = L.divIcon({
       className: 'custom-marker',
       html: `
@@ -105,7 +98,6 @@ export default function RouteMap({ destinationLat, destinationLng, destinationNa
       popupAnchor: [0, -40]
     })
 
-    // Add markers
     L.marker([BENGALURU_LAT, BENGALURU_LNG], { icon: startIcon })
       .addTo(map)
       .bindPopup('<div style="font-weight: bold; color: #059669;">🚀 Start: Bengaluru</div>')
@@ -114,16 +106,15 @@ export default function RouteMap({ destinationLat, destinationLng, destinationNa
       .addTo(map)
       .bindPopup(`<div style="font-weight: bold; color: #ea580c;">🏛️ Destination: ${destinationName}</div>`)
 
-    // Add routing with mobile-friendly configuration
     const routingControl = (L as any).Routing.control({
       waypoints: [
         L.latLng(BENGALURU_LAT, BENGALURU_LNG),
         L.latLng(destinationLat, destinationLng)
       ],
-      routeWhileDragging: false, // Disable on mobile for better performance
-      showAlternatives: false, // Hide alternatives on mobile to reduce clutter
+      routeWhileDragging: false,
+      showAlternatives: false,
       fitSelectedRoutes: true,
-      addWaypoints: false, // Prevent adding waypoints on mobile
+      addWaypoints: false,
       lineOptions: {
         styles: [
           { color: '#dc2626', opacity: 1, weight: 7 },
@@ -133,17 +124,14 @@ export default function RouteMap({ destinationLat, destinationLng, destinationNa
         extendToWaypoints: true,
         missingRouteTolerance: 0
       },
-      createMarker: function() { return null; }, // Don't create default markers
-      // Hide the instruction container on mobile
+      createMarker: function() { return null; },
       show: false,
       collapsible: false,
     }).addTo(map)
 
-    // Listen for route calculation to get distance and duration
     routingControl.on('routesfound', function(e: any) {
       const routes = e.routes
       const summary = routes[0].summary
-      // Convert distance to km and duration to hours/minutes
       const distanceKm = (summary.totalDistance / 1000).toFixed(1)
       const hours = Math.floor(summary.totalTime / 3600)
       const minutes = Math.round((summary.totalTime % 3600) / 60)
@@ -152,17 +140,13 @@ export default function RouteMap({ destinationLat, destinationLng, destinationNa
       setRouteDuration(hours > 0 ? `${hours}h ${minutes}min` : `${minutes} min`)
     })
 
-    // Remove the routing instructions panel for cleaner mobile view
-    // Keep only the route line on the map
     const container = routingControl.getContainer()
     if (container) {
-      // Always hide the default panel - we'll show our custom summary instead
       container.style.display = 'none'
     }
 
     mapInstanceRef.current = map
 
-    // Cleanup
     return () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove()
@@ -182,7 +166,6 @@ export default function RouteMap({ destinationLat, destinationLng, destinationNa
         }}
       />
 
-      {/* Route Summary Card - Clean mobile-friendly design */}
       {routeDistance && routeDuration && (
         <div className="mt-4 p-4 bg-linear-to-r from-orange-500 to-amber-600 rounded-lg shadow-lg">
           <div className="flex items-center justify-between text-white">
@@ -208,7 +191,6 @@ export default function RouteMap({ destinationLat, destinationLng, destinationNa
         </div>
       )}
 
-      {/* Mobile-friendly map controls hint */}
       <div className="md:hidden mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-xs text-blue-700 font-medium flex items-start gap-2">
           <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

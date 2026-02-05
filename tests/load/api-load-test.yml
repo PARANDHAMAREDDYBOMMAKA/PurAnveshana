@@ -1,0 +1,83 @@
+config:
+  target: "https://puranveshana.com"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 10
+      name: "Sustained load"
+    - duration: 60
+      arrivalRate: 20
+      name: "Peak load"
+  plugins:
+    metrics-by-endpoint: {}
+  processor: "./load-test-processor.js"
+
+scenarios:
+  - name: "Browse Heritage Sites"
+    weight: 30
+    flow:
+      - get:
+          url: "/"
+          capture:
+            - json: "$"
+              as: "homepage"
+      - think: 2
+      - get:
+          url: "/api/yatra"
+          capture:
+            - json: "$.stories[0].id"
+              as: "storyId"
+      - think: 3
+
+  - name: "View Yatra Story"
+    weight: 25
+    flow:
+      - get:
+          url: "/api/yatra"
+      - think: 1
+      - get:
+          url: "/dashboard/yatra"
+      - think: 2
+
+  - name: "User Authentication Flow"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test{{ $randomNumber() }}@example.com"
+            password: "testpassword123"
+          capture:
+            - json: "$.user.id"
+              as: "userId"
+      - think: 2
+      - get:
+          url: "/dashboard"
+      - think: 1
+      - post:
+          url: "/api/auth/logout"
+
+  - name: "API Performance Tests"
+    weight: 25
+    flow:
+      - get:
+          url: "/api/yatra"
+          expect:
+            - statusCode: 200
+      - think: 1
+
+      - get:
+          url: "/api/geocode?lat=12.9716&lng=77.5946"
+          expect:
+            - statusCode: 200
+      - think: 1
+
+      - get:
+          url: "/api/support/tickets"
+          expect:
+            - statusCode:
+                - 200
+                - 401
+      - think: 2

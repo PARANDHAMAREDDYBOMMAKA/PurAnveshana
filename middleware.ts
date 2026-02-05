@@ -30,7 +30,6 @@ export async function middleware(request: NextRequest) {
       pathname.startsWith('/api/upload') ||
       pathname.startsWith('/signup'))
   ) {
-    // Only check bot score if Cloudflare headers are present
     const hasCfHeaders = request.headers.has('CF-Ray')
     if (hasCfHeaders) {
       const isLegitimate = verifyCloudflareBot(request.headers)
@@ -42,68 +41,65 @@ export async function middleware(request: NextRequest) {
         return new NextResponse('Bot detected', { status: 403 })
       }
     }
-    // If no Cloudflare headers, allow the request (direct Vercel access)
   }
 
-  // Rate limiting
-  let rateLimitConfig = RATE_LIMITS.GENERAL
-  if (pathname.startsWith('/api/auth')) {
-    rateLimitConfig = RATE_LIMITS.AUTH
-  } else if (pathname.startsWith('/api/upload')) {
-    rateLimitConfig = RATE_LIMITS.UPLOAD
-  } else if (pathname.startsWith('/api')) {
-    rateLimitConfig = RATE_LIMITS.API
-  }
+  if (process.env.NODE_ENV === 'production') {
+    let rateLimitConfig = RATE_LIMITS.GENERAL
+    if (pathname.startsWith('/api/auth')) {
+      rateLimitConfig = RATE_LIMITS.AUTH
+    } else if (pathname.startsWith('/api/upload')) {
+      rateLimitConfig = RATE_LIMITS.UPLOAD
+    } else if (pathname.startsWith('/api')) {
+      rateLimitConfig = RATE_LIMITS.API
+    }
 
-  const rateLimitResult = rateLimit(
-    `${clientIp}:${pathname}`,
-    rateLimitConfig
-  )
+    const rateLimitResult = rateLimit(
+      `${clientIp}:${pathname}`,
+      rateLimitConfig
+    )
 
-  if (!rateLimitResult.allowed) {
-    await logSecurityEvent('rate_limit_exceeded', clientIp, {
-      path: pathname,
-      limit: rateLimitResult.limit,
-      rayId,
-    })
+    if (!rateLimitResult.allowed) {
+      await logSecurityEvent('rate_limit_exceeded', clientIp, {
+        path: pathname,
+        limit: rateLimitResult.limit,
+        rayId,
+      })
 
-    const rateLimitResponse = new NextResponse('Too many requests', {
-      status: 429,
-    })
-    rateLimitResponse.headers.set(
+      const rateLimitResponse = new NextResponse('Too many requests', {
+        status: 429,
+      })
+      rateLimitResponse.headers.set(
+        'X-RateLimit-Limit',
+        rateLimitResult.limit.toString()
+      )
+      rateLimitResponse.headers.set('X-RateLimit-Remaining', '0')
+      rateLimitResponse.headers.set(
+        'X-RateLimit-Reset',
+        rateLimitResult.resetAt.toString()
+      )
+      rateLimitResponse.headers.set(
+        'Retry-After',
+        Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000).toString()
+      )
+      return rateLimitResponse
+    }
+
+    response.headers.set(
       'X-RateLimit-Limit',
       rateLimitResult.limit.toString()
     )
-    rateLimitResponse.headers.set('X-RateLimit-Remaining', '0')
-    rateLimitResponse.headers.set(
+    response.headers.set(
+      'X-RateLimit-Remaining',
+      rateLimitResult.remaining.toString()
+    )
+    response.headers.set(
       'X-RateLimit-Reset',
       rateLimitResult.resetAt.toString()
     )
-    rateLimitResponse.headers.set(
-      'Retry-After',
-      Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000).toString()
-    )
-    return rateLimitResponse
   }
 
-  // Add rate limit headers
-  response.headers.set(
-    'X-RateLimit-Limit',
-    rateLimitResult.limit.toString()
-  )
-  response.headers.set(
-    'X-RateLimit-Remaining',
-    rateLimitResult.remaining.toString()
-  )
-  response.headers.set(
-    'X-RateLimit-Reset',
-    rateLimitResult.resetAt.toString()
-  )
-
-  // Check for session token
   const sessionToken = request.cookies.get('session')?.value
 
-  // Protected routes
   if (
     !sessionToken &&
     (pathname.startsWith('/dashboard') || pathname.startsWith('/upload'))
@@ -113,20 +109,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect to dashboard if already logged in
   if (
     sessionToken &&
     (pathname === '/login' || pathname === '/signup' || pathname === '/')
   ) {
     const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+    url.pathname = '/dashboard/yatra'
     return NextResponse.redirect(url)
   }
 
-  // Update session (refresh token if needed)
   const sessionResponse = await updateSession(request)
   if (sessionResponse) {
-    // Copy security headers to session response
     response.headers.forEach((value, key) => {
       sessionResponse.headers.set(key, value)
     })
@@ -137,18 +130,17 @@ export async function middleware(request: NextRequest) {
 }
 
 function applySecurityHeaders(response: NextResponse) {
-  // Content Security Policy
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://cdn.jsdelivr.net https://www.googletagmanager.com",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://*.posthog.com https://us-assets.i.posthog.com https://*.hs-scripts.com https://*.hs-analytics.net https://*.hs-banner.com https://*.usemessages.com https://forms.hsforms.com https://js-na2.hscollectedforms.net",
     "style-src 'self' 'unsafe-inline' https://unpkg.com https://www.gstatic.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
     "media-src 'self' blob: https://res.cloudinary.com https://*.r2.dev https://*.r2.cloudflarestorage.com",
-    "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com https://nominatim.openstreetmap.org https://res.cloudinary.com https://api.cloudinary.com https://www.googletagmanager.com",
+    "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com https://nominatim.openstreetmap.org https://res.cloudinary.com https://api.cloudinary.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://googleads.g.doubleclick.net https://*.posthog.com https://*.hubspot.com https://*.hubspotusercontent.com https://*.hsforms.com https://*.hscollectedforms.net https://*.hs-analytics.net",
     "worker-src 'self' blob:",
     "child-src 'self' blob:",
-    "frame-src 'self' https://challenges.cloudflare.com",
+    "frame-src 'self' https://challenges.cloudflare.com https://maps.google.com https://www.google.com/maps https://www.googletagmanager.com https://googleads.g.doubleclick.net",
     "frame-ancestors 'self'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -158,31 +150,24 @@ function applySecurityHeaders(response: NextResponse) {
     cspDirectives.join('; ')
   )
 
-  // Strict Transport Security
   response.headers.set(
     'Strict-Transport-Security',
     'max-age=63072000; includeSubDomains; preload'
   )
 
-  // X-Frame-Options
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
 
-  // X-Content-Type-Options
   response.headers.set('X-Content-Type-Options', 'nosniff')
 
-  // Referrer Policy
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
 
-  // Permissions Policy
   response.headers.set(
     'Permissions-Policy',
     'camera=(self), microphone=(), geolocation=(self)'
   )
 
-  // X-DNS-Prefetch-Control
   response.headers.set('X-DNS-Prefetch-Control', 'on')
 
-  // X-XSS-Protection (legacy, but still useful)
   response.headers.set('X-XSS-Protection', '1; mode=block')
 }
 

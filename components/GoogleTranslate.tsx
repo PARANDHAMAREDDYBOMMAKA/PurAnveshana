@@ -23,7 +23,6 @@ declare global {
 }
 
 export default function GoogleTranslate() {
-  // Initialize language from cookie
   const getInitialLanguage = () => {
     const cookie = document.cookie
       .split('; ')
@@ -43,25 +42,21 @@ export default function GoogleTranslate() {
   const removalIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const scriptLoadedRef = useRef(false);
 
-  // Set initial language from cookie on mount
   useEffect(() => {
     const initialLang = getInitialLanguage();
     setCurrentLanguage(initialLang);
   }, []);
 
-  // Load Google Translate script once
   useEffect(() => {
-    // Only load the script once
     if (scriptLoadedRef.current) return;
 
-    // Initialize Google Translate
     window.googleTranslateElementInit = () => {
       if (window.google?.translate?.TranslateElement) {
         new window.google.translate.TranslateElement(
           {
             pageLanguage: 'en',
-            includedLanguages: 'en,hi', // English and Hindi
-            layout: 0, // Simple layout
+            includedLanguages: 'en,hi',
+            layout: 0,
             autoDisplay: false,
           },
           'google_translate_element'
@@ -69,7 +64,6 @@ export default function GoogleTranslate() {
       }
     };
 
-    // Load the Google Translate script
     if (!document.getElementById('google-translate-script')) {
       const script = document.createElement('script');
       script.id = 'google-translate-script';
@@ -78,26 +72,21 @@ export default function GoogleTranslate() {
       document.body.appendChild(script);
       scriptLoadedRef.current = true;
     }
-  }, []); // Run only once
+  }, []);
 
-  // Handle element hiding (using CSS instead of removal to avoid React conflicts) and language detection
   useEffect(() => {
-    // Hide Google Translate UI elements using CSS instead of removing them
     const hideGoogleElements = () => {
       if (isTranslating) return;
 
       try {
-        // Hide all iframes
         const iframes = document.querySelectorAll('iframe.goog-te-banner-frame, iframe.skiptranslate, iframe[id^="goog-gt-"]');
         iframes.forEach(iframe => {
           (iframe as HTMLElement).style.display = 'none';
         });
 
-        // Hide top banner
         const topBanner = document.querySelector('.goog-te-banner-frame') as HTMLElement;
         if (topBanner) topBanner.style.display = 'none';
 
-        // Hide skiptranslate divs but preserve the one with goog-te-combo select
         const skipTranslate = document.querySelectorAll('body > .skiptranslate');
         skipTranslate.forEach(el => {
           const hasSelect = el.querySelector('.goog-te-combo');
@@ -106,13 +95,11 @@ export default function GoogleTranslate() {
           }
         });
 
-        // Hide spinner and loading elements
         const spinners = document.querySelectorAll('.goog-te-spinner-pos, .goog-te-spinner');
         spinners.forEach(el => {
           (el as HTMLElement).style.display = 'none';
         });
 
-        // Hide any element with ID starting with goog-gt- except necessary ones
         document.querySelectorAll('[id^="goog-gt-"]').forEach(el => {
           const parent = el.closest('#google_translate_element');
           if (!parent && !el.classList.contains('goog-te-combo')) {
@@ -120,26 +107,21 @@ export default function GoogleTranslate() {
           }
         });
 
-        // Reset body position
         document.body.style.top = '0';
         document.body.style.position = 'static';
       } catch { /* ignore DOM errors */ }
     };
 
-    // Run hide function
     const runHide = () => {
       if (!isTranslating) {
         hideGoogleElements();
       }
     };
 
-    // Initial cleanup after a delay
     const initialTimeout = setTimeout(runHide, 1000);
 
-    // Run hide function periodically
     removalIntervalRef.current = setInterval(runHide, 2000);
 
-    // Check for language change from cookies
     const checkLanguage = setInterval(() => {
       const cookie = document.cookie
         .split('; ')
@@ -162,7 +144,6 @@ export default function GoogleTranslate() {
     };
   }, [isTranslating, currentLanguage]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -183,7 +164,6 @@ export default function GoogleTranslate() {
     let attempts = 0;
     const maxAttempts = 20;
 
-    // Stop removing Google elements during translation
     setIsTranslating(true);
 
     const attemptChange = () => {
@@ -194,7 +174,6 @@ export default function GoogleTranslate() {
         console.log('Current value:', selectElement.value);
         console.log('Select element:', selectElement);
 
-        // Make select temporarily visible and interactable with !important override
         const parent = selectElement.parentElement;
         if (parent) {
           parent.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; z-index: 999999 !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;';
@@ -202,13 +181,10 @@ export default function GoogleTranslate() {
 
         selectElement.style.cssText = 'display: block !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;';
 
-        // Focus on the select
         selectElement.focus();
 
-        // Set the value
         selectElement.value = lang;
 
-        // Trigger multiple event types with more comprehensive events
         const events = ['focus', 'click', 'input', 'change', 'blur'];
         events.forEach(eventType => {
           const event = new Event(eventType, { bubbles: true, cancelable: true });
@@ -217,20 +193,17 @@ export default function GoogleTranslate() {
 
         console.log('Value after change:', selectElement.value);
 
-        // Hide it again and resume element removal after translation completes
         setTimeout(() => {
           if (parent) {
             parent.style.cssText = '';
           }
           selectElement.style.cssText = '';
 
-          // Resume element removal after 5 seconds (give Google more time to translate)
           setTimeout(() => {
             setIsTranslating(false);
           }, 5000);
         }, 500);
 
-        // Update our state
         setCurrentLanguage(lang);
         setIsOpen(false);
       } else {

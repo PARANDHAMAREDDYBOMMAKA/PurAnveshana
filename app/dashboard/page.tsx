@@ -1,56 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import DashboardClient from '@/components/DashboardClient'
-import toast from 'react-hot-toast'
+import { useDashboardData } from '@/hooks/useDashboardData'
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [images, setImages] = useState<any[]>([])
-  const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
-  const [userEmail, setUserEmail] = useState('')
+  const { profile, sites, isLoading, error, refresh } = useDashboardData()
 
   useEffect(() => {
-    fetchDashboardData()
-  }, [])
-
-  const fetchDashboardData = async () => {
-    try {
-      const [profileResponse, sitesResponse] = await Promise.all([
-        fetch('/api/profile'),
-        fetch('/api/images'),
-      ])
-
-      if (!profileResponse.ok || !sitesResponse.ok) {
-        if (profileResponse.status === 401 || sitesResponse.status === 401) {
-          router.push('/login')
-          return
-        }
-        throw new Error('Failed to fetch data')
-      }
-
-      const profileData = await profileResponse.json()
-      const sitesData = await sitesResponse.json()
-
-      setUserEmail(profileData.profile.email)
-      setUserRole(profileData.profile.role)
-      setImages(sitesData.sites || [])
-    } catch (error: any) {
-      console.error('Error fetching dashboard data:', error)
-      toast.error('Failed to load dashboard')
-    } finally {
-      setLoading(false)
+    if (error?.status === 401) {
+      router.push('/login')
     }
-  }
+  }, [error, router])
 
-  const refreshImages = () => {
-    fetchDashboardData()
-  }
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white flex items-center justify-center">
         <div className="text-center">
@@ -61,14 +27,18 @@ export default function DashboardPage() {
     )
   }
 
-  const isAdmin = userRole === 'admin'
+  if (!profile) {
+    return null
+  }
+
+  const isAdmin = profile.role === 'admin'
 
   return (
     <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white">
-      <Navbar userEmail={userEmail} isAdmin={isAdmin} />
+      <Navbar userEmail={profile.email} isAdmin={isAdmin} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <DashboardClient images={images} isAdmin={isAdmin} onUploadSuccess={refreshImages} />
+        <DashboardClient images={sites} isAdmin={isAdmin} onUploadSuccess={refresh} />
       </div>
     </div>
   )

@@ -5,7 +5,6 @@ import { withRetry } from '@/lib/db-utils'
 import { deleteFromR2 } from '@/lib/r2'
 import { v2 as cloudinary } from 'cloudinary'
 
-// Configure Cloudinary (for backward compatibility with existing images)
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -30,10 +29,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
+    // Make role comparison case-insensitive and robust
+    const isAdmin = profile.role?.toString().toLowerCase().trim() === 'admin'
+
+    // CACHING DISABLED - fetch fresh data every time
     let sites: any[] = []
 
     try {
-      if (profile.role === 'admin') {
+      if (isAdmin) {
         sites = await withRetry(() =>
           prisma.heritageSite.findMany({
             include: {
@@ -75,32 +78,42 @@ export async function GET(request: Request) {
         )
       }
 
-      // Fetch payment amounts for each heritage site
-      const sitesWithPayments = await Promise.all(
-        sites.map(async (site) => {
-          const payments = await withRetry(() =>
-            prisma.payment.findMany({
-              where: {
-                heritageSiteId: site.id,
-                status: 'COMPLETED',
-              },
-              select: {
-                amount: true,
-              },
-            })
-          )
-          const totalAmount = payments.reduce((sum, payment) => sum + payment.amount, 0)
-          return {
-            ...site,
-            paymentAmount: totalAmount,
-          }
+      const siteIds = sites.map((s) => s.id)
+      const allPayments = await withRetry(() =>
+        prisma.payment.findMany({
+          where: {
+            heritageSiteId: { in: siteIds },
+            status: 'COMPLETED',
+          },
+          select: {
+            heritageSiteId: true,
+            amount: true,
+          },
         })
       )
 
-      return NextResponse.json({
+      const paymentMap = new Map<string, number>()
+      allPayments.forEach((payment) => {
+        const current = paymentMap.get(payment.heritageSiteId || '') || 0
+        paymentMap.set(payment.heritageSiteId || '', current + payment.amount)
+      })
+
+      const sitesWithPayments = sites.map((site) => ({
+        ...site,
+        paymentAmount: paymentMap.get(site.id) || 0,
+      }))
+
+      const response = {
         success: true,
         sites: sitesWithPayments || [],
         userRole: profile.role,
+      }
+
+      // CACHING DISABLED - return fresh data with no-cache headers
+      return NextResponse.json(response, {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
       })
     } catch (err) {
       console.error('Error fetching from new schema:', err)
@@ -144,6 +157,8 @@ export async function POST(request: Request) {
     const {
       title,
       description,
+      type,
+      referenceLinks,
       images,
     } = body
 
@@ -161,7 +176,6 @@ export async function POST(request: Request) {
           { status: 400 }
         )
       }
-      // Check that either R2 or Cloudinary fields are provided
       const hasR2 = img.r2Url && img.r2Key
       const hasCloudinary = img.cloudinaryUrl && img.cloudinaryPublicId
       if (!hasR2 && !hasCloudinary) {
@@ -178,11 +192,12 @@ export async function POST(request: Request) {
           userId: profile.id,
           title,
           description,
+          type: type || null,
+          referenceLinks: referenceLinks || [],
           paymentStatus: 'IN_PROGRESS',
           images: {
             create: images.map((img: any) => ({
               location: img.location,
-              // Use R2 if provided, otherwise use Cloudinary (for backward compatibility)
               r2Url: img.r2Url || null,
               r2Key: img.r2Key || null,
               cloudinaryUrl: img.cloudinaryUrl || null,
@@ -229,7 +244,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json()
-    const { siteId, title, description } = body
+    const { siteId, title, description, type, referenceLinks } = body
 
     if (!siteId || !title || !description) {
       return NextResponse.json(
@@ -259,10 +274,18 @@ export async function PUT(request: Request) {
       )
     }
 
+    const updateData: any = { title, description }
+    if (type !== undefined) {
+      updateData.type = type || null
+    }
+    if (referenceLinks !== undefined) {
+      updateData.referenceLinks = referenceLinks || []
+    }
+
     const updatedSite = await withRetry(() =>
       prisma.heritageSite.update({
         where: { id: siteId },
-        data: { title, description },
+        data: updateData,
         include: {
           images: true,
         },
@@ -328,15 +351,12 @@ export async function DELETE(request: Request) {
       )
     }
 
-    // Delete all images/videos from R2 or Cloudinary
     const deletePromises = site.images.map(async (image) => {
       try {
-        // If image uses R2, delete from R2
         if (image.r2Key) {
           await deleteFromR2(image.r2Key)
           console.log(`Deleted file from R2:`, image.r2Key)
         }
-        // If image uses Cloudinary, delete from Cloudinary
         else if (image.cloudinaryPublicId) {
           const resourceType = image.cloudinaryUrl?.includes('/video/') ? 'video' : 'image'
           await cloudinary.uploader.destroy(image.cloudinaryPublicId, {
@@ -346,14 +366,11 @@ export async function DELETE(request: Request) {
         }
       } catch (error) {
         console.error('Error deleting file:', error)
-        // Continue with deletion even if storage deletion fails
       }
     })
 
-    // Wait for all storage deletions to complete
     await Promise.allSettled(deletePromises)
 
-    // Delete from database
     await withRetry(() =>
       prisma.heritageSite.delete({
         where: { id: siteId },
