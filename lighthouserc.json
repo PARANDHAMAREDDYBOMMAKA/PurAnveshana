@@ -1,0 +1,45 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "npm run build && npm run start",
+      "startServerReadyPattern": "ready on",
+      "url": [
+        "http://localhost:3000/",
+        "http://localhost:3000/login",
+        "http://localhost:3000/signup",
+        "http://localhost:3000/profile",
+        "http://localhost:3000/dashboard",
+        "http://localhost:3000/dashboard/yatra",
+        "http://localhost:3000/dashboard/yatra/create",
+        "http://localhost:3000/dashboard/profile",
+        "http://localhost:3000/dashboard/support",
+        "http://localhost:3000/dashboard/payment-history"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "cpuSlowdownMultiplier": 1
+        }
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "categories:performance": ["error", {"minScore": 0.8}],
+        "categories:accessibility": ["error", {"minScore": 0.9}],
+        "categories:best-practices": ["error", {"minScore": 0.85}],
+        "categories:seo": ["error", {"minScore": 0.9}],
+        "first-contentful-paint": ["warn", {"maxNumericValue": 2000}],
+        "largest-contentful-paint": ["warn", {"maxNumericValue": 2500}],
+        "cumulative-layout-shift": ["warn", {"maxNumericValue": 0.1}],
+        "total-blocking-time": ["warn", {"maxNumericValue": 300}]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

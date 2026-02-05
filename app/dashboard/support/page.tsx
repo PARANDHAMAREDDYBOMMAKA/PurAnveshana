@@ -41,7 +41,6 @@ export default function SupportPage() {
       setUserEmail(profileData.profile.email)
       setUserRole(profileData.profile.role)
 
-      // Fetch tickets from appropriate endpoint based on role
       const ticketsEndpoint = profileData.profile.role === 'admin'
         ? '/api/admin/support/tickets'
         : '/api/support/tickets'
@@ -129,7 +128,7 @@ export default function SupportPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
           <p className="mt-4 text-slate-900 font-medium">Loading support tickets...</p>
@@ -141,7 +140,7 @@ export default function SupportPage() {
   const isAdmin = userRole === 'admin'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-white">
+    <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-white">
       <Navbar userEmail={userEmail} isAdmin={isAdmin} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -149,7 +148,7 @@ export default function SupportPage() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">
+              <h1 className="text-3xl font-bold text-slate-900" style={{ fontFamily: 'Georgia, serif' }}>
                 {isAdmin ? 'All Support Tickets' : 'Support Tickets'}
               </h1>
               <p className="mt-2 text-slate-600">
@@ -157,11 +156,16 @@ export default function SupportPage() {
                   ? 'View and manage all user support requests'
                   : 'Manage your support requests and get help'}
               </p>
+              <div className="flex items-center gap-2 mt-4">
+                <span className="w-12 h-px bg-amber-400/50"></span>
+                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                <span className="w-12 h-px bg-amber-400/50"></span>
+              </div>
             </div>
             {!isAdmin && (
               <button
                 onClick={() => setShowNewTicketForm(true)}
-                className="px-6 py-3 bg-linear-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+                className="px-6 py-3 bg-amber-800 hover:bg-amber-900 text-amber-50 font-semibold rounded-full shadow-lg shadow-amber-900/20 transition-all transform hover:scale-105"
               >
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,11 +178,31 @@ export default function SupportPage() {
           </div>
         </div>
 
-        {/* New Ticket Form - Only for non-admin users */}
         {!isAdmin && showNewTicketForm && (
-          <div className="mb-8 bg-white rounded-xl shadow-lg border border-orange-200 p-6">
+          <div
+            className="mb-8 rounded-xl border border-amber-200/60 p-6 relative overflow-hidden"
+            style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.12)' }}
+          >
+            {/* Decorative corner elements */}
+            <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none">
+              <div className="absolute top-3 left-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute top-3 left-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
+            <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none">
+              <div className="absolute top-3 right-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute top-3 right-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 pointer-events-none">
+              <div className="absolute bottom-3 left-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute bottom-3 left-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
+            <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none">
+              <div className="absolute bottom-3 right-3 w-6 h-px bg-amber-300/60"></div>
+              <div className="absolute bottom-3 right-3 w-px h-6 bg-amber-300/60"></div>
+            </div>
+
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-slate-900">Create New Ticket</h2>
+              <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Georgia, serif' }}>Create New Ticket</h2>
               <button
                 onClick={() => setShowNewTicketForm(false)}
                 className="text-slate-400 hover:text-slate-600"
@@ -197,7 +221,7 @@ export default function SupportPage() {
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   required
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black placeholder:text-slate-500"
+                  className="w-full px-4 py-2 border border-amber-200/80 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white/60 text-black placeholder:text-slate-500"
                   placeholder="Brief description of your issue"
                 />
               </div>
@@ -209,7 +233,7 @@ export default function SupportPage() {
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required
                   rows={6}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black placeholder:text-slate-500"
+                  className="w-full px-4 py-2 border border-amber-200/80 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white/60 text-black placeholder:text-slate-500"
                   placeholder="Detailed description of your issue..."
                 />
               </div>
@@ -221,7 +245,7 @@ export default function SupportPage() {
                     type="text"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black placeholder:text-slate-500"
+                    className="w-full px-4 py-2 border border-amber-200/80 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white/60 text-black placeholder:text-slate-500"
                     placeholder="e.g., Technical, Billing, General"
                   />
                 </div>
@@ -231,7 +255,7 @@ export default function SupportPage() {
                   <select
                     value={formData.priority}
                     onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
+                    className="w-full px-4 py-2 border border-amber-200/80 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white/60 text-black"
                   >
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
@@ -245,14 +269,14 @@ export default function SupportPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-amber-800 hover:bg-amber-900 text-amber-50 font-semibold rounded-full shadow-lg shadow-amber-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? 'Creating...' : 'Create Ticket'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowNewTicketForm(false)}
-                  className="px-6 py-3 bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition-colors"
+                  className="px-6 py-3 bg-amber-100 text-amber-800 font-semibold rounded-full hover:bg-amber-200 transition-colors"
                 >
                   Cancel
                 </button>
@@ -264,15 +288,36 @@ export default function SupportPage() {
         {/* Tickets List */}
         <div className="space-y-4">
           {tickets.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-md border border-slate-200 p-12 text-center">
-              <svg className="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div
+              className="rounded-xl border border-amber-200/50 p-12 text-center relative overflow-hidden"
+              style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.12)' }}
+            >
+              {/* Decorative corner elements */}
+              <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none">
+                <div className="absolute top-3 left-3 w-6 h-px bg-amber-300/60"></div>
+                <div className="absolute top-3 left-3 w-px h-6 bg-amber-300/60"></div>
+              </div>
+              <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none">
+                <div className="absolute top-3 right-3 w-6 h-px bg-amber-300/60"></div>
+                <div className="absolute top-3 right-3 w-px h-6 bg-amber-300/60"></div>
+              </div>
+              <div className="absolute bottom-0 left-0 w-16 h-16 pointer-events-none">
+                <div className="absolute bottom-3 left-3 w-6 h-px bg-amber-300/60"></div>
+                <div className="absolute bottom-3 left-3 w-px h-6 bg-amber-300/60"></div>
+              </div>
+              <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none">
+                <div className="absolute bottom-3 right-3 w-6 h-px bg-amber-300/60"></div>
+                <div className="absolute bottom-3 right-3 w-px h-6 bg-amber-300/60"></div>
+              </div>
+
+              <svg className="w-16 h-16 mx-auto text-amber-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">No support tickets yet</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>No support tickets yet</h3>
               <p className="text-slate-600 mb-6">Create your first support ticket to get help</p>
               <button
                 onClick={() => setShowNewTicketForm(true)}
-                className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+                className="px-6 py-3 bg-amber-800 hover:bg-amber-900 text-amber-50 font-semibold rounded-full shadow-lg shadow-amber-900/20 transition-all transform hover:scale-105"
               >
                 Create Ticket
               </button>
@@ -282,13 +327,14 @@ export default function SupportPage() {
               <div
                 key={ticket.id}
                 onClick={() => router.push(`/dashboard/support/${ticket.id}`)}
-                className="bg-white rounded-xl shadow-md border border-slate-200 p-6 hover:shadow-lg transition-all cursor-pointer"
+                className="bg-white rounded-xl border border-amber-200/50 p-6 hover:border-amber-300 transition-all cursor-pointer"
+                style={{ boxShadow: '0 2px 12px rgba(139, 90, 43, 0.08)' }}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start gap-3 mb-3">
                       <div className="shrink-0">
-                        <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                         </svg>
                       </div>

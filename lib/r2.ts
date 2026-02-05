@@ -1,7 +1,6 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 
-// Initialize R2 client
 const r2Client = new S3Client({
   region: 'auto',
   endpoint: process.env.R2_ENDPOINT,

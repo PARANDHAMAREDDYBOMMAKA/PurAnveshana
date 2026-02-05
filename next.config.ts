@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000, // Cache images for 1 year
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   // Enable compression for better performance (helps SEO)
   compress: true,
@@ -28,6 +31,11 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Trailing slashes for better URL consistency
   trailingSlash: false,
+  // Experimental features for better performance
+  experimental: {
+    // Optimize CSS loading
+    optimizeCss: true,
+  },
   // Ensure security headers are properly set
   async headers() {
     return [
@@ -44,7 +52,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com https://nominatim.openstreetmap.org https://res.cloudinary.com https://api.cloudinary.com https://www.googletagmanager.com"
+            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://*.posthog.com https://us-assets.i.posthog.com https://*.hs-scripts.com https://*.hs-analytics.net https://*.hs-banner.com https://*.usemessages.com https://forms.hsforms.com https://js-na2.hscollectedforms.net; connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co https://*.r2.dev https://*.r2.cloudflarestorage.com https://translate.googleapis.com https://translate-pa.googleapis.com https://nominatim.openstreetmap.org https://res.cloudinary.com https://api.cloudinary.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://googleads.g.doubleclick.net https://*.posthog.com https://*.hubspot.com https://*.hubspotusercontent.com https://*.hsforms.com https://*.hscollectedforms.net https://*.hs-analytics.net; frame-src 'self' https://challenges.cloudflare.com https://maps.google.com https://www.google.com/maps https://www.googletagmanager.com https://googleads.g.doubleclick.net"
           },
           {
             key: 'Permissions-Policy',

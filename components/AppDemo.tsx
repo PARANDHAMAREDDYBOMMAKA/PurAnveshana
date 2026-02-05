@@ -6,7 +6,6 @@ export default function AppDemo() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
 
-  // Interactive typing states
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -30,7 +29,6 @@ export default function AppDemo() {
     }
   };
 
-  // Typing animation for login
   useEffect(() => {
     if (currentStep !== 0) return;
 
@@ -59,7 +57,6 @@ export default function AppDemo() {
     return () => clearInterval(timer);
   }, [currentStep]);
 
-  // Typing animation for upload title
   useEffect(() => {
     if (currentStep !== 1) return;
 
@@ -76,18 +73,15 @@ export default function AppDemo() {
     return () => clearInterval(timer);
   }, [currentStep]);
 
-  // Reset typing when step changes
   useEffect(() => {
     setLoginEmail('');
     setLoginPassword('');
     setUploadTitle('');
   }, [currentStep]);
 
-  // Auto-advance steps
   useEffect(() => {
     if (!isPlaying) return;
 
-    // Login step (0) has 2500ms delay, rest have 4000ms
     const delay = currentStep === 0 ? 2500 : 4000;
 
     const timeout = setTimeout(() => {
@@ -99,7 +93,6 @@ export default function AppDemo() {
 
   return (
     <div className="relative w-full max-w-4xl mx-auto z-10">
-      {/* Browser Frame */}
       <div className="bg-slate-800 rounded-t-xl p-2 sm:p-3 flex items-center gap-2">
         <div className="flex gap-1 sm:gap-1.5">
           <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
@@ -111,22 +104,18 @@ export default function AppDemo() {
         </div>
       </div>
 
-      {/* App Content */}
       <div className="bg-amber-50 rounded-b-xl shadow-2xl overflow-hidden border border-slate-200 border-t-0">
-        {/* Main Content Area */}
         <div className="min-h-[350px] sm:min-h-[400px] md:min-h-[450px] relative overflow-hidden">
 
-          {/* Step 1: Login Page - Interactive */}
           <div className={`transition-all duration-500 absolute inset-0 ${currentStep === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
             <div className="bg-linear-to-br from-amber-50 via-orange-50 to-white h-full flex items-center justify-center p-3 sm:p-4 md:p-6">
               <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border border-orange-100 w-full max-w-xs sm:max-w-sm">
-                {/* Logo */}
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center shadow-lg">
                     <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-base sm:text-lg font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Puranveshana</span>
+                    <span className="text-base sm:text-lg font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent notranslate" translate="no">Puranveshana</span>
                     <span className="text-[8px] sm:text-[10px] text-orange-500 -mt-0.5 notranslate" translate="no">पुरातन अन्वेषण</span>
                   </div>
                 </div>
@@ -134,7 +123,6 @@ export default function AppDemo() {
                 <h2 className="text-lg sm:text-xl font-bold text-center text-slate-900 mb-1 sm:mb-2">Welcome Back</h2>
                 <p className="text-[10px] sm:text-xs text-center text-slate-500 mb-4 sm:mb-6">Sign in to continue exploring</p>
 
-                {/* Interactive Form */}
                 <div className="space-y-3 sm:space-y-4">
                   <div>
                     <label className="text-[10px] sm:text-xs font-semibold text-slate-700 mb-1 block">Email</label>
@@ -173,15 +161,13 @@ export default function AppDemo() {
             </div>
           </div>
 
-          {/* Step 2: Upload Form */}
           <div className={`transition-all duration-500 absolute inset-0 ${currentStep === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-            {/* Dashboard Navbar */}
             <div className="bg-white border-b border-slate-200 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                   <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <span className="font-bold text-orange-600 text-xs sm:text-sm">Puranveshana</span>
+                <span className="font-bold text-orange-600 text-xs sm:text-sm notranslate" translate="no">Puranveshana</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="text-[10px] sm:text-xs text-slate-600 hidden sm:block">explorer@gmail.com</span>
@@ -198,7 +184,6 @@ export default function AppDemo() {
                   Upload Heritage Site
                 </h3>
 
-                {/* Upload Zone */}
                 <div className="border-2 border-dashed border-orange-300 rounded-xl p-3 sm:p-4 md:p-6 text-center mb-3 sm:mb-4 bg-orange-50">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 animate-bounce">
                     <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
@@ -207,7 +192,6 @@ export default function AppDemo() {
                   <p className="text-[9px] sm:text-[10px] md:text-xs text-slate-400">or click to browse</p>
                 </div>
 
-                {/* Form Fields with typing animation */}
                 <div className="space-y-2 sm:space-y-3">
                   <div>
                     <label className="text-[10px] sm:text-xs font-medium text-slate-700 mb-1 block">Title</label>
@@ -229,15 +213,13 @@ export default function AppDemo() {
             </div>
           </div>
 
-          {/* Step 3: Complete */}
           <div className={`transition-all duration-500 absolute inset-0 ${currentStep === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-            {/* Dashboard Navbar */}
             <div className="bg-white border-b border-slate-200 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                   <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <span className="font-bold text-orange-600 text-xs sm:text-sm">Puranveshana</span>
+                <span className="font-bold text-orange-600 text-xs sm:text-sm notranslate" translate="no">Puranveshana</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="text-[10px] sm:text-xs text-slate-600 hidden sm:block">explorer@gmail.com</span>
@@ -256,14 +238,12 @@ export default function AppDemo() {
                 <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 mb-1 sm:mb-2">Upload Successful!</h3>
                 <p className="text-[10px] sm:text-xs md:text-sm text-slate-600 mb-3 sm:mb-4">Your heritage site has been verified and added.</p>
 
-                {/* Reward Card */}
                 <div className="bg-linear-to-br from-amber-100 to-orange-100 rounded-xl p-3 sm:p-4 border-2 border-amber-300 mb-3 sm:mb-4">
                   <p className="text-[10px] sm:text-xs text-amber-700 font-semibold mb-0.5 sm:mb-1">Estimated Reward</p>
                   <p className="text-lg sm:text-xl md:text-2xl font-bold text-amber-600">₹50 - ₹200</p>
                   <p className="text-[9px] sm:text-[10px] md:text-xs text-amber-600 mt-0.5 sm:mt-1">Unique & Verified Discovery</p>
                 </div>
 
-                {/* New Site Card */}
                 <div className="bg-slate-50 rounded-xl p-2 sm:p-3 text-left border border-slate-200">
                   <div className="flex gap-2 sm:gap-3">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-orange-100 to-amber-100 rounded-lg flex items-center justify-center shrink-0">
@@ -282,15 +262,13 @@ export default function AppDemo() {
             </div>
           </div>
 
-          {/* Step 4: Dashboard View */}
           <div className={`transition-all duration-500 absolute inset-0 ${currentStep === 3 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-            {/* Dashboard Navbar */}
             <div className="bg-white border-b border-slate-200 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                   <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
-                <span className="font-bold text-orange-600 text-xs sm:text-sm">Puranveshana</span>
+                <span className="font-bold text-orange-600 text-xs sm:text-sm notranslate" translate="no">Puranveshana</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="text-[10px] sm:text-xs text-slate-600 hidden sm:block">explorer@gmail.com</span>
@@ -301,7 +279,6 @@ export default function AppDemo() {
             </div>
 
             <div className="p-3 sm:p-4 md:p-6">
-              {/* Stats Cards */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
                 <div className="bg-linear-to-br from-orange-500 to-amber-600 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 text-white shadow-lg">
                   <div className="text-base sm:text-lg md:text-2xl font-bold">13</div>
@@ -317,14 +294,12 @@ export default function AppDemo() {
                 </div>
               </div>
 
-              {/* Heritage Site Cards */}
               <div className="space-y-2 sm:space-y-3">
                 <h3 className="text-xs sm:text-sm font-semibold text-slate-700 flex items-center gap-1.5 sm:gap-2">
                   <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4" />
                   Your Heritage Sites
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                  {/* Card 1 - Temple */}
                   <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 shadow-md border border-slate-100 hover:shadow-lg hover:border-orange-200 transition-all cursor-pointer">
                     <div className="flex gap-2 sm:gap-3">
                       <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-orange-100 to-amber-100 rounded-lg flex items-center justify-center shrink-0">
@@ -343,7 +318,6 @@ export default function AppDemo() {
                       </div>
                     </div>
                   </div>
-                  {/* Card 2 - Inscription */}
                   <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 shadow-md border border-slate-100 hover:shadow-lg hover:border-blue-200 transition-all cursor-pointer">
                     <div className="flex gap-2 sm:gap-3">
                       <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-blue-100 to-cyan-100 rounded-lg flex items-center justify-center shrink-0">
@@ -362,7 +336,6 @@ export default function AppDemo() {
                       </div>
                     </div>
                   </div>
-                  {/* Card 3 - Fort */}
                   <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 shadow-md border border-slate-100 hover:shadow-lg hover:border-purple-200 transition-all cursor-pointer">
                     <div className="flex gap-2 sm:gap-3">
                       <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center shrink-0">
@@ -381,7 +354,6 @@ export default function AppDemo() {
                       </div>
                     </div>
                   </div>
-                  {/* Card 4 - New Hidden Temple */}
                   <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 shadow-md border border-slate-100 hover:shadow-lg hover:border-orange-200 transition-all cursor-pointer">
                     <div className="flex gap-2 sm:gap-3">
                       <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-orange-100 to-amber-100 rounded-lg flex items-center justify-center shrink-0">
@@ -406,7 +378,6 @@ export default function AppDemo() {
           </div>
         </div>
 
-        {/* Progress Indicators */}
         <div className="px-2 sm:px-4 pb-3 sm:pb-4 flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 flex-wrap">
           {steps.map((step, idx) => (
             <button
@@ -429,7 +400,6 @@ export default function AppDemo() {
         </div>
       </div>
 
-      {/* Play/Pause Control */}
       <button
         onClick={() => setIsPlaying(!isPlaying)}
         className="absolute top-11 sm:top-12 md:top-14 right-2 sm:right-3 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-slate-700 hover:bg-slate-600 rounded-full flex items-center justify-center text-white transition-colors z-20"

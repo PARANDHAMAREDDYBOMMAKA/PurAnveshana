@@ -1,8 +1,12 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
+import ProfileDropdown from './ProfileDropdown'
+import NotificationBell from './NotificationBell'
+import LanguageSelector from './LanguageSelector'
+import { MapPin, Map, Home, Wallet, HeadphonesIcon, X, Settings, LogOut } from 'lucide-react'
 import toast from 'react-hot-toast'
-import GoogleTranslate from './GoogleTranslate'
 
 interface NavbarProps {
   userEmail?: string
@@ -11,6 +15,37 @@ interface NavbarProps {
 
 export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
   const router = useRouter()
+  const pathname = usePathname()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isMobileMenuOpen])
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const getInitials = (email?: string) => {
+    if (!email) return 'U'
+    return email.charAt(0).toUpperCase()
+  }
 
   const handleLogout = async () => {
     try {
@@ -24,100 +59,208 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
 
       toast.success('Logged out successfully')
       router.push('/')
-      router.refresh()
     } catch (error) {
       toast.error('Error logging out')
     }
   }
 
-  return (
-    <nav className="bg-white shadow-md border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
-        <div className="flex justify-between items-center h-14 sm:h-16">
-          {/* Logo and Brand */}
-          <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
-            <div className="bg-linear-to-br from-orange-500 to-amber-600 p-1.5 sm:p-2 rounded-lg shadow-sm shrink-0">
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
-            </div>
-            <div className="flex flex-col min-w-0">
-              <h1 className="text-sm sm:text-xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight truncate">
-                Puranveshana
-              </h1>
-              <span className="text-[9px] sm:text-xs text-orange-600 font-medium -mt-0.5 notranslate" translate="no">
-                पुरातन अन्वेषण
-              </span>
-            </div>
-            {isAdmin && (
-              <span className="hidden lg:inline-block ml-1 px-2 py-1 text-[10px] font-bold rounded-full bg-linear-to-r from-orange-500 to-amber-600 text-white">
-                ADMIN
-              </span>
-            )}
-          </div>
+  const navItems = [
+    { label: 'Yatra', icon: Map, path: '/dashboard/yatra' },
+    { label: 'Anveshan', icon: Home, path: '/dashboard' },
+    { label: 'Payments', icon: Wallet, path: '/dashboard/payment-history' },
+    { label: 'Support', icon: HeadphonesIcon, path: '/dashboard/support' },
+  ]
 
-          {/* Navigation Links and Actions */}
-          <div className="flex items-center gap-1 sm:gap-2 lg:gap-3">
-            {/* Navigation Links */}
-            <div className="flex items-center gap-1 sm:gap-2">
+  const isActive = (path: string) => {
+    if (path === '/dashboard') return pathname === '/dashboard'
+    return pathname.startsWith(path)
+  }
+
+  return (
+    <>
+      {/* Top Navbar */}
+      <div className="sticky top-0 z-50 px-2 sm:px-3 lg:px-4 pt-2 sm:pt-3">
+        <nav className={`max-w-7xl mx-auto transition-all duration-500 rounded-2xl ${
+          scrolled
+            ? 'bg-amber-50/80 backdrop-blur-xl shadow-lg shadow-amber-900/5 border border-amber-200/50'
+            : 'bg-white/60 backdrop-blur-lg border border-amber-100/50'
+        }`}>
+          <div className="px-3 sm:px-4 lg:px-6">
+            <div className="flex justify-between items-center h-14 sm:h-16">
+              {/* Logo */}
               <button
                 onClick={() => router.push('/dashboard')}
-                className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                className="flex items-center gap-2 min-w-0 group"
               >
-                <span className="hidden sm:inline">Dashboard</span>
-                <svg className="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
+                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-linear-to-br from-amber-700 to-amber-800 rounded-xl flex items-center justify-center shrink-0 shadow-md shadow-amber-900/20 group-hover:shadow-lg transition-shadow">
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-base sm:text-lg font-bold text-amber-900 leading-tight truncate notranslate" translate="no" style={{ fontFamily: 'Georgia, serif' }}>
+                    Puranveshana
+                  </span>
+                  <span className="text-[8px] sm:text-[9px] text-amber-700/60 font-medium -mt-0.5 notranslate truncate" translate="no">
+                    पुरातन अन्वेषण
+                  </span>
+                </div>
+                {isAdmin && (
+                  <span className="hidden lg:inline-block ml-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-800 text-amber-50">
+                    ADMIN
+                  </span>
+                )}
               </button>
-              <button
-                onClick={() => router.push('/dashboard/support')}
-                className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
-              >
-                <span className="hidden sm:inline">Support</span>
-                <svg className="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </button>
+
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex items-center">
+                <div
+                  className="flex items-center gap-0.5 p-1 rounded-xl border border-amber-200/40"
+                  style={{ background: 'linear-gradient(145deg, rgba(255, 251, 245, 0.6) 0%, rgba(255, 248, 237, 0.6) 100%)' }}
+                >
+                  {navItems.map((item) => {
+                    const active = isActive(item.path)
+                    return (
+                      <button
+                        key={item.label}
+                        onClick={() => router.push(item.path)}
+                        className={`group relative flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          active
+                            ? 'text-amber-900 shadow-sm'
+                            : 'text-amber-800/55 hover:text-amber-900'
+                        }`}
+                        style={active ? {
+                          background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)',
+                          boxShadow: '0 1px 3px rgba(139, 90, 43, 0.1)',
+                        } : undefined}
+                      >
+                        <item.icon className={`w-4 h-4 transition-colors ${active ? 'text-amber-800' : 'text-amber-700/40 group-hover:text-amber-700/70'}`} />
+                        <span style={{ fontFamily: 'Georgia, serif' }}>{item.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {isAdmin && (
+                  <span className="lg:hidden ml-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-800 text-amber-50">
+                    ADMIN
+                  </span>
+                )}
+
+                <div className="w-px h-6 bg-amber-300/40 mx-2.5"></div>
+
+                <div className="flex items-center gap-0.5">
+                  <LanguageSelector />
+                  <NotificationBell />
+                  <ProfileDropdown userEmail={userEmail} />
+                </div>
+              </div>
+
+              {/* Mobile Right Side */}
+              <div className="flex md:hidden items-center gap-1.5">
+                {isAdmin && (
+                  <span className="px-1.5 py-0.5 text-[8px] font-bold rounded-full bg-amber-800 text-amber-50">
+                    ADMIN
+                  </span>
+                )}
+                <LanguageSelector />
+                <NotificationBell />
+                <div className="relative" ref={mobileMenuRef}>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="flex items-center justify-center bg-linear-to-br from-amber-700 to-amber-800 rounded-xl w-8 h-8 shadow-md shadow-amber-900/20 hover:shadow-lg transition-all"
+                    aria-label="Toggle menu"
+                  >
+                    {isMobileMenuOpen ? (
+                      <X className="w-4 h-4 text-white" />
+                    ) : (
+                      <span className="text-white text-sm font-bold">{getInitials(userEmail)}</span>
+                    )}
+                  </button>
+
+                  {/* Mobile Dropdown Menu */}
+                  {isMobileMenuOpen && (
+                    <div
+                      className="absolute right-0 mt-2 w-64 rounded-2xl py-2 z-50 border border-amber-200/60 overflow-hidden"
+                      style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 8px 32px rgba(139, 90, 43, 0.15)' }}
+                    >
+                      {/* Corner decorations */}
+                      <div className="absolute top-2.5 left-2.5 w-4 h-4 border-t border-l border-amber-300/60 rounded-tl-sm"></div>
+                      <div className="absolute top-2.5 right-2.5 w-4 h-4 border-t border-r border-amber-300/60 rounded-tr-sm"></div>
+                      <div className="absolute bottom-2.5 left-2.5 w-4 h-4 border-b border-l border-amber-300/60 rounded-bl-sm"></div>
+                      <div className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b border-r border-amber-300/60 rounded-br-sm"></div>
+
+                      {/* Profile Header */}
+                      <div className="px-4 py-3 border-b border-amber-200/40">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-linear-to-br from-amber-700 to-amber-800 rounded-xl w-10 h-10 flex items-center justify-center shrink-0 shadow-md shadow-amber-900/20">
+                            <span className="text-amber-50 text-base font-bold">{getInitials(userEmail)}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] text-amber-700/60 mb-0.5">Signed in as</p>
+                            <p className="text-sm font-semibold text-amber-900 truncate">{userEmail}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="py-1.5 px-2">
+                        <button
+                          onClick={() => {
+                            setIsMobileMenuOpen(false)
+                            router.push('/profile')
+                          }}
+                          className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-amber-900/80 hover:bg-amber-100/50 rounded-lg transition-colors"
+                        >
+                          <Settings className="w-4.5 h-4.5 mr-3 text-amber-700/60" />
+                          <span style={{ fontFamily: 'Georgia, serif' }}>Profile Settings</span>
+                        </button>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-red-700 hover:bg-red-50/60 rounded-lg transition-colors"
+                        >
+                          <LogOut className="w-4.5 h-4.5 mr-3" />
+                          <span style={{ fontFamily: 'Georgia, serif' }}>Logout</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+          </div>
+        </nav>
+      </div>
 
-            {/* Admin Badge Mobile */}
-            {isAdmin && (
-              <span className="lg:hidden px-1.5 py-0.5 text-[9px] font-bold rounded-full bg-linear-to-r from-orange-500 to-amber-600 text-white">
-                ADMIN
-              </span>
-            )}
-
-            {/* Google Translate */}
-            <div className="hidden sm:block">
-              <GoogleTranslate />
-            </div>
-
-            {/* User Email - Desktop Only */}
-            <div className="hidden lg:flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-              <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <span className="text-xs text-slate-700 font-medium truncate max-w-[120px] xl:max-w-none">{userEmail}</span>
-            </div>
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-linear-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 shadow-sm transition-all"
-            >
-              <span className="hidden sm:inline">Logout</span>
-              <svg className="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
+        <div
+          className="border-t border-amber-200/60"
+          style={{ background: 'linear-gradient(0deg, #fffbf5 0%, rgba(255, 251, 245, 0.97) 100%)', backdropFilter: 'blur(12px)', boxShadow: '0 -4px 24px rgba(139, 90, 43, 0.06)' }}
+        >
+          <div className="flex items-center justify-around px-2 py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
+            {navItems.map((item) => {
+              const active = isActive(item.path)
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => router.push(item.path)}
+                  className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[60px] ${
+                    active ? 'text-amber-900' : 'text-amber-800/50'
+                  }`}
+                  style={active ? { background: 'linear-gradient(145deg, rgba(217, 119, 6, 0.1) 0%, rgba(245, 158, 11, 0.06) 100%)' } : undefined}
+                >
+                  <item.icon className={`w-5 h-5 transition-colors ${active ? 'text-amber-800' : 'text-amber-700/40'}`} />
+                  <span className={`text-[10px] font-semibold ${active ? 'text-amber-900' : 'text-amber-800/50'}`}>
+                    {item.label}
+                  </span>
+                  {active && (
+                    <div className="w-4 h-0.5 bg-amber-700 rounded-full -mt-0.5" />
+                  )}
+                </button>
+              )
+            })}
           </div>
         </div>
-
-        {/* Mobile Google Translate - Below Nav */}
-        <div className="sm:hidden pb-2 flex justify-center">
-          <GoogleTranslate />
-        </div>
       </div>
-    </nav>
+    </>
   )
 }
