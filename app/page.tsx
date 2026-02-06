@@ -60,7 +60,7 @@ export default function Home() {
         scrolled={scrolled}
       />
 
-      <NewHeroSection />
+      {/* <NewHeroSection /> */}
       <ScrollMessage />
       <HeritageGallery />
       <FeaturesSection />

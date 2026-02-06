@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
 import { invalidatePattern, CACHE_KEYS } from '@/lib/redis'
+import { purgePaths } from '@/lib/cloudflare/cdn'
 
 export async function GET(
   request: Request,
@@ -161,6 +162,11 @@ export async function PUT(
     await invalidatePattern(`${CACHE_KEYS.YATRA_STORY}${id}*`)
     await invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`)
 
+    // Purge CDN cache for the updated story and listing pages
+    purgePaths([`/dashboard/yatra/${id}`, '/dashboard/yatra', '/']).catch((err) =>
+      console.error('CDN purge error:', err)
+    )
+
     return NextResponse.json({
       success: true,
       story: updatedStory,
@@ -221,6 +227,11 @@ export async function DELETE(
     } catch (err) {
       console.error('Error invalidating Yatra cache after delete:', err)
     }
+
+    // Purge CDN cache for the deleted story and listing pages
+    purgePaths([`/dashboard/yatra/${id}`, '/dashboard/yatra', '/']).catch((err) =>
+      console.error('CDN purge error:', err)
+    )
 
     return NextResponse.json({
       success: true,

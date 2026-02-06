@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import { withRetry } from '@/lib/db-utils'
+import { invalidatePattern, CACHE_KEYS } from '@/lib/redis'
 
 export async function DELETE(
   request: Request,
@@ -13,7 +14,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { commentId } = await params
+    const { id, commentId } = await params
 
     const comment = await withRetry(() =>
       prisma.yatraComment.findUnique({

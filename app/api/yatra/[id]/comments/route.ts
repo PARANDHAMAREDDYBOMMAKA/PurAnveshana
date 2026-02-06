@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import { withRetry } from '@/lib/db-utils'
 import { notifyStoryComment } from '@/lib/notifications'
+import { invalidatePattern, CACHE_KEYS } from '@/lib/redis'
 
 export async function GET(
   request: Request,
@@ -103,6 +104,12 @@ export async function POST(
         story.title
       )
     }
+
+    // Invalidate cached story data since comment count changed
+    await Promise.all([
+      invalidatePattern(`${CACHE_KEYS.YATRA_STORY}${id}*`),
+      invalidatePattern(`${CACHE_KEYS.YATRA_STORIES}*`),
+    ])
 
     return NextResponse.json({
       success: true,

@@ -13,9 +13,10 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const rayId = getRayId(request.headers)
 
-  // Apply security headers
+  // Apply security headers and CDN cache headers
   const response = NextResponse.next()
   applySecurityHeaders(response)
+  applyCdnCacheHeaders(response, pathname, !!request.cookies.get('session')?.value)
 
   // Block requests from specific countries (optional)
   // Uncomment and add country codes to block: ['XX', 'YY']
@@ -169,6 +170,43 @@ function applySecurityHeaders(response: NextResponse) {
   response.headers.set('X-DNS-Prefetch-Control', 'on')
 
   response.headers.set('X-XSS-Protection', '1; mode=block')
+}
+
+/**
+ * Apply Cloudflare CDN cache headers based on route type and auth state.
+ * Uses CDN-Cache-Control to control Cloudflare edge caching independently
+ * from browser caching (Cache-Control).
+ */
+function applyCdnCacheHeaders(
+  response: NextResponse,
+  pathname: string,
+  isAuthenticated: boolean
+) {
+  // API routes — never cache
+  if (pathname.startsWith('/api/')) {
+    response.headers.set('Cache-Control', 'private, no-store, no-cache, must-revalidate')
+    response.headers.set('CDN-Cache-Control', 'no-store')
+    return
+  }
+
+  // Authenticated pages (dashboard, upload, profile) — bypass CDN cache
+  if (
+    isAuthenticated &&
+    (pathname.startsWith('/dashboard') ||
+      pathname.startsWith('/upload') ||
+      pathname.startsWith('/profile'))
+  ) {
+    response.headers.set('Cache-Control', 'private, no-cache, must-revalidate')
+    response.headers.set('CDN-Cache-Control', 'no-store')
+    return
+  }
+
+  // Public pages (landing, login, signup, maps) — cache at edge, short TTL
+  response.headers.set(
+    'Cache-Control',
+    'public, max-age=0, s-maxage=60, stale-while-revalidate=300'
+  )
+  response.headers.set('CDN-Cache-Control', 'max-age=60, stale-while-revalidate=300')
 }
 
 export const config = {

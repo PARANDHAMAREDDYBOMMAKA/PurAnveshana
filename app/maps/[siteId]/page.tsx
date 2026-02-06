@@ -23,8 +23,8 @@ export default function MapsPage() {
   const fetchData = async () => {
     try {
       const [profileResponse, sitesResponse] = await Promise.all([
-        fetch('/api/profile'),
-        fetch('/api/images'),
+        fetch('/api/profile', { credentials: 'include' }),
+        fetch('/api/images', { credentials: 'include' }),
       ])
 
       if (!profileResponse.ok || !sitesResponse.ok) {
