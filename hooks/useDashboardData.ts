@@ -12,8 +12,8 @@ export function useDashboardData() {
       setError(null)
 
       const [profileRes, sitesRes] = await Promise.all([
-        fetch('/api/profile', { cache: 'no-store' }),
-        fetch('/api/images', { cache: 'no-store' })
+        fetch('/api/profile', { cache: 'no-store', credentials: 'include' }),
+        fetch('/api/images', { cache: 'no-store', credentials: 'include' })
       ])
 
       if (!profileRes.ok) {
