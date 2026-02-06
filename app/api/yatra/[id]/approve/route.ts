@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth/session'
 import { withRetry } from '@/lib/db-utils'
 import { PublishStatus } from '@prisma/client'
 import { notifyStoryApproved, notifyStoryFeatured, notifyStoryRejected } from '@/lib/notifications'
+import { purgePaths } from '@/lib/cloudflare/cdn'
 
 export async function POST(
   request: Request,
@@ -66,7 +67,10 @@ export async function POST(
       await notifyStoryRejected(id, story.userId, story.title)
     }
 
-    // No server-side cache invalidation required for yatra stories in production
+    // Purge CDN cache — story visibility changed
+    purgePaths([`/dashboard/yatra/${id}`, '/dashboard/yatra', '/']).catch((err) =>
+      console.error('CDN purge error:', err)
+    )
 
     return NextResponse.json({
       success: true,

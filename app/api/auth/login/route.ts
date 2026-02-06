@@ -11,24 +11,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { email, password, turnstileToken } = body
 
-    const clientIp = getClientIp(request.headers)
-    if (turnstileToken) {
-      const verification = await verifyTurnstileToken(turnstileToken, clientIp)
-      if (!verification.success) {
-        if (process.env.NODE_ENV === 'production') {
-          await logSecurityEvent('turnstile_failed', clientIp, {
-            endpoint: '/api/auth/login',
-            error: verification.error,
-          })
-          return NextResponse.json(
-            { error: verification.error || 'Verification failed' },
-            { status: 403 }
-          )
-        }
-        console.warn('[Dev] Turnstile verification failed, but allowing login in development mode')
-      }
-    }
-
+    // Validate input FIRST before any external calls
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Email and password are required' },
@@ -36,11 +19,36 @@ export async function POST(request: Request) {
       )
     }
 
-    const user = await withRetry(() =>
-      prisma.profile.findUnique({
-        where: { email },
-      })
-    )
+    const clientIp = getClientIp(request.headers)
+
+    // Run turnstile verification and DB lookup in parallel
+    // Rate limiting already protects against brute force, so the DB read is safe
+    const [turnstileResult, user] = await Promise.all([
+      turnstileToken
+        ? verifyTurnstileToken(turnstileToken, clientIp)
+        : Promise.resolve({ success: true } as { success: boolean; error?: string }),
+      withRetry(() =>
+        prisma.profile.findUnique({
+          where: { email },
+          select: { id: true, email: true, password: true, role: true },
+        })
+      ),
+    ])
+
+    // Check turnstile result after parallel execution
+    if (turnstileToken && !turnstileResult.success) {
+      if (process.env.NODE_ENV === 'production') {
+        await logSecurityEvent('turnstile_failed', clientIp, {
+          endpoint: '/api/auth/login',
+          error: turnstileResult.error,
+        })
+        return NextResponse.json(
+          { error: turnstileResult.error || 'Verification failed' },
+          { status: 403 }
+        )
+      }
+      console.warn('[Dev] Turnstile verification failed, but allowing login in development mode')
+    }
 
     if (!user) {
       return NextResponse.json(
