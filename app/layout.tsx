@@ -189,6 +189,11 @@ export default function RootLayout({
           strategy="afterInteractive"
           defer
         />
+        <Script
+          id="contentsquare"
+          src="https://t.contentsquare.net/uxa/e660028751507.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
