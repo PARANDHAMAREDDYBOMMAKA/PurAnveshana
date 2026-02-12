@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast'
 import TranslateErrorBoundary from '@/components/TranslateErrorBoundary';
@@ -17,6 +17,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: 'cover',
+  themeColor: '#1e293b',
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://puranveshana.com'),
   title: {
@@ -25,13 +34,6 @@ export const metadata: Metadata = {
   },
   description: "Uncover Indian history and explore India's hidden history with Puranveshana. Discover, document, and verify heritage sites, ancient monuments, and archaeological locations. Upload images of historical sites and earn rewards for heritage preservation.",
   manifest: "/manifest.json",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-    viewportFit: 'cover'
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -150,7 +152,6 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#1e293b" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -186,13 +187,12 @@ export default function RootLayout({
         <Script
           id="hs-script-loader"
           src="https://js-na2.hs-scripts.com/244814581.js"
-          strategy="afterInteractive"
-          defer
+          strategy="lazyOnload"
         />
         <Script
           id="contentsquare"
           src="https://t.contentsquare.net/uxa/e660028751507.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </head>
       <body

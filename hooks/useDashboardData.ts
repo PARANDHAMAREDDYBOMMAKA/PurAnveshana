@@ -1,19 +1,41 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
+const cache: {
+  profile: any
+  sites: any[]
+  timestamp: number
+} = {
+  profile: null,
+  sites: [],
+  timestamp: 0
+}
+
+const CACHE_DURATION = 30000
 
 export function useDashboardData() {
-  const [profileData, setProfileData] = useState<any>(null)
-  const [sitesData, setSitesData] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [profileData, setProfileData] = useState<any>(cache.profile)
+  const [sitesData, setSitesData] = useState<any[]>(cache.sites)
+  const [isLoading, setIsLoading] = useState(!cache.profile)
   const [error, setError] = useState<any>(null)
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async (force = false) => {
+    const now = Date.now()
+    const isCacheValid = cache.profile && (now - cache.timestamp) < CACHE_DURATION
+
+    if (isCacheValid && !force) {
+      setProfileData(cache.profile)
+      setSitesData(cache.sites)
+      setIsLoading(false)
+      return
+    }
+
     try {
-      setIsLoading(true)
+      if (!cache.profile) setIsLoading(true)
       setError(null)
 
       const [profileRes, sitesRes] = await Promise.all([
-        fetch('/api/profile', { cache: 'no-store', credentials: 'include' }),
-        fetch('/api/images', { cache: 'no-store', credentials: 'include' })
+        fetch('/api/profile', { credentials: 'include' }),
+        fetch('/api/images', { credentials: 'include' })
       ])
 
       if (!profileRes.ok) {
@@ -31,24 +53,30 @@ export function useDashboardData() {
       const profileJson = await profileRes.json()
       const sitesJson = await sitesRes.json()
 
-      setProfileData(profileJson.profile)
-      setSitesData(sitesJson.sites || [])
+      cache.profile = profileJson.profile
+      cache.sites = sitesJson.sites || []
+      cache.timestamp = now
+
+      setProfileData(cache.profile)
+      setSitesData(cache.sites)
     } catch (err: any) {
       setError(err)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [fetchData])
+
+  const refresh = useCallback(() => fetchData(true), [fetchData])
 
   return {
     profile: profileData,
     sites: sitesData,
     isLoading,
     error,
-    refresh: fetchData,
+    refresh,
   }
 }

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/auth/session'
+import { updateSession, decrypt } from '@/lib/auth/session'
 import {
   getClientIp,
   verifyCloudflareBot,
@@ -101,17 +101,27 @@ export async function middleware(request: NextRequest) {
 
   const sessionToken = request.cookies.get('session')?.value
 
+  let isValidSession = false
+  if (sessionToken) {
+    const sessionData = await decrypt(sessionToken)
+    isValidSession = sessionData !== null
+  }
+
   if (
-    !sessionToken &&
+    !isValidSession &&
     (pathname.startsWith('/dashboard') || pathname.startsWith('/upload'))
   ) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
-    return NextResponse.redirect(url)
+    const redirectResponse = NextResponse.redirect(url)
+    if (sessionToken && !isValidSession) {
+      redirectResponse.cookies.delete('session')
+    }
+    return redirectResponse
   }
 
   if (
-    sessionToken &&
+    isValidSession &&
     (pathname === '/login' || pathname === '/signup' || pathname === '/')
   ) {
     const url = request.nextUrl.clone()
@@ -119,12 +129,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  const sessionResponse = await updateSession(request)
-  if (sessionResponse) {
-    response.headers.forEach((value, key) => {
-      sessionResponse.headers.set(key, value)
-    })
-    return sessionResponse
+  if (isValidSession) {
+    const sessionResponse = await updateSession(request)
+    if (sessionResponse) {
+      response.headers.forEach((value, key) => {
+        sessionResponse.headers.set(key, value)
+      })
+      return sessionResponse
+    }
   }
 
   return response

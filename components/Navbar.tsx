@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import ProfileDropdown from './ProfileDropdown'
 import NotificationBell from './NotificationBell'
 import LanguageSelector from './LanguageSelector'
@@ -119,9 +120,10 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                   {navItems.map((item) => {
                     const active = isActive(item.path)
                     return (
-                      <button
+                      <Link
                         key={item.label}
-                        onClick={() => router.push(item.path)}
+                        href={item.path}
+                        prefetch={true}
                         className={`group relative flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                           active
                             ? 'text-amber-900 shadow-sm'
@@ -134,7 +136,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                       >
                         <item.icon className={`w-4 h-4 transition-colors ${active ? 'text-amber-800' : 'text-amber-700/40 group-hover:text-amber-700/70'}`} />
                         <span style={{ fontFamily: 'Georgia, serif' }}>{item.label}</span>
-                      </button>
+                      </Link>
                     )
                   })}
                 </div>
@@ -240,9 +242,10 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
             {navItems.map((item) => {
               const active = isActive(item.path)
               return (
-                <button
+                <Link
                   key={item.label}
-                  onClick={() => router.push(item.path)}
+                  href={item.path}
+                  prefetch={true}
                   className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[60px] ${
                     active ? 'text-amber-900' : 'text-amber-800/50'
                   }`}
@@ -255,7 +258,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                   {active && (
                     <div className="w-4 h-0.5 bg-amber-700 rounded-full -mt-0.5" />
                   )}
-                </button>
+                </Link>
               )
             })}
           </div>

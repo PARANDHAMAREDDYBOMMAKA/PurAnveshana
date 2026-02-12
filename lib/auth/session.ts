@@ -64,20 +64,40 @@ export async function updateSession(request: NextRequest) {
 
   if (!token) return null
 
-  const payload = await decrypt(token)
+  try {
+    const { payload } = await jwtVerify(token, key, {
+      algorithms: ['HS256'],
+    })
 
-  if (!payload) return null
+    if (!payload) return null
 
-  const response = NextResponse.next()
-  response.cookies.set({
-    name: 'session',
-    value: await encrypt(payload),
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 24 * 7,
-    path: '/',
-    sameSite: 'lax'
-  })
+    const exp = payload.exp as number
+    const now = Math.floor(Date.now() / 1000)
+    const oneDay = 60 * 60 * 24
 
-  return response
+    if (exp - now > oneDay) {
+      return null
+    }
+
+    const sessionData: SessionData = {
+      userId: payload.userId as string,
+      email: payload.email as string,
+      role: payload.role as 'admin' | 'user',
+    }
+
+    const response = NextResponse.next()
+    response.cookies.set({
+      name: 'session',
+      value: await encrypt(sessionData),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
+      sameSite: 'lax'
+    })
+
+    return response
+  } catch (error) {
+    return null
+  }
 }

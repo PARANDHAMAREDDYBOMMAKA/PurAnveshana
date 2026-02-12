@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  reactStrictMode: false,
+  productionBrowserSourceMaps: false,
   images: {
     remotePatterns: [
       {
@@ -33,8 +35,12 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   // Experimental features for better performance
   experimental: {
-    // Optimize CSS loading
     optimizeCss: true,
+    optimizePackageImports: [
+      'lucide-react',
+      '@heroicons/react',
+      'react-hot-toast',
+    ],
   },
   // Cloudflare CDN-optimized caching headers
   async headers() {

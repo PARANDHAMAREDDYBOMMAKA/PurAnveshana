@@ -1,19 +1,21 @@
 "use client";
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { HomeNavigation } from '@/components/HomeNavigation';
-import { NewHeroSection, ScrollMessage, HeritageGallery, FeaturesSection, TrustSection, SimpleCTASection } from '@/components/landing';
+import { ScrollMessage, HeritageGallery, FeaturesSection, TrustSection, SimpleCTASection } from '@/components/landing';
 import HomeFooter from '@/components/HomeFooter';
-import PrivacyPolicyModal from '@/components/modals/PrivacyPolicyModal';
-import TermsOfServiceModal from '@/components/modals/TermsOfServiceModal';
-import ContactUsModal from '@/components/modals/ContactUsModal';
-import GuidelinesModal from '@/components/modals/GuidelinesModal';
-import HelpCenterModal from '@/components/modals/HelpCenterModal';
-import SitemapModal from '@/components/modals/SitemapModal';
-import AccessibilityModal from '@/components/modals/AccessibilityModal';
-import CookiePolicyModal from '@/components/modals/CookiePolicyModal';
-import HeritageMapModal from '@/components/modals/HeritageMapModal';
-import ContributorsModal from '@/components/modals/ContributorsModal';
-import SuccessStoriesModal from '@/components/modals/SuccessStoriesModal';
+
+const PrivacyPolicyModal = dynamic(() => import('@/components/modals/PrivacyPolicyModal'), { ssr: false });
+const TermsOfServiceModal = dynamic(() => import('@/components/modals/TermsOfServiceModal'), { ssr: false });
+const ContactUsModal = dynamic(() => import('@/components/modals/ContactUsModal'), { ssr: false });
+const GuidelinesModal = dynamic(() => import('@/components/modals/GuidelinesModal'), { ssr: false });
+const HelpCenterModal = dynamic(() => import('@/components/modals/HelpCenterModal'), { ssr: false });
+const SitemapModal = dynamic(() => import('@/components/modals/SitemapModal'), { ssr: false });
+const AccessibilityModal = dynamic(() => import('@/components/modals/AccessibilityModal'), { ssr: false });
+const CookiePolicyModal = dynamic(() => import('@/components/modals/CookiePolicyModal'), { ssr: false });
+const HeritageMapModal = dynamic(() => import('@/components/modals/HeritageMapModal'), { ssr: false });
+const ContributorsModal = dynamic(() => import('@/components/modals/ContributorsModal'), { ssr: false });
+const SuccessStoriesModal = dynamic(() => import('@/components/modals/SuccessStoriesModal'), { ssr: false });
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
