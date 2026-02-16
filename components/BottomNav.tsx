@@ -13,28 +13,32 @@ export default function BottomNav() {
       path: '/dashboard/yatra',
       icon: MapPin,
       gradient: 'from-orange-500 to-amber-500',
-      color: 'text-orange-600'
+      color: 'text-orange-600',
+      tourId: 'nav-yatra'
     },
     {
       name: 'Anveshan',
       path: '/dashboard',
       icon: Home,
       gradient: 'from-blue-500 to-cyan-500',
-      color: 'text-blue-600'
+      color: 'text-blue-600',
+      tourId: 'nav-anveshan'
     },
     {
       name: 'Payments',
       path: '/dashboard/payment-history',
       icon: DollarSign,
       gradient: 'from-emerald-500 to-teal-500',
-      color: 'text-emerald-600'
+      color: 'text-emerald-600',
+      tourId: 'nav-payments'
     },
     {
       name: 'Support',
       path: '/dashboard/support',
       icon: HeadphonesIcon,
       gradient: 'from-purple-500 to-pink-500',
-      color: 'text-purple-600'
+      color: 'text-purple-600',
+      tourId: 'nav-support'
     },
   ]
 
@@ -50,6 +54,7 @@ export default function BottomNav() {
           return (
             <button
               key={item.name}
+              data-tour={item.tourId}
               onClick={() => router.push(item.path)}
               className="relative flex flex-col items-center justify-center gap-1 flex-1 h-full group"
             >

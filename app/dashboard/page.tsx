@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import DashboardClient from '@/components/DashboardClient'
+import DashboardTour from '@/components/tours/DashboardTour'
 import { useDashboardData } from '@/hooks/useDashboardData'
 
 export default function DashboardPage() {
@@ -40,6 +41,8 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <DashboardClient images={sites} isAdmin={isAdmin} onUploadSuccess={refresh} />
       </div>
+
+      {!isAdmin && <DashboardTour />}
     </div>
   )
 }

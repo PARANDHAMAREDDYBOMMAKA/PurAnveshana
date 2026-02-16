@@ -25,6 +25,7 @@ import {
   Link as LinkIcon,
   ChevronDown
 } from 'lucide-react'
+import YatraTour from './tours/YatraTour'
 
 interface YatraComment {
   id: string
@@ -626,7 +627,9 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
     <div className="pb-20">
       {/* Header - Heritage Style */}
       <div className="mb-6">
-        <div className="relative w-full rounded-2xl p-5 sm:p-6 shadow-lg mb-4 overflow-hidden"
+        <div
+          data-tour="yatra-header"
+          className="relative w-full rounded-2xl p-5 sm:p-6 shadow-lg mb-4 overflow-hidden"
           style={{
             background: 'linear-gradient(145deg, #f8f0e3 0%, #f0e4d0 25%, #e8d5b8 50%, #f5edd8 75%, #ebe0c9 100%)',
             boxShadow: '0 8px 40px rgba(180, 100, 40, 0.12), 0 2px 8px rgba(180, 100, 40, 0.08)',
@@ -655,7 +658,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
         {/* Search and Create Section */}
         <div className="flex flex-row gap-2 sm:gap-3">
           {/* Search */}
-          <div className="relative flex-1">
+          <div data-tour="yatra-search" className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-amber-600/50" />
             <input
               type="text"
@@ -669,6 +672,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
           {/* Create Button */}
           {!isAdmin && (
             <Link
+              data-tour="yatra-create-button"
               href="/dashboard/yatra/create"
               className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 bg-amber-800 text-amber-50 font-bold rounded-full hover:bg-amber-900 active:scale-95 transition-all shadow-lg shadow-amber-900/20 hover:shadow-xl hover:shadow-amber-900/25 whitespace-nowrap"
             >
@@ -1079,6 +1083,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-4">
                       <button
+                        data-tour="yatra-like-button"
                         onClick={() => handleLike(story.id)}
                         className={`flex items-center gap-1.5 transition-colors ${
                           likedStories[story.id]
@@ -1092,6 +1097,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                         </span>
                       </button>
                       <button
+                        data-tour="yatra-comment-button"
                         onClick={() => handleComment(story.id)}
                         className="flex items-center gap-1.5 text-amber-900 hover:text-amber-700 transition-colors"
                       >
@@ -1100,7 +1106,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                           {commentCounts[story.id] || 0}
                         </span>
                       </button>
-                      <div className="relative">
+                      <div className="relative" data-tour="yatra-share-button">
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
@@ -1142,6 +1148,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
                       </div>
                     </div>
                     <button
+                      data-tour="yatra-save-button"
                       onClick={() => handleSave(story.id)}
                       className={`transition-colors ${
                         savedStories.has(story.id)
@@ -1317,6 +1324,8 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
           )}
         </div>
       )}
+
+      {!isAdmin && <YatraTour />}
     </div>
   )
 }

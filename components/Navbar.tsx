@@ -66,10 +66,10 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
   }
 
   const navItems = [
-    { label: 'Yatra', icon: Map, path: '/dashboard/yatra' },
-    { label: 'Anveshan', icon: Home, path: '/dashboard' },
-    { label: 'Payments', icon: Wallet, path: '/dashboard/payment-history' },
-    { label: 'Support', icon: HeadphonesIcon, path: '/dashboard/support' },
+    { label: 'Yatra', icon: Map, path: '/dashboard/yatra', tourId: 'nav-yatra' },
+    { label: 'Anveshan', icon: Home, path: '/dashboard', tourId: 'nav-anveshan' },
+    { label: 'Payments', icon: Wallet, path: '/dashboard/payment-history', tourId: 'nav-payments' },
+    { label: 'Support', icon: HeadphonesIcon, path: '/dashboard/support', tourId: 'nav-support' },
   ]
 
   const isActive = (path: string) => {
@@ -233,7 +233,7 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
+      <div data-tour="mobile-bottom-nav" className="fixed bottom-0 left-0 right-0 z-100 md:hidden">
         <div
           className="border-t border-amber-200/60"
           style={{ background: 'linear-gradient(0deg, #fffbf5 0%, rgba(255, 251, 245, 0.97) 100%)', backdropFilter: 'blur(12px)', boxShadow: '0 -4px 24px rgba(139, 90, 43, 0.06)' }}
@@ -246,7 +246,8 @@ export default function Navbar({ userEmail, isAdmin }: NavbarProps) {
                   key={item.label}
                   href={item.path}
                   prefetch={true}
-                  className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[60px] ${
+                  data-tour={item.tourId}
+                  className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-15 ${
                     active ? 'text-amber-900' : 'text-amber-800/50'
                   }`}
                   style={active ? { background: 'linear-gradient(145deg, rgba(217, 119, 6, 0.1) 0%, rgba(245, 158, 11, 0.06) 100%)' } : undefined}

@@ -129,7 +129,9 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
 
       {!isAdmin && (
         <div className="space-y-6 sm:space-y-8">
-          <div className="relative w-full rounded-2xl p-5 sm:p-6 shadow-lg mb-2 overflow-hidden"
+          <div
+            data-tour="anveshan-header"
+            className="relative w-full rounded-2xl p-5 sm:p-6 shadow-lg mb-2 overflow-hidden"
             style={{
               background: 'linear-gradient(145deg, #f8f0e3 0%, #f0e4d0 25%, #e8d5b8 50%, #f5edd8 75%, #ebe0c9 100%)',
               boxShadow: '0 8px 40px rgba(180, 100, 40, 0.12), 0 2px 8px rgba(180, 100, 40, 0.08)',
@@ -154,6 +156,7 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
           </div>
 
           <button
+            data-tour="upload-button"
             onClick={() => setShowUploadModal(true)}
             className="relative w-full rounded-xl border border-amber-200/60 p-5 sm:p-6 hover:border-amber-300 transition-all duration-300 group overflow-hidden"
             style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 50%, #fef5e7 100%)', boxShadow: '0 4px 24px rgba(139, 90, 43, 0.12)' }}
@@ -208,7 +211,7 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
             </div>
           </Link>
 
-          <div className="grid grid-cols-3 gap-3 sm:gap-4">
+          <div data-tour="stats-section" className="grid grid-cols-3 gap-3 sm:gap-4">
             {[
               { icon: MapPin, value: isShowingDefaults ? 0 : (sites?.length || 0), label: 'Sites' },
               { icon: Camera, value: isShowingDefaults ? 0 : totalImages, label: 'Images' },
