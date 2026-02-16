@@ -148,24 +148,11 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
           toast.error('Please enter a title for your Yatra')
           return false
         }
-        if (formData.title.length > 80) {
-          toast.error('Title must be 80 characters or less')
-          return false
-        }
         return true
 
       case 2:
-        const wordCount = formData.discoveryContext.trim().split(/\s+/).length
         if (!formData.discoveryContext.trim()) {
           toast.error('Please describe how you discovered this site')
-          return false
-        }
-        if (wordCount < 50) {
-          toast.error('Discovery context must be at least 50 words (150-300 recommended)')
-          return false
-        }
-        if (wordCount > 400) {
-          toast.error('Discovery context is too long. Please keep it under 400 words.')
           return false
         }
         return true
@@ -175,24 +162,12 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
           toast.error('Please describe your journey to reach this place')
           return false
         }
-        if (formData.journeyNarrative.length < 100) {
-          toast.error('Journey description must be at least 100 characters')
-          return false
-        }
         return true
 
       case 4:
-        if (formData.historicalIndicators.length === 0) {
-          toast.error('Please select at least one historical indicator')
-          return false
-        }
         return true
 
       case 5:
-        if (formData.evidenceTypes.length === 0) {
-          toast.error('Please select at least one type of evidence')
-          return false
-        }
         return true
 
       case 6:
@@ -398,7 +373,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 What is the title of your Yatra?
               </h2>
               <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
-                Keep it within 80 characters, descriptive but not sensational
+                Give your story a descriptive title
               </p>
             </div>
 
@@ -408,13 +383,9 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="E.g., Ancient temple ruins in..."
-                maxLength={80}
                 className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-amber-900 placeholder:text-amber-800/40 rounded-xl sm:rounded-2xl border border-amber-200/60 focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30 focus:outline-none"
                 style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)' }}
               />
-              <div className="mt-2 text-right text-xs sm:text-sm text-amber-800/70">
-                {formData.title.length}/80 characters
-              </div>
             </div>
 
             <div className="rounded-xl border border-amber-200/60 p-4" style={infoBoxStyle}>
@@ -429,7 +400,6 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
         )
 
       case 2:
-        const wordCount = formData.discoveryContext.trim().split(/\s+/).filter(w => w).length
         return (
           <div className="space-y-6">
             <div className="text-center mb-6 sm:mb-8">
@@ -437,7 +407,7 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 How did you come across this site?
               </h2>
               <p className="text-sm sm:text-base text-amber-800/70" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
-                Share the story of your discovery (150-300 words recommended)
+                Share the story of your discovery
               </p>
             </div>
 
@@ -450,14 +420,6 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-amber-900 placeholder:text-amber-800/40 rounded-xl sm:rounded-2xl border border-amber-200/60 focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30 focus:outline-none resize-none"
                 style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)' }}
               />
-              <div className="mt-2 flex flex-col sm:flex-row justify-between gap-1 sm:gap-0 text-xs sm:text-sm">
-                <span className={`${wordCount < 50 ? 'text-red-600' : wordCount > 300 ? 'text-amber-800' : 'text-green-700'}`}>
-                  {wordCount} words {wordCount < 50 && '(minimum 50)'}
-                </span>
-                <span className="text-amber-800/70">
-                  {wordCount >= 150 && wordCount <= 300 ? '&#10003; Perfect length' : '150-300 recommended'}
-                </span>
-              </div>
             </div>
           </div>
         )
@@ -483,11 +445,6 @@ export default function YatraWizard({ paidSites, selectedSiteId, isEditMode = fa
                 className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg text-amber-900 placeholder:text-amber-800/40 rounded-xl sm:rounded-2xl border border-amber-200/60 focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30 focus:outline-none resize-none"
                 style={{ background: 'linear-gradient(145deg, #fffbf5 0%, #fff8ed 100%)' }}
               />
-              <div className="mt-2 text-right text-xs sm:text-sm">
-                <span className={formData.journeyNarrative.length >= 100 ? 'text-green-700' : 'text-amber-800/70'}>
-                  {formData.journeyNarrative.length} characters (minimum 100)
-                </span>
-              </div>
             </div>
           </div>
         )

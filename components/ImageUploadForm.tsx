@@ -324,32 +324,11 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
       return
     }
 
-    const wordCount = sharedDescription.trim().split(/\s+/).filter(word => word.length > 0).length
-    if (wordCount < 20) {
-      toast.error(`Description must be at least 20 words. Current: ${wordCount} words`)
-      return
-    }
-
     const hasGPSLocation = selectedFiles.some(f => f.autoDetectedLocation)
 
     if (!hasGPSLocation && !sharedLocation) {
       toast.error('Please enter location (no GPS data found in images)')
       return
-    }
-
-    if (sharedLocation) {
-      const locationParts = sharedLocation.split(',').map(part => part.trim()).filter(part => part.length > 0)
-
-      if (locationParts.length < 3) {
-        toast.error('Location must include at least: Place, District, and State (separated by commas)')
-        return
-      }
-
-      const hasPincode = locationParts.some(part => /\b\d{6}\b/.test(part))
-      if (!hasPincode) {
-        toast.error('Location must contain a valid 6-digit pincode')
-        return
-      }
     }
 
     setLoading(true)
@@ -650,9 +629,6 @@ export default function ImageUploadForm({ onUploadComplete }: ImageUploadFormPro
             <label htmlFor="description" className="block text-sm font-medium text-amber-900">
               Description <span className="text-red-500">*</span>
             </label>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length >= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100/60 text-amber-700'}`}>
-              {sharedDescription.trim().split(/\s+/).filter(w => w.length > 0).length} / 20 words
-            </span>
           </div>
           <textarea
             id="description"
