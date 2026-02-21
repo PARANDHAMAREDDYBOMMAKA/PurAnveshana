@@ -150,7 +150,7 @@ const DashboardClient = memo(function DashboardClient({ images: initialSites, is
               </div>
               <div className="flex flex-col">
                 <h2 className="text-2xl sm:text-3xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>Anveshan</h2>
-                <p className="text-sm sm:text-base text-amber-800/70 mt-0.5" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>Discover ancient sites. Get rewarded.</p>
+                <p className="text-sm sm:text-base text-amber-800/70 mt-0.5" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>Document ancient heritage. Preserve it for generations.</p>
               </div>
             </div>
           </div>

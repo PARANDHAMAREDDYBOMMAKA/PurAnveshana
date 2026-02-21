@@ -650,7 +650,7 @@ export default function YatraGallery({ userId, isAdmin }: YatraGalleryProps) {
             </div>
             <div className="flex flex-col">
               <h2 className="text-2xl sm:text-3xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>Yatra</h2>
-              <p className="text-sm sm:text-base text-amber-800/70 mt-0.5" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>Your heritage discovery journey</p>
+              <p className="text-sm sm:text-base text-amber-800/70 mt-0.5" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>Share your journey. Inspire preservation.</p>
             </div>
           </div>
         </div>

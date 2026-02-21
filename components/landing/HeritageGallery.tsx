@@ -14,9 +14,9 @@ const images = [
 
 export function HeritageGallery() {
   return (
-    <section className="py-8 sm:py-12 lg:py-16 bg-linear-to-b from-white via-amber-50/20 to-white overflow-hidden">
+    <section className="pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12 lg:pb-16 bg-linear-to-b from-amber-50 via-amber-50/20 to-white overflow-hidden">
       <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="text-center mb-6 sm:mb-10">
+        {/* <div className="text-center mb-6 sm:mb-10">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="w-8 sm:w-12 h-px bg-amber-600/40"></span>
             <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-amber-700/60" />
@@ -31,7 +31,7 @@ export function HeritageGallery() {
           <p className="text-amber-700/60 text-xs sm:text-sm tracking-wider uppercase">
             Heritage captured by explorers
           </p>
-        </div>
+        </div> */}
 
         {/* Mobile: horizontal scroll */}
         <div className="sm:hidden -mx-3">

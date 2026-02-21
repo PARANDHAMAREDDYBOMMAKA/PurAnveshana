@@ -62,7 +62,7 @@ export function FeaturesSection() {
                     <h3 className="text-xl font-bold text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>
                       Anveshan
                     </h3>
-                    <p className="text-orange-600 font-medium text-sm italic">The Art of Discovery</p>
+                    <p className="text-orange-600 font-medium text-sm">Document ancient heritage. Preserve it for generations.</p>
                   </div>
                 </div>
 
@@ -138,7 +138,7 @@ export function FeaturesSection() {
                     <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Georgia, serif' }}>
                       Yatra
                     </h3>
-                    <p className="text-slate-500 font-medium text-sm italic">The Journey Shared</p>
+                    <p className="text-slate-500 font-medium text-sm">Share your journey. Inspire preservation.</p>
                   </div>
                 </div>
 
@@ -191,7 +191,7 @@ export function FeaturesSection() {
                 <h3 className="text-2xl sm:text-3xl font-bold text-amber-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
                   Anveshan
                 </h3>
-                <p className="text-orange-600 font-medium mb-4 text-sm sm:text-base italic">The Art of Discovery</p>
+                <p className="text-orange-600 font-medium mb-4 text-sm sm:text-base">Document ancient heritage. Preserve it for generations.</p>
 
                 <p className="text-amber-800/80 mb-6 leading-relaxed">
                   Found an ancient site? Through Anveshan, you become a guardian of history — documenting what time might otherwise forget.
@@ -240,7 +240,7 @@ export function FeaturesSection() {
                 <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
                   Yatra
                 </h3>
-                <p className="text-slate-600 font-medium mb-4 text-sm sm:text-base italic">The Journey Shared</p>
+                <p className="text-slate-600 font-medium mb-4 text-sm sm:text-base">Share your journey. Inspire preservation.</p>
 
                 <p className="text-slate-600 mb-6 leading-relaxed">
                   Been on a heritage journey? Through Yatra, your experiences become bridges — connecting others to places they've never seen.

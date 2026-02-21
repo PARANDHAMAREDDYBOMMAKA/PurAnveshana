@@ -63,8 +63,8 @@ export default function Home() {
       />
 
       {/* <NewHeroSection /> */}
-      <ScrollMessage />
       <HeritageGallery />
+      <ScrollMessage />
       <FeaturesSection />
       <TrustSection />
       <SimpleCTASection />
